@@ -2,6 +2,8 @@ package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 
+import org.bukkit.plugin.java.JavaPlugin;
+
 import java.util.logging.Logger;
 
 public abstract class AbstractEventLogger implements EventLogger {
@@ -37,7 +39,16 @@ public abstract class AbstractEventLogger implements EventLogger {
                 }
 
                 if (shouldPrint) {
-                    sb.append("\tat ").append(element).append("\n");
+                    sb.append("\tat ").append(element);
+                    try {
+                        // append the name of the plugin
+                        Class clazz = Class.forName(element.getClassName());
+                        JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
+                        sb.append(" [").append(providingPlugin.getName()).append("]");
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    sb.append("\n");
                 }
             }
         }
