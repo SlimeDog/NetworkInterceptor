@@ -34,6 +34,9 @@ logging:
   # these will always be included in the file output
   include-traces: false
 
+  # if whitelisted hosts should be excluded from logs
+  ignore-whitelisted: false
+
   # where we should log to
   # either: 'console', 'file' or 'all'
   mode: console

@@ -28,6 +28,8 @@ public class NetworkInterceptor extends JavaPlugin {
     private EventLogger logger = null;
     private Blocker blocker = null;
 
+    private boolean ignoreWhitelisted = false;
+
     public NetworkInterceptor() {
         // init early
         // this is seen as bad practice, but we want to try and catch as
@@ -64,6 +66,11 @@ public class NetworkInterceptor extends JavaPlugin {
         if (this.logger == null) {
             return;
         }
+
+        if (this.ignoreWhitelisted && this.blocker instanceof WhitelistBlocker && !this.blocker.shouldBlock(event)) {
+            return;
+        }
+
         this.logger.logAttempt(event);
     }
 
@@ -112,6 +119,8 @@ public class NetworkInterceptor extends JavaPlugin {
             getLogger().info("Logging is not enabled");
             return;
         }
+
+        this.ignoreWhitelisted = configuration.getBoolean("logging.ignore-whitelisted", false);
 
         String mode = configuration.getString("logging.mode", "console");
         boolean includeTraces = configuration.getBoolean("logging.include-traces", true);
