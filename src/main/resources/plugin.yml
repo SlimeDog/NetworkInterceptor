@@ -1,0 +1,5 @@
+name: ${project.name}
+version: ${project.version}
+main: me.lucko.networkinterceptor.NetworkInterceptor
+author: Luck
+load: STARTUP

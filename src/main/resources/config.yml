@@ -1,0 +1,67 @@
+# NetworkInterceptor configuration
+# made with <3 by Luck
+
+# how we should intercept network requests
+# any of: 'security-manager', 'proxy-selector'
+#
+# security-manager: - installs a custom SecurityManager into the server.
+#                   - will catch all outgoing network requests
+#                   - may be incompatible with other plugins which install a
+#                     security manager.
+#
+# proxy-selector:   - installs a custom ProxySelector into the server.
+#                   - will catch *most* outgoing http requests
+#                   - will not catch requests which specifically define their
+#                     proxy
+#                   - shouldn't be incompatible with anything
+#
+# you can define multiple methods.
+methods:
+  - security-manager
+  - proxy-selector
+
+
+# Configures the logging aspect of the plugin
+#
+# - allows network requests to be logged to the console or a file
+# - useful for monitoring activity and constructing blacklists (see below)
+logging:
+
+  # if logging is enabled
+  enabled: true
+
+  # if stack traces should be printed for each attempt
+  # these will always be included in the file output
+  include-traces: false
+
+  # where we should log to
+  # either: 'console', 'file' or 'all'
+  mode: console
+
+
+# Configures the blocking aspect of the plugin
+#
+# - allows network requests to be blocked
+# - can either use a whitelist or a blacklist approach
+block:
+
+  # if blocking is enabled
+  enabled: false
+
+  # how we should block
+  # either: 'whitelist' or 'blacklist'
+  mode: blacklist
+
+  # the whitelist / blacklist
+  # entries should be lowercase
+  list:
+    # common plugin metrics services
+    - "bstats.org"
+    - "report.mcstats.org"
+    - "report.mcupdate.org"
+
+    # minecraft snooper
+    - "snoop.minecraft.net"
+
+    # spigot api for update checking
+    - "api.spigotmc.org"
