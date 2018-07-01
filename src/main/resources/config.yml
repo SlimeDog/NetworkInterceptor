@@ -60,6 +60,7 @@ block:
   list:
     # common plugin metrics services
     - "bstats.org"
+    - "mcstats.org"
     - "report.mcstats.org"
     - "report.mcupdate.org"
 

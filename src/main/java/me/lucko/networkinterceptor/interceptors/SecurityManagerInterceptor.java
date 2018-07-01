@@ -5,6 +5,7 @@ import me.lucko.networkinterceptor.NetworkInterceptor;
 import me.lucko.networkinterceptor.utils.SneakyThrow;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.security.Permission;
 
 public class SecurityManagerInterceptor extends SecurityManager implements Interceptor {
@@ -28,7 +29,7 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
 
         if (this.plugin.shouldBlock(event)) {
             this.plugin.logBlock(event);
-            SneakyThrow.sneakyThrow(new IOException("Connect failed"));
+            SneakyThrow.sneakyThrow(new SocketTimeoutException("Connect failed"));
             throw new AssertionError();
         }
     }

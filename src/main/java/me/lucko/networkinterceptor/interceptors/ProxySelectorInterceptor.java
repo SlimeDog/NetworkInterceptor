@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class ProxySelectorInterceptor implements Interceptor {
 
             if (ProxySelectorInterceptor.this.plugin.shouldBlock(event)) {
                 ProxySelectorInterceptor.this.plugin.logBlock(event);
-                SneakyThrow.sneakyThrow(new IOException("Connect failed"));
+                SneakyThrow.sneakyThrow(new SocketTimeoutException("Connect failed"));
                 throw new AssertionError();
             }
 
