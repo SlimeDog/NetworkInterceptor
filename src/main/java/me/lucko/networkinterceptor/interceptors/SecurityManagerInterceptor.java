@@ -29,7 +29,7 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
 
         if (this.plugin.shouldBlock(event)) {
             this.plugin.logBlock(event);
-            SneakyThrow.sneakyThrow(new SocketTimeoutException("Connect failed"));
+            SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
             throw new AssertionError();
         }
     }

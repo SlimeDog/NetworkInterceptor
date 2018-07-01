@@ -57,7 +57,7 @@ public class ProxySelectorInterceptor implements Interceptor {
 
             if (ProxySelectorInterceptor.this.plugin.shouldBlock(event)) {
                 ProxySelectorInterceptor.this.plugin.logBlock(event);
-                SneakyThrow.sneakyThrow(new SocketTimeoutException("Connect failed"));
+                SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
                 throw new AssertionError();
             }
 
