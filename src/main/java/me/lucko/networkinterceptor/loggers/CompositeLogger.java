@@ -21,7 +21,7 @@ public class CompositeLogger implements EventLogger {
             try {
                 logger.logAttempt(event);
             } catch (Exception e) {
-                e.getStackTrace();
+                e.printStackTrace();
             }
         }
     }
@@ -32,7 +32,7 @@ public class CompositeLogger implements EventLogger {
             try {
                 logger.logBlock(event);
             } catch (Exception e) {
-                e.getStackTrace();
+                e.printStackTrace();
             }
         }
     }

@@ -42,9 +42,9 @@ public abstract class AbstractEventLogger implements EventLogger {
                     sb.append("\tat ").append(element);
                     try {
                         // append the name of the plugin
-                        Class clazz = Class.forName(element.getClassName());
+                        Class<?> clazz = Class.forName(element.getClassName());
                         JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
-                        sb.append(" [").append(providingPlugin.getName()).append("]");
+                        sb.append(" [").append(providingPlugin.getName()).append(']');
                     } catch (Exception e) {
                         // ignore
                     }

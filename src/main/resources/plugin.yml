@@ -1,5 +1,16 @@
 name: ${project.name}
 version: ${project.version}
+description: ${project.description}
 main: me.lucko.networkinterceptor.NetworkInterceptor
 author: Luck
 load: STARTUP
+
+# Mark the plugin as 1.13 compatible to avoid CB having to perform quite as much unnecessary
+# remapping when the plugin is loaded. Note that despite what this setting might otherwise imply,
+# the plugin is still compatible with pre-1.13 releases.
+api-version: 1.13
+
+commands:
+  networkinterceptor:
+    description: Main plugin command
+    usage: /<command> reload
