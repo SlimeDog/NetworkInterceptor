@@ -10,8 +10,8 @@ import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
 import me.lucko.networkinterceptor.interceptors.SecurityManagerInterceptor;
 import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
-import me.lucko.networkinterceptor.loggers.FileLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
+import me.lucko.networkinterceptor.loggers.FileLogger;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -93,7 +93,7 @@ public class NetworkInterceptor extends JavaPlugin {
             try {
                 interceptor.enable();
             } catch (Exception e) {
-                getLogger().log(Level.SEVERE,"Exception occurred whilst enabling " + interceptor.getClass().getName(), e);
+                getLogger().log(Level.SEVERE, "Exception occurred whilst enabling " + interceptor.getClass().getName(), e);
             }
         }
     }
@@ -103,7 +103,7 @@ public class NetworkInterceptor extends JavaPlugin {
             try {
                 interceptor.disable();
             } catch (Exception e) {
-                getLogger().log(Level.SEVERE,"Exception occurred whilst disabling " + interceptor.getClass().getName(), e);
+                getLogger().log(Level.SEVERE, "Exception occurred whilst disabling " + interceptor.getClass().getName(), e);
             }
         }
     }
@@ -132,7 +132,7 @@ public class NetworkInterceptor extends JavaPlugin {
                 Interceptor interceptor = constructor.newInstance(this);
                 this.interceptors.put(method, interceptor);
             } catch (Throwable t) {
-                getLogger().log(Level.SEVERE,"Exception occurred whilst initialising method " + method, t);
+                getLogger().log(Level.SEVERE, "Exception occurred whilst initialising method " + method, t);
             }
         }
     }
