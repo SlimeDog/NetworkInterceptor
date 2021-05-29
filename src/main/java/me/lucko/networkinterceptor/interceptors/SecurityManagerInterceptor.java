@@ -4,7 +4,6 @@ import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.NetworkInterceptor;
 import me.lucko.networkinterceptor.utils.SneakyThrow;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.security.Permission;
 
