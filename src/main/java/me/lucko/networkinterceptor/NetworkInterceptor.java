@@ -13,6 +13,7 @@ import me.lucko.networkinterceptor.loggers.ConsoleLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
 import me.lucko.networkinterceptor.loggers.FileLogger;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,6 +40,12 @@ public class NetworkInterceptor extends JavaPlugin {
         saveDefaultConfig();
 
         enable();
+
+        // check and enable bStats
+        if (getConfig().getBoolean("bstats-enable", false)) {
+            int pluginId = -1; // <-- Replace with the id of your plugin!
+            new Metrics(this, pluginId);
+        }
     }
 
     @Override

@@ -20,6 +20,8 @@ methods:
   - security-manager
   - proxy-selector
 
+# bStats
+bstats-enable: false
 
 # Configures the logging aspect of the plugin
 #
