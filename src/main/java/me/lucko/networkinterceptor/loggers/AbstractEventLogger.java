@@ -44,7 +44,7 @@ public abstract class AbstractEventLogger implements EventLogger {
                         // append the name of the plugin
                         Class<?> clazz = Class.forName(element.getClassName());
                         JavaPlugin providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
-                        sb.append(" [").append(providingPlugin.getName()).append("]");
+                        sb.append(" [").append(providingPlugin.getName()).append(']');
                     } catch (Exception e) {
                         // ignore
                     }

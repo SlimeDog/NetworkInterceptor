@@ -1,5 +1,20 @@
+# pHD
+#
+# See http://wiki.bukkit.org/Plugin_YAML for a complete list of requirements and options.
+
 name: ${project.name}
 version: ${project.version}
-main: me.lucko.networkinterceptor.NetworkInterceptor
-author: Luck
+api-version: 1.13
+main: ${project.groupId}.${project.artifactId}.NetworkInterceptor
+description: ${project.description}
+website: ${website}
+authors: [drives_a_ford, Luck, SlimeDog]
 load: STARTUP
+depend: []
+softdepend: []
+
+commands:
+  networkinterceptor:
+    description: Main plugin command
+    usage: /<command> reload
+    aliases: [ni]

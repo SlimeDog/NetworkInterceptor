@@ -22,6 +22,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class NetworkInterceptor extends JavaPlugin {
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
@@ -36,30 +37,26 @@ public class NetworkInterceptor extends JavaPlugin {
         // many requests as possible
 
         saveDefaultConfig();
-        FileConfiguration configuration = getConfig();
 
-        setupBlockers(configuration);
-        setupLoggers(configuration);
-        setupInterceptors(configuration);
+        enable();
+    }
 
-        for (Interceptor interceptor : this.interceptors.values()) {
-            try {
-                interceptor.enable();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    @Override
+    public void onEnable() {
+        getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand(this));
     }
 
     @Override
     public void onDisable() {
-        for (Interceptor interceptor : this.interceptors.values()) {
-            try {
-                interceptor.disable();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        disable();
+    }
+
+    public void reload() {
+        reloadConfig();
+
+        disable();
+
+        enable();
     }
 
     public void logAttempt(InterceptEvent event) {
@@ -85,6 +82,32 @@ public class NetworkInterceptor extends JavaPlugin {
         return this.blocker != null && this.blocker.shouldBlock(event);
     }
 
+    private void enable() {
+        FileConfiguration config = getConfig();
+
+        setupBlockers(config);
+        setupLoggers(config);
+        setupInterceptors(config);
+
+        for (Interceptor interceptor : this.interceptors.values()) {
+            try {
+                interceptor.enable();
+            } catch (Exception e) {
+                getLogger().log(Level.SEVERE,"Exception occurred whilst enabling " + interceptor.getClass().getName(), e);
+            }
+        }
+    }
+
+    private void disable() {
+        for (Interceptor interceptor : this.interceptors.values()) {
+            try {
+                interceptor.disable();
+            } catch (Exception e) {
+                getLogger().log(Level.SEVERE,"Exception occurred whilst disabling " + interceptor.getClass().getName(), e);
+            }
+        }
+    }
+
     private void setupInterceptors(FileConfiguration configuration) {
         List<String> methods = configuration.getStringList("methods");
         if (methods.isEmpty()) {
@@ -101,15 +124,15 @@ public class NetworkInterceptor extends JavaPlugin {
             }
         }
 
-        getLogger().info("Interceptors: " + enabled.toString());
+        getLogger().info("Interceptors: " + enabled);
+
         for (InterceptMethod method : enabled) {
             try {
                 Constructor<? extends Interceptor> constructor = method.clazz.getDeclaredConstructor(NetworkInterceptor.class);
                 Interceptor interceptor = constructor.newInstance(this);
                 this.interceptors.put(method, interceptor);
             } catch (Throwable t) {
-                getLogger().severe("Exception occurred whilst initialising method " + method);
-                t.printStackTrace();
+                getLogger().log(Level.SEVERE,"Exception occurred whilst initialising method " + method, t);
             }
         }
     }

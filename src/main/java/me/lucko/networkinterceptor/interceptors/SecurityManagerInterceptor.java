@@ -10,6 +10,8 @@ import java.security.Permission;
 public class SecurityManagerInterceptor extends SecurityManager implements Interceptor {
     private final NetworkInterceptor plugin;
 
+    private boolean enabled = true;
+
     public SecurityManagerInterceptor(NetworkInterceptor plugin) {
         this.plugin = plugin;
     }
@@ -17,6 +19,13 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
     @Override
     public void enable() {
         System.setSecurityManager(this);
+    }
+
+    @Override
+    public void disable() {
+        enabled = false;
+
+        System.setSecurityManager(null);
     }
 
     @Override
@@ -44,7 +53,8 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
         if (name == null) {
             return;
         }
-        if (name.equals("setSecurityManager")) {
+
+        if (this.enabled && name.equals("setSecurityManager")) {
             throw new SecurityException("Cannot replace the security manager.");
         }
     }
