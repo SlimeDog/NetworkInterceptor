@@ -106,6 +106,7 @@ public class NetworkInterceptor extends JavaPlugin {
                 getLogger().log(Level.SEVERE, "Exception occurred whilst disabling " + interceptor.getClass().getName(), e);
             }
         }
+        this.interceptors.clear();
     }
 
     private void setupInterceptors(FileConfiguration configuration) {
