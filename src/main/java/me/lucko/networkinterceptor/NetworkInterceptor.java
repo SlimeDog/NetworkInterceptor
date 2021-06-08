@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 
 import me.lucko.networkinterceptor.blockers.BlacklistBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
+import me.lucko.networkinterceptor.blockers.LearningBlocker;
 import me.lucko.networkinterceptor.blockers.WhitelistBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
@@ -50,6 +51,9 @@ public class NetworkInterceptor extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (blocker instanceof LearningBlocker) {
+            ((LearningBlocker) blocker).scheduleCleanup();
+        }
         getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand(this));
     }
 
@@ -193,6 +197,11 @@ public class NetworkInterceptor extends JavaPlugin {
                 break;
             default:
                 getLogger().severe("Unknown blocking mode: " + mode);
+        }
+        // TODO - add configurable config empty
+        if (blocker != null && configuration.getBoolean("learning.enabled", true)) {
+            getLogger().warning("Using Learning blocker!");
+            blocker = new LearningBlocker(this, blocker);
         }
     }
 
