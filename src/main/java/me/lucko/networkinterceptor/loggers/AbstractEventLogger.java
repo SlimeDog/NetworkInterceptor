@@ -28,7 +28,9 @@ public abstract class AbstractEventLogger implements EventLogger {
             for (StackTraceElement element : map.keySet()) {
                 sb.append("\tat ").append(element);
                 JavaPlugin providingPlugin = map.get(element);
-                sb.append(" [").append(providingPlugin == null ? "N/A" : providingPlugin.getName()).append(']');
+                if (providingPlugin != null) {
+                    sb.append(" [").append(providingPlugin.getName()).append(']');
+                }
                 sb.append("\n");
             }
         }
