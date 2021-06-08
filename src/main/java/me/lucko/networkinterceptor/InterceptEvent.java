@@ -1,7 +1,7 @@
 package me.lucko.networkinterceptor;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class InterceptEvent {
     private final String host;
     private final StackTraceElement[] stackTrace;
-    private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new HashMap<>();
+    private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace) {
         this.host = host;
