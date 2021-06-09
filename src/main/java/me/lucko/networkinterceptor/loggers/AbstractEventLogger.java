@@ -46,6 +46,12 @@ public abstract class AbstractEventLogger implements EventLogger {
 
     @Override
     public void logBlock(InterceptEvent event) {
-        getLogger().info("Blocked connection to host '" + event.getHost() + "'");
+        StringBuilder sb = new StringBuilder("Blocked connection to host ");
+        sb.append(event.getHost());
+        String origHost = event.getOriginalHost();
+        if (origHost != null) {
+            sb.append(" (").append(origHost).append(")");
+        }
+        getLogger().info(sb.toString());
     }
 }
