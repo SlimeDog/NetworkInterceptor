@@ -10,6 +10,7 @@ public class InterceptEvent {
     private final String host;
     private final StackTraceElement[] stackTrace;
     private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
+    private String originalHost;
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace) {
         this.host = host;
@@ -60,4 +61,13 @@ public class InterceptEvent {
             }
         }
     }
+
+    public void setOriginalHost(String host) {
+        this.originalHost = host;
+    }
+
+    public String getOriginalHost() {
+        return originalHost;
+    }
+
 }

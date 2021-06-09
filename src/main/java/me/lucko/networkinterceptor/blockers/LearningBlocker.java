@@ -40,6 +40,7 @@ public class LearningBlocker implements Blocker {
             // similar trace has been allowed in the past
             plugin.getLogger().info("Allowing because of similar trace! ['" + event.getHost()
                     + "' was found to correspond to '" + prev.originalHost + "']");
+            event.setOriginalHost(prev.originalHost);
             return false; // allow
         }
         return rawBlock; // block

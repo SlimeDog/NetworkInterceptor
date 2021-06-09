@@ -20,7 +20,12 @@ public abstract class AbstractEventLogger implements EventLogger {
     public void logAttempt(InterceptEvent event) {
         String host = event.getHost();
 
-        StringBuilder sb = new StringBuilder("Intercepted outgoing connection to host ").append(host).append("\n");
+        StringBuilder sb = new StringBuilder("Intercepted outgoing connection to host ").append(host);
+        String origHost = event.getOriginalHost();
+        if (origHost != null) {
+            sb.append(" (").append(origHost).append(")");
+        }
+        sb.append("\n");
 
         // print stacktrace
         if (this.includeTraces) {
