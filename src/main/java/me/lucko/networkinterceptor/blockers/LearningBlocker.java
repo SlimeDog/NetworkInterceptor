@@ -39,8 +39,6 @@ public class LearningBlocker implements Blocker {
         long lastAllowed = System.currentTimeMillis() - STACK_CHECK_TIMEOUT_MS;
         if (prev != null && prev.stamp >= lastAllowed) { // TODO - configurable ?
             // similar trace has been allowed in the past
-            plugin.getLogger().info("Allowing because of similar trace! ['" + event.getHost()
-                    + "' was found to correspond to '" + prev.originalHost + "']");
             event.setOriginalHost(prev.originalHost);
             return false; // allow
         }
