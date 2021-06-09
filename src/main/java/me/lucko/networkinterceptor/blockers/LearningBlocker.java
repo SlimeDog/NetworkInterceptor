@@ -9,7 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.lucko.networkinterceptor.InterceptEvent;
 
 public class LearningBlocker implements Blocker {
-    private static final long STACK_CHECK_TIMEOUT_MS = 10L; // TODO - configurable
+    private static final long STACK_CHECK_TIMEOUT_MS = 100L; // TODO - configurable
     private static final long STACK_TIMEOUT_CLEAR_DELAY = 70 * 1000L; // TODO - configurable
     private final JavaPlugin plugin;
     private final Blocker delegate;
@@ -36,7 +36,8 @@ public class LearningBlocker implements Blocker {
         }
         // not allowed by default
         StackTraces prev = cachedAllowedTraces.get(traces);
-        if (prev != null) { // TODO - configurable ?
+        long lastAllowed = System.currentTimeMillis() - STACK_CHECK_TIMEOUT_MS;
+        if (prev != null && prev.stamp >= lastAllowed) { // TODO - configurable ?
             // similar trace has been allowed in the past
             plugin.getLogger().info("Allowing because of similar trace! ['" + event.getHost()
                     + "' was found to correspond to '" + prev.originalHost + "']");
