@@ -33,9 +33,11 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
         StackTraceElement[] trace = new Exception().getStackTrace();
         InterceptEvent event = new InterceptEvent(host, trace);
 
+        boolean blocked = this.plugin.shouldBlock(event);
+
         this.plugin.logAttempt(event);
 
-        if (this.plugin.shouldBlock(event)) {
+        if (blocked) {
             this.plugin.logBlock(event);
             SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
             throw new AssertionError();
