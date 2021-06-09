@@ -22,8 +22,7 @@ public abstract class AbstractEventLogger implements EventLogger {
 
         StringBuilder sb = new StringBuilder("Intercepted outgoing connection to host ").append(host);
         String origHost = event.getOriginalHost();
-        if (origHost != null) { // original host not available since this is logged before eligibility is
-                                // checked
+        if (origHost != null) {
             sb.append(" (").append(origHost).append(")");
         }
         sb.append("\n");
