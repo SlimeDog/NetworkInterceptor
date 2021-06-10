@@ -118,6 +118,9 @@ public class NetworkInterceptor extends JavaPlugin {
             }
         }
         this.interceptors.clear();
+        if (blocker instanceof LearningBlocker) {
+            ((LearningBlocker) blocker).cancelCleanup();
+        }
     }
 
     private void setupInterceptors(FileConfiguration configuration) {

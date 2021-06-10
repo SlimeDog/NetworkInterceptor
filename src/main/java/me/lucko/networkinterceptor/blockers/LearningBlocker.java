@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 
@@ -14,6 +15,7 @@ public class LearningBlocker implements Blocker {
     private final JavaPlugin plugin;
     private final Blocker delegate;
     private final Map<StackTraces, StackTraces> cachedAllowedTraces = new HashMap<>();
+    private BukkitTask cleanupTask;
 
     public LearningBlocker(JavaPlugin plugin, Blocker delegate, long similarStackTimeoutMs) {
         this.plugin = plugin;
@@ -21,8 +23,15 @@ public class LearningBlocker implements Blocker {
         this.similarStackTimeoutMs = similarStackTimeoutMs;
     }
 
+    public void cancelCleanup() {
+        if (cleanupTask != null) {
+            cleanupTask.cancel();
+        }
+    }
+
     public void scheduleCleanup() {
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::cleanOldTraces,
+        cancelCleanup();
+        cleanupTask = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::cleanOldTraces,
                 STACK_TIMEOUT_CLEAR_DELAY, STACK_TIMEOUT_CLEAR_DELAY);
     }
 
