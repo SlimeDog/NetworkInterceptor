@@ -202,9 +202,9 @@ public class NetworkInterceptor extends JavaPlugin {
                 getLogger().severe("Unknown blocking mode: " + mode);
         }
         // TODO - add configurable config empty
-        if (blocker != null && configuration.getBoolean("learning.enabled", true)) {
+        if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             getLogger().info("Using a mapping blocker");
-            long similarStackTimeoutMs = configuration.getLong("learning.similar-stack-timeout-ms", 100L);
+            long similarStackTimeoutMs = configuration.getLong("mapping.timer", 100L);
             blocker = new LearningBlocker(this, blocker, similarStackTimeoutMs);
         }
     }

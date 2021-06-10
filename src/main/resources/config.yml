@@ -43,6 +43,13 @@ logging:
   # either: 'console', 'file' or 'all'
   mode: console
 
+# Configure whether fully qualified domain names (FQDNs) are mapped to their IP addresses
+# This will allow calls to IP addresses that are the result of a call to a specific FQDN
+# within a certain amount of time of the former.
+mapping:
+  enabled: true
+  # The time (in ms) within which IPs are allowed to pass as per their FQDN permissions
+  timer: 100
 
 # Configures the blocking aspect of the plugin
 #
