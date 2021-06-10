@@ -201,7 +201,8 @@ public class NetworkInterceptor extends JavaPlugin {
         // TODO - add configurable config empty
         if (blocker != null && configuration.getBoolean("learning.enabled", true)) {
             getLogger().warning("Using Learning blocker!");
-            blocker = new LearningBlocker(this, blocker);
+            long similarStackTimeoutMs = configuration.getLong("learning.similar-stack-timeout-ms", 100L);
+            blocker = new LearningBlocker(this, blocker, similarStackTimeoutMs);
         }
     }
 

@@ -9,15 +9,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import me.lucko.networkinterceptor.InterceptEvent;
 
 public class LearningBlocker implements Blocker {
-    private static final long STACK_CHECK_TIMEOUT_MS = 100L; // TODO - configurable
     private static final long STACK_TIMEOUT_CLEAR_DELAY = 70 * 1000L; // TODO - configurable
+    private final long similarStackTimeoutMs;
     private final JavaPlugin plugin;
     private final Blocker delegate;
     private final Map<StackTraces, StackTraces> cachedAllowedTraces = new HashMap<>();
 
-    public LearningBlocker(JavaPlugin plugin, Blocker delegate) {
+    public LearningBlocker(JavaPlugin plugin, Blocker delegate, long similarStackTimeoutMs) {
         this.plugin = plugin;
         this.delegate = delegate;
+        this.similarStackTimeoutMs = similarStackTimeoutMs;
     }
 
     public void scheduleCleanup() {
@@ -36,7 +37,7 @@ public class LearningBlocker implements Blocker {
         }
         // not allowed by default
         StackTraces prev = cachedAllowedTraces.get(traces);
-        long lastAllowed = System.currentTimeMillis() - STACK_CHECK_TIMEOUT_MS;
+        long lastAllowed = System.currentTimeMillis() - similarStackTimeoutMs;
         if (prev != null && prev.stamp >= lastAllowed) { // TODO - configurable ?
             // similar trace has been allowed in the past
             event.setOriginalHost(prev.originalHost);
@@ -46,7 +47,7 @@ public class LearningBlocker implements Blocker {
     }
 
     private void cleanOldTraces() {
-        long oldestStamp = System.currentTimeMillis() - STACK_CHECK_TIMEOUT_MS;
+        long oldestStamp = System.currentTimeMillis() - similarStackTimeoutMs;
         cachedAllowedTraces.values().removeIf(val -> val.stamp < oldestStamp);
     }
 
