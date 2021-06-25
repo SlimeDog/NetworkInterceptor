@@ -4,15 +4,17 @@ import com.google.common.collect.ImmutableList;
 
 import me.lucko.networkinterceptor.blockers.BlacklistBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
+import me.lucko.networkinterceptor.blockers.LearningBlocker;
 import me.lucko.networkinterceptor.blockers.WhitelistBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
 import me.lucko.networkinterceptor.interceptors.SecurityManagerInterceptor;
 import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
-import me.lucko.networkinterceptor.loggers.FileLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
+import me.lucko.networkinterceptor.loggers.FileLogger;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +24,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 public class NetworkInterceptor extends JavaPlugin {
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
@@ -36,30 +39,35 @@ public class NetworkInterceptor extends JavaPlugin {
         // many requests as possible
 
         saveDefaultConfig();
-        FileConfiguration configuration = getConfig();
 
-        setupBlockers(configuration);
-        setupLoggers(configuration);
-        setupInterceptors(configuration);
+        enable();
 
-        for (Interceptor interceptor : this.interceptors.values()) {
-            try {
-                interceptor.enable();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        // check and enable bStats
+        if (getConfig().getBoolean("bstats-enable", false)) {
+            int pluginId = -1; // <-- Replace with the id of your plugin!
+            new Metrics(this, pluginId);
         }
     }
 
     @Override
-    public void onDisable() {
-        for (Interceptor interceptor : this.interceptors.values()) {
-            try {
-                interceptor.disable();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void onEnable() {
+        if (blocker instanceof LearningBlocker) {
+            ((LearningBlocker) blocker).scheduleCleanup();
         }
+        getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand(this));
+    }
+
+    @Override
+    public void onDisable() {
+        disable();
+    }
+
+    public void reload() {
+        reloadConfig();
+
+        disable();
+
+        enable();
     }
 
     public void logAttempt(InterceptEvent event) {
@@ -85,6 +93,36 @@ public class NetworkInterceptor extends JavaPlugin {
         return this.blocker != null && this.blocker.shouldBlock(event);
     }
 
+    private void enable() {
+        FileConfiguration config = getConfig();
+
+        setupBlockers(config);
+        setupLoggers(config);
+        setupInterceptors(config);
+
+        for (Interceptor interceptor : this.interceptors.values()) {
+            try {
+                interceptor.enable();
+            } catch (Exception e) {
+                getLogger().log(Level.SEVERE, "Exception occurred whilst enabling " + interceptor.getClass().getName(), e);
+            }
+        }
+    }
+
+    private void disable() {
+        for (Interceptor interceptor : this.interceptors.values()) {
+            try {
+                interceptor.disable();
+            } catch (Exception e) {
+                getLogger().log(Level.SEVERE, "Exception occurred whilst disabling " + interceptor.getClass().getName(), e);
+            }
+        }
+        this.interceptors.clear();
+        if (blocker instanceof LearningBlocker) {
+            ((LearningBlocker) blocker).cancelCleanup();
+        }
+    }
+
     private void setupInterceptors(FileConfiguration configuration) {
         List<String> methods = configuration.getStringList("methods");
         if (methods.isEmpty()) {
@@ -101,15 +139,15 @@ public class NetworkInterceptor extends JavaPlugin {
             }
         }
 
-        getLogger().info("Interceptors: " + enabled.toString());
+        getLogger().info("Interceptors: " + enabled);
+
         for (InterceptMethod method : enabled) {
             try {
                 Constructor<? extends Interceptor> constructor = method.clazz.getDeclaredConstructor(NetworkInterceptor.class);
                 Interceptor interceptor = constructor.newInstance(this);
                 this.interceptors.put(method, interceptor);
             } catch (Throwable t) {
-                getLogger().severe("Exception occurred whilst initialising method " + method);
-                t.printStackTrace();
+                getLogger().log(Level.SEVERE, "Exception occurred whilst initialising method " + method, t);
             }
         }
     }
@@ -162,6 +200,12 @@ public class NetworkInterceptor extends JavaPlugin {
                 break;
             default:
                 getLogger().severe("Unknown blocking mode: " + mode);
+        }
+        // TODO - add configurable config empty
+        if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
+            getLogger().info("Using a mapping blocker");
+            long similarStackTimeoutMs = configuration.getLong("mapping.timer", 100L);
+            blocker = new LearningBlocker(this, blocker, similarStackTimeoutMs);
         }
     }
 

@@ -4,12 +4,13 @@ import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.NetworkInterceptor;
 import me.lucko.networkinterceptor.utils.SneakyThrow;
 
-import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.security.Permission;
 
 public class SecurityManagerInterceptor extends SecurityManager implements Interceptor {
     private final NetworkInterceptor plugin;
+
+    private boolean enabled = true;
 
     public SecurityManagerInterceptor(NetworkInterceptor plugin) {
         this.plugin = plugin;
@@ -21,13 +22,22 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
     }
 
     @Override
+    public void disable() {
+        enabled = false;
+
+        System.setSecurityManager(null);
+    }
+
+    @Override
     public void checkConnect(String host, int port) {
         StackTraceElement[] trace = new Exception().getStackTrace();
         InterceptEvent event = new InterceptEvent(host, trace);
 
+        boolean blocked = this.plugin.shouldBlock(event);
+
         this.plugin.logAttempt(event);
 
-        if (this.plugin.shouldBlock(event)) {
+        if (blocked) {
             this.plugin.logBlock(event);
             SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
             throw new AssertionError();
@@ -45,7 +55,8 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
         if (name == null) {
             return;
         }
-        if (name.equals("setSecurityManager")) {
+
+        if (this.enabled && name.equals("setSecurityManager")) {
             throw new SecurityException("Cannot replace the security manager.");
         }
     }

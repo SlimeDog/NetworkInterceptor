@@ -53,9 +53,11 @@ public class ProxySelectorInterceptor implements Interceptor {
             StackTraceElement[] trace = new Exception().getStackTrace();
             InterceptEvent event = new InterceptEvent(host, trace);
 
+            boolean blocked = ProxySelectorInterceptor.this.plugin.shouldBlock(event);
+
             ProxySelectorInterceptor.this.plugin.logAttempt(event);
 
-            if (ProxySelectorInterceptor.this.plugin.shouldBlock(event)) {
+            if (blocked) {
                 ProxySelectorInterceptor.this.plugin.logBlock(event);
                 SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
                 throw new AssertionError();
