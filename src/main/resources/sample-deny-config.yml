@@ -7,7 +7,7 @@
 # Implementation: drives_a_ford
 # Testing: SlimeDog
 #
-# Minecraft version support: 1.13.2, 1.14.4, 1.15.2, 1.16.5, 1.17.x
+# Minecraft version support: 1.17.x
 #
 # NetworkInterceptor was conceived when FQDNs (fully-qualified domain names) were
 # sufficient to define a network connection target. Times have changed. Today,
@@ -76,6 +76,14 @@ log:
   enabled: true
   include-traces: false
   mode: file
+
+# Configure whether fully qualified domain names (FQDNs) are mapped to their IP addresses
+# This will allow calls to IP addresses that are the result of a call to a specific FQDN
+# within a certain amount of time of the former.
+mapping:
+  enabled: true
+  # The time (in ms) within which IPs are allowed to pass as per their FQDN permissions
+  timer: 1000
 
 # Enable/disable blocking.
 # If blocking is disabled, logging will still occur unless disabled above.
