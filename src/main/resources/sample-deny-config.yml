@@ -1,0 +1,115 @@
+# NetworkInterceptor configuration
+# originally made with <3 by Luck
+#
+# Updated and maintained by drives_a_ford and SlimeDog
+
+# Design: SlimeDog
+# Implementation: drives_a_ford
+# Testing: SlimeDog
+#
+# Minecraft version support: 1.13.2, 1.14.4, 1.15.2, 1.16.5, 1.17.x
+#
+# NetworkInterceptor was conceived when FQDNs (fully-qualified domain names) were
+# sufficient to define a network connection target. Times have changed. Today,
+# Mojang, Paper, and many plugins are multi-hosted. Numeric IP addresses have
+# proliferated to the point that defining a connection target is complicated.
+# Cloudflare creates additional complication. This redesign is intended to
+# address those issues, by defining multiple ways to define the connections
+# that will be monitored and blocked:
+# - trusted processes list
+# - trusted plugins list
+# - FQDN list
+#
+# A note about SpigotMC premium plugins:
+# loadConfig0() makes a call to api.spigotmc.org for anti-piracy protection.
+# But since premium plugins are required to work without internet connections
+# (per premium guidelines), the outbound call may be safely blocked.
+#
+# At of 2020-08-01, premium plugins we have tested included:
+# - AAC
+# - AACAdditionPro
+# - AntiAFKPlus
+# - ForceResourcepacks aka WorldResourcepacks
+# - Panilla
+# - PyroWeatherPro
+
+# Network requests may be detected by either or both of the following methods.
+#
+# security-manager:
+#   - Installs a custom SecurityManager into the server
+#   - Will intercept all outgoing network requests
+#   - May be incompatible with other plugins which install a security manager
+#   - In particular, note that AAC disables itself if the security-manager method is enabled.
+#
+# proxy-selector:
+#  - Installs a custom ProxySelector into the server
+#  - Will intercept most outgoing HTTP requests
+#  - Will not catch requests which specifically define their proxy
+#  - Should not be incompatible with anything
+#
+# Both methods may be enabled, and are recommended.
+methods:
+  - security-manager
+  - proxy-selector
+
+# bStats metrics
+bstats-enable: true
+
+# Processing mode is allow or deny
+# In allow mode, outbound network connections to specified targets will be allowed.
+# In deny mode, outbound network connections to specified targets will be denied (blocked).
+# In either mode, trusted processes and plugins may be specified.
+mode: deny
+
+# Enable/disable logging of outbound network connections.
+#
+# Enable/disable stack traces for each connection attempt.
+# Stack traces will always be included in the file output.
+#
+# Connection requests may be logged to the console
+# or to plugins/NetworkInterceptor/intercept.log
+# Options are
+#   - console
+#   - file
+#   - all
+log:
+  enabled: true
+  include-traces: false
+  mode: file
+
+# Enable/disable blocking.
+# If blocking is disabled, logging will still occur unless disabled above.
+block:
+  enabled: true
+
+# Trusted processes and plugins
+# In allow mode, outbound network connections by these processes will be allowed.
+# In deny mode, outbound network connections by these processes will be allowed,
+# unless the target is explicitly blocked in the targets list.
+#
+# minecraft-version-check applies to all Minecraft variants.
+# Tested variants:
+# - Spigot
+# - Paper
+#
+# plugin-version-check applies to all plugins, so targets do not need to be specified.
+trusted-processes:
+  - mojang-player-authentication
+  - minecraft-version-check
+  - plugin-version-check
+
+# Trusted plugins
+# In allow mode, outbound network connections by these plugins will be allowed.
+# In deny mode, outbound network connections by these plugins will be allowed,
+# unless the target is explicitly blocked in the targets list.
+trusted-plugins:
+  - none
+
+# The target list
+# Entries should be lowercase
+# In allow mode, outbound network connections to these targets will be allowed.
+# In deny mode, outbound network connections to these targets will be blocked.
+targets:
+  # A list of disallowed FQDNs and IP addresses
+  - 'example.com'
+  - 'example.org'
