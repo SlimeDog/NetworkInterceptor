@@ -1,5 +1,7 @@
 # NetworkInterceptor
-Bukkit plugin to monitor and block outgoing network requests
+Monitor and block outgoing network requests
+
+NetworkInterceptor 1.0 was made with <3 by Luck. All credit for the original design and implementation belong to him
 
 ### Why?
 I have a issue with:
