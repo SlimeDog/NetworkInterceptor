@@ -44,7 +44,7 @@ public class NetworkInterceptor extends JavaPlugin {
 
         // check and enable bStats
         if (getConfig().getBoolean("bstats-enable", false)) {
-            int pluginId = -1; // <-- Replace with the id of your plugin!
+            int pluginId = 11822;
             new Metrics(this, pluginId);
         }
     }
