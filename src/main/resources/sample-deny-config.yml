@@ -72,7 +72,7 @@ mode: deny
 #   - console
 #   - file
 #   - all
-log:
+logging:
   enabled: true
   include-traces: false
   mode: file
