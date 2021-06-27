@@ -2,8 +2,9 @@
 
 ### Overview
 **NetworkInterceptor** detects and (optionally) blocks outgoing network connections. Some examples include:
-* Generally good:
+* Generally required:
   * player authentication (Mojang)
+* Generally good:
   * server version check (Minecraft variants: Paper, Spigot, etc.)
   * plugin version check
 * Generally not so good:
