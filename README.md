@@ -13,7 +13,7 @@
   * plugin data reporting
 
 **NetworkInterceptor** installs a custom security manager into the Java runtime environment which logs and (optionally) blocks outgoing network connections.
-It lets server administrators easily monitor the nature of connections made by plugins, and if they desire, prevent them.
+This allows server administrators easily to monitor the nature of connections made by plugins, and if they desire, prevent them.
 
 ### Can it be bypassed?
 A plugin with malicious intent could (most likely) find a way to bypass it.
