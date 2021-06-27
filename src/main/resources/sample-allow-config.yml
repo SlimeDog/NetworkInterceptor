@@ -16,7 +16,6 @@
 # Cloudflare creates additional complication. This redesign is intended to
 # address those issues, by defining multiple ways to define the connections
 # that will be monitored and blocked:
-# - trusted processes list
 # - trusted plugins list
 # - FQDN list
 #
@@ -89,22 +88,6 @@ mapping:
 # If blocking is disabled, logging will still occur unless disabled above.
 block:
   enabled: true
-
-# Trusted processes and plugins
-# In allow mode, outbound network connections by these processes will be allowed.
-# In deny mode, outbound network connections by these processes will be allowed,
-# unless the target is explicitly blocked in the targets list.
-#
-# minecraft-version-check applies to all Minecraft variants.
-# Tested variants:
-# - Spigot
-# - Paper
-#
-# plugin-version-check applies to all plugins, so targets do not need to be specified.
-trusted-processes:
-  - mojang-player-authentication
-  - minecraft-version-check
-  - plugin-version-check
 
 # Trusted plugins
 # In allow mode, outbound network connections by these plugins will be allowed.
