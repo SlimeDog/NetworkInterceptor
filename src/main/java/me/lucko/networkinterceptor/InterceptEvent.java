@@ -2,7 +2,9 @@ package me.lucko.networkinterceptor;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -10,6 +12,7 @@ public class InterceptEvent {
     private final String host;
     private final StackTraceElement[] stackTrace;
     private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
+    private final Set<JavaPlugin> tracedPlugins = new LinkedHashSet<>();
     private String originalHost;
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace) {
@@ -28,6 +31,10 @@ public class InterceptEvent {
 
     public Map<StackTraceElement, JavaPlugin> getNonInternalStackTraceWithPlugins() {
         return Collections.unmodifiableMap(nonInternalStackTrace);
+    }
+
+    public Set<JavaPlugin> getOrderedTracedPlugins() {
+        return new LinkedHashSet<>(tracedPlugins);
     }
 
     private void generateNonInternalStackTrace() {
@@ -53,6 +60,7 @@ public class InterceptEvent {
                     Class<?> clazz = Class.forName(element.getClassName());
                     providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
                     // sb.append(" [").append(providingPlugin.getName()).append(']');
+                    tracedPlugins.add(providingPlugin);
                 } catch (Exception e) {
                     // ignore
                     providingPlugin = null;

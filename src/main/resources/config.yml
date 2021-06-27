@@ -1,47 +1,81 @@
 # NetworkInterceptor configuration
-# made with <3 by Luck
+# originally made with <3 by Luck
+#
+# Updated and maintained by drives_a_ford and SlimeDog
 
-# how we should intercept network requests
-# any of: 'security-manager', 'proxy-selector'
+# Design: SlimeDog
+# Implementation: drives_a_ford
+# Testing: SlimeDog
 #
-# security-manager: - installs a custom SecurityManager into the server.
-#                   - will catch all outgoing network requests
-#                   - may be incompatible with other plugins which install a
-#                     security manager.
+# Minecraft version support: 1.17.x
 #
-# proxy-selector:   - installs a custom ProxySelector into the server.
-#                   - will catch *most* outgoing http requests
-#                   - will not catch requests which specifically define their
-#                     proxy
-#                   - shouldn't be incompatible with anything
+# NetworkInterceptor was conceived when FQDNs (fully-qualified domain names) were
+# sufficient to define a network connection target. Times have changed. Today,
+# Mojang, Paper, and many plugins are multi-hosted. Numeric IP addresses have
+# proliferated to the point that defining a connection target is complicated.
+# Cloudflare creates additional complication. This redesign is intended to
+# address those issues, by defining multiple ways to define the connections
+# that will be monitored and blocked:
+# - trusted processes list
+# - trusted plugins list
+# - FQDN list
 #
-# you can define multiple methods.
+# A note about SpigotMC premium plugins:
+# loadConfig0() makes a call to api.spigotmc.org for anti-piracy protection.
+# But since premium plugins are required to work without internet connections
+# (per premium guidelines), the outbound call may be safely blocked.
+#
+# At of 2020-08-01, premium plugins we have tested included:
+# - AAC
+# - AACAdditionPro
+# - AntiAFKPlus
+# - ForceResourcepacks aka WorldResourcepacks
+# - Panilla
+# - PyroWeatherPro
+
+# Network requests may be detected by either or both of the following methods.
+#
+# security-manager:
+#   - Installs a custom SecurityManager into the server
+#   - Will intercept all outgoing network requests
+#   - May be incompatible with other plugins which install a security manager
+#   - In particular, note that AAC disables itself if the security-manager method is enabled.
+#
+# proxy-selector:
+#  - Installs a custom ProxySelector into the server
+#  - Will intercept most outgoing HTTP requests
+#  - Will not catch requests which specifically define their proxy
+#  - Should not be incompatible with anything
+#
+# Both methods may be enabled, and are recommended.
 methods:
   - security-manager
   - proxy-selector
 
-# bStats
-bstats-enable: false
+# bStats metrics
+bstats-enable: true
 
-# Configures the logging aspect of the plugin
+# Processing mode is allow or deny
+# In allow mode, outbound network connections to specified targets will be allowed.
+# In deny mode, outbound network connections to specified targets will be denied (blocked).
+# In either mode, trusted processes and plugins may be specified.
+mode: allow
+
+# Enable/disable logging of outbound network connections.
 #
-# - allows network requests to be logged to the console or a file
-# - useful for monitoring activity and constructing blacklists (see below)
-logging:
-
-  # if logging is enabled
+# Enable/disable stack traces for each connection attempt.
+# Stack traces will always be included in the file output.
+#
+# Connection requests may be logged to the console
+# or to plugins/NetworkInterceptor/intercept.log
+# Options are
+#   - console
+#   - file
+#   - all
+log:
   enabled: true
-
-  # if stack traces should be printed for each attempt
-  # these will always be included in the file output
   include-traces: false
-
-  # if whitelisted hosts should be excluded from logs
-  ignore-whitelisted: false
-
-  # where we should log to
-  # either: 'console', 'file' or 'all'
-  mode: console
+  mode: file
 
 # Configure whether fully qualified domain names (FQDNs) are mapped to their IP addresses
 # This will allow calls to IP addresses that are the result of a call to a specific FQDN
@@ -49,32 +83,79 @@ logging:
 mapping:
   enabled: true
   # The time (in ms) within which IPs are allowed to pass as per their FQDN permissions
-  timer: 100
+  timer: 1000
 
-# Configures the blocking aspect of the plugin
-#
-# - allows network requests to be blocked
-# - can either use a whitelist or a blacklist approach
+# Enable/disable blocking.
+# If blocking is disabled, logging will still occur unless disabled above.
 block:
+  enabled: true
 
-  # if blocking is enabled
-  enabled: false
+# Trusted processes and plugins
+# In allow mode, outbound network connections by these processes will be allowed.
+# In deny mode, outbound network connections by these processes will be allowed,
+# unless the target is explicitly blocked in the targets list.
+#
+# minecraft-version-check applies to all Minecraft variants.
+# Tested variants:
+# - Spigot
+# - Paper
+#
+# plugin-version-check applies to all plugins, so targets do not need to be specified.
+trusted-processes:
+  - mojang-player-authentication
+  - minecraft-version-check
+  - plugin-version-check
 
-  # how we should block
-  # either: 'whitelist' or 'blacklist'
-  mode: blacklist
+# Trusted plugins
+# In allow mode, outbound network connections by these plugins will be allowed.
+# In deny mode, outbound network connections by these plugins will be allowed,
+# unless the target is explicitly blocked in the targets list.
+trusted-plugins:
+  - LuckPerms
 
-  # the whitelist / blacklist
-  # entries should be lowercase
-  list:
-    # common plugin metrics services
-    - "bstats.org"
-    - "mcstats.org"
-    - "report.mcstats.org"
-    - "report.mcupdate.org"
+# The target list
+# Entries should be lowercase
+# In allow mode, outbound network connections to these targets will be allowed.
+# In deny mode, outbound network connections to these targets will be blocked.
+targets:
+  # Aikar timings
+  - 'timings.aikar.co'
+  - 'timings.spigotmc.org'
 
-    # minecraft snooper
-    - "snoop.minecraft.net"
+  # bStats metrics service
+  - 'bstats.org'
 
-    # spigot api for update checking
-    - "api.spigotmc.org"
+  # Github API: Not required, but used by Paper
+  - 'api.github.com'
+
+  # LuckPerms
+  - 'bytebin.lucko.me'            # pastebin
+  - 'metadata.luckperms.net'      # pastebin
+  - 'nexus.lucko.me'              # dependencies
+  - 'repo.maven.apache.org'       # auto-install-translations: true
+
+  # Minecraft snooper
+  - 'snoop.minecraft.net'
+
+  # Mojang authentication
+  - 'api.mojang.com'
+  - 'sessionserver.mojang.com'
+  - 'launcher.mojang.com'
+  - 'launchermeta.mojang.com'
+
+  # Paper version and update check
+  - 'papermc.io'
+
+  # PlaceholderAPI ecloud
+  - 'api.extendedclip.com'
+
+  # SpigotMC library loader
+  - '199.232.192.209'
+  - '199.232.192.215'
+  - '199.232.196.215'
+
+  # SpigotMC plugin update check
+  - 'api.spigotmc.org'
+
+  # SpigotMC version and update check
+  - 'hub.spigotmc.org'

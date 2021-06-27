@@ -13,14 +13,19 @@ import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
 import me.lucko.networkinterceptor.loggers.FileLogger;
+import me.lucko.networkinterceptor.plugin.DefinedProcesses;
+import me.lucko.networkinterceptor.plugin.KeepPlugins;
+import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 import org.bstats.bukkit.Metrics;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +35,7 @@ public class NetworkInterceptor extends JavaPlugin {
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
     private EventLogger logger = null;
     private Blocker blocker = null;
+    private PluginOptions options = null;
 
     private boolean ignoreWhitelisted = false;
 
@@ -53,6 +59,9 @@ public class NetworkInterceptor extends JavaPlugin {
     public void onEnable() {
         if (blocker instanceof LearningBlocker) {
             ((LearningBlocker) blocker).scheduleCleanup();
+        }
+        if (options != null) { // search now that the plugin is enabled
+            options.searchForPlugins(this);
         }
         getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand(this));
     }
@@ -104,7 +113,8 @@ public class NetworkInterceptor extends JavaPlugin {
             try {
                 interceptor.enable();
             } catch (Exception e) {
-                getLogger().log(Level.SEVERE, "Exception occurred whilst enabling " + interceptor.getClass().getName(), e);
+                getLogger().log(Level.SEVERE, "Exception occurred whilst enabling " + interceptor.getClass().getName(),
+                        e);
             }
         }
     }
@@ -114,7 +124,8 @@ public class NetworkInterceptor extends JavaPlugin {
             try {
                 interceptor.disable();
             } catch (Exception e) {
-                getLogger().log(Level.SEVERE, "Exception occurred whilst disabling " + interceptor.getClass().getName(), e);
+                getLogger().log(Level.SEVERE, "Exception occurred whilst disabling " + interceptor.getClass().getName(),
+                        e);
             }
         }
         this.interceptors.clear();
@@ -143,7 +154,8 @@ public class NetworkInterceptor extends JavaPlugin {
 
         for (InterceptMethod method : enabled) {
             try {
-                Constructor<? extends Interceptor> constructor = method.clazz.getDeclaredConstructor(NetworkInterceptor.class);
+                Constructor<? extends Interceptor> constructor = method.clazz
+                        .getDeclaredConstructor(NetworkInterceptor.class);
                 Interceptor interceptor = constructor.newInstance(this);
                 this.interceptors.put(method, interceptor);
             } catch (Throwable t) {
@@ -186,27 +198,54 @@ public class NetworkInterceptor extends JavaPlugin {
             return;
         }
 
-        List<String> list = ImmutableList.copyOf(configuration.getStringList("block.list"));
+        List<String> list = ImmutableList.copyOf(configuration.getStringList("targets"));
+        options = generatePluginOptions(configuration);
 
-        String mode = configuration.getString("block.mode", "blacklist");
+        String mode = configuration.getString("mode", "deny");
         switch (mode.toLowerCase()) {
-            case "whitelist":
-                getLogger().info("Using whitelist blocking strategy");
-                this.blocker = new WhitelistBlocker(list);
+            case "allow":
+                getLogger().info("Using whitelist blocking strategy (allow)");
+                this.blocker = new WhitelistBlocker(list, options);
                 break;
-            case "blacklist":
-                getLogger().info("Using blacklist blocking strategy");
-                this.blocker = new BlacklistBlocker(list);
+            case "deny":
+                getLogger().info("Using blacklist blocking strategy (deny)");
+                this.blocker = new BlacklistBlocker(list, options);
                 break;
             default:
-                getLogger().severe("Unknown blocking mode: " + mode);
+                getLogger().severe("Unknown mode: " + mode);
         }
-        // TODO - add configurable config empty
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             getLogger().info("Using a mapping blocker");
             long similarStackTimeoutMs = configuration.getLong("mapping.timer", 100L);
             blocker = new LearningBlocker(this, blocker, similarStackTimeoutMs);
         }
+    }
+
+    private PluginOptions generatePluginOptions(ConfigurationSection configuration) {
+        // TODO - re-implement in config
+        String keepTypeName = configuration.getString("keep-type", "ALL");
+        KeepPlugins keepType;
+        try {
+            keepType = KeepPlugins.valueOf(keepTypeName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            getLogger().warning("Unknown keep type: " + keepTypeName + ". Defaulting to ALL");
+            keepType = KeepPlugins.ALL;
+        }
+        // TODO - re-implement in config
+        boolean keepConsequtives = configuration.getBoolean("keep-consequtives", false);
+        // TODO - re-implement in config (or remove!)
+        boolean allowNonPlugin = configuration.getBoolean("keep-non-plugins", false);
+        Set<String> trustedPlugins = new HashSet<>(configuration.getStringList("trusted-plugins"));
+        Set<DefinedProcesses> trustedProcesses = new HashSet<>();
+        for (String processName : configuration.getStringList("trusted-processes")) {
+            DefinedProcesses process = DefinedProcesses.getDefinedProcess(processName);
+            if (process == null) {
+                getLogger().warning("Unknown trusted process: " + processName);
+            } else {
+                trustedProcesses.add(process);
+            }
+        }
+        return new PluginOptions(keepType, keepConsequtives, allowNonPlugin, trustedPlugins, trustedProcesses);
     }
 
     enum InterceptMethod {
