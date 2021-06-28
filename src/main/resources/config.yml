@@ -87,7 +87,7 @@ mapping:
 # Enable/disable blocking.
 # If blocking is disabled, logging will still occur unless disabled above.
 blocking:
-  enabled: true
+  enabled: false
 
 # Trusted plugins
 # In allow mode, outbound network connections by these plugins will be allowed.
