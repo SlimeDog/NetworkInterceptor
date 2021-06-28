@@ -138,6 +138,7 @@ targets:
   - '199.232.196.215'
 
   # SpigotMC plugin update check
+  - 'api.spiget.org'
   - 'api.spigotmc.org'
 
   # SpigotMC version and update check
