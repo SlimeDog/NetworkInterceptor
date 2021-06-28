@@ -193,7 +193,7 @@ public class NetworkInterceptor extends JavaPlugin {
     }
 
     private void setupBlockers(FileConfiguration configuration) {
-        if (!configuration.getBoolean("block.enabled", false)) {
+        if (!configuration.getBoolean("blocking.enabled", false)) {
             getLogger().info("Blocking is not enabled");
             return;
         }

@@ -86,7 +86,7 @@ mapping:
 
 # Enable/disable blocking.
 # If blocking is disabled, logging will still occur unless disabled above.
-block:
+blocking:
   enabled: true
 
 # Trusted plugins
