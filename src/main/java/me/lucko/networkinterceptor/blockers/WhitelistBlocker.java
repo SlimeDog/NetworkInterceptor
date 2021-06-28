@@ -16,12 +16,12 @@ public class WhitelistBlocker extends PluginAwareBlocker {
     @Override
     public boolean shouldBlock(InterceptEvent event) {
         boolean original = !this.whitelist.contains(event.getHost().toLowerCase());
-        if (shouldBlockProcesses(event)) {
-            return true;
+        if (!shouldBlockProcesses(event)) {
+            return false; // allow because of allowed process
         }
-        if (shouldBlockPlugins(event)) {
-            return true;
+        if (!shouldBlockPlugins(event)) {
+            return false; // allow because of allowed plugin
         }
-        return original;
+        return original; // default
     }
 }
