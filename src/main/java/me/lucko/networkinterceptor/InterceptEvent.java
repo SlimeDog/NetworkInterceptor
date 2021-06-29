@@ -14,6 +14,7 @@ public class InterceptEvent {
     private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
     private final Set<JavaPlugin> tracedPlugins = new LinkedHashSet<>();
     private String originalHost;
+    private JavaPlugin trustedPlugin;
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace) {
         this.host = host;
@@ -76,6 +77,14 @@ public class InterceptEvent {
 
     public String getOriginalHost() {
         return originalHost;
+    }
+
+    public void setTrustedPlugin(JavaPlugin plugin) {
+        this.trustedPlugin = plugin;
+    }
+
+    public JavaPlugin getTrustedPlugin() {
+        return trustedPlugin;
     }
 
 }

@@ -26,6 +26,7 @@ public abstract class PluginAwareBlocker implements Blocker {
         for (JavaPlugin plugin : plugins) { // TODO - make more versatile. Right now the FIRST untrusted plugin will
                                             // suffice
             if (options.isTrusted(plugin)) {
+                event.setTrustedPlugin(plugin);
                 return false; // trusted!
             }
         }

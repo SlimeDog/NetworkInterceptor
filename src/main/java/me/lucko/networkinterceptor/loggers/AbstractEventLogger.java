@@ -25,6 +25,10 @@ public abstract class AbstractEventLogger implements EventLogger {
         if (origHost != null) {
             sb.append(" (").append(origHost).append(")");
         }
+        JavaPlugin trustedPlugin = event.getTrustedPlugin();
+        if (trustedPlugin != null) {
+            sb.append(" (by trusted-plugin ").append(trustedPlugin.getName()).append(")");
+        }
         sb.append("\n");
 
         // print stacktrace
