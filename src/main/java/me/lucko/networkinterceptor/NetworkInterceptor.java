@@ -170,7 +170,8 @@ public class NetworkInterceptor extends JavaPlugin {
             return;
         }
 
-        this.ignoreAllowed = configuration.getBoolean("logging.ignore-whitelisted", false);
+        // this option is undocumented
+        this.ignoreAllowed = configuration.getBoolean("logging.ignore-allowed", false);
 
         String mode = configuration.getString("logging.mode", "console");
         boolean includeTraces = configuration.getBoolean("logging.include-traces", true);
