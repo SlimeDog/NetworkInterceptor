@@ -5,17 +5,17 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 import java.util.List;
 
-public class BlacklistBlocker extends PluginAwareBlocker {
-    private final List<String> blacklist;
+public class AllowBlocker extends PluginAwareBlocker {
+    private final List<String> allowed;
 
-    public BlacklistBlocker(List<String> blacklist, PluginOptions options) {
+    public AllowBlocker(List<String> allowed, PluginOptions options) {
         super(options);
-        this.blacklist = blacklist;
+        this.allowed = allowed;
     }
 
     @Override
     public boolean shouldBlock(InterceptEvent event) {
-        boolean original = this.blacklist.contains(event.getHost().toLowerCase());
+        boolean original = !this.allowed.contains(event.getHost().toLowerCase());
         return shouldBeBlockedInternal(event, original);
     }
 }

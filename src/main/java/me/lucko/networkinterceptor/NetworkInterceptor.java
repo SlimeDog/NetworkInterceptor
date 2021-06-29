@@ -2,10 +2,10 @@ package me.lucko.networkinterceptor;
 
 import com.google.common.collect.ImmutableList;
 
-import me.lucko.networkinterceptor.blockers.BlacklistBlocker;
+import me.lucko.networkinterceptor.blockers.AllowBlocker;
+import me.lucko.networkinterceptor.blockers.BlockBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
 import me.lucko.networkinterceptor.blockers.LearningBlocker;
-import me.lucko.networkinterceptor.blockers.WhitelistBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
 import me.lucko.networkinterceptor.interceptors.SecurityManagerInterceptor;
@@ -37,7 +37,7 @@ public class NetworkInterceptor extends JavaPlugin {
     private Blocker blocker = null;
     private PluginOptions options = null;
 
-    private boolean ignoreWhitelisted = false;
+    private boolean ignoreAllowed = false;
 
     public NetworkInterceptor() {
         // init early
@@ -84,7 +84,7 @@ public class NetworkInterceptor extends JavaPlugin {
             return;
         }
 
-        if (this.ignoreWhitelisted && this.blocker instanceof WhitelistBlocker && !this.blocker.shouldBlock(event)) {
+        if (this.ignoreAllowed && this.blocker instanceof AllowBlocker && !this.blocker.shouldBlock(event)) {
             return;
         }
 
@@ -170,7 +170,7 @@ public class NetworkInterceptor extends JavaPlugin {
             return;
         }
 
-        this.ignoreWhitelisted = configuration.getBoolean("logging.ignore-whitelisted", false);
+        this.ignoreAllowed = configuration.getBoolean("logging.ignore-whitelisted", false);
 
         String mode = configuration.getString("logging.mode", "console");
         boolean includeTraces = configuration.getBoolean("logging.include-traces", true);
@@ -204,12 +204,12 @@ public class NetworkInterceptor extends JavaPlugin {
         String mode = configuration.getString("mode", "deny");
         switch (mode.toLowerCase()) {
             case "allow":
-                getLogger().info("Using whitelist blocking strategy (allow)");
-                this.blocker = new WhitelistBlocker(list, options);
+                getLogger().info("Using blocking strategy allow");
+                this.blocker = new AllowBlocker(list, options);
                 break;
             case "deny":
-                getLogger().info("Using blacklist blocking strategy (deny)");
-                this.blocker = new BlacklistBlocker(list, options);
+                getLogger().info("Using blocking strategy deny");
+                this.blocker = new BlockBlocker(list, options);
                 break;
             default:
                 getLogger().severe("Unknown mode: " + mode);
