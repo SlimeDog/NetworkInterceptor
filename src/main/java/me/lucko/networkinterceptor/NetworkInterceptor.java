@@ -4,7 +4,10 @@ import com.google.common.collect.ImmutableList;
 
 import me.lucko.networkinterceptor.blockers.BlacklistBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
+import me.lucko.networkinterceptor.blockers.CompositeBlocker;
 import me.lucko.networkinterceptor.blockers.LearningBlocker;
+import me.lucko.networkinterceptor.blockers.PluginAwareBlocker;
+import me.lucko.networkinterceptor.blockers.ProcessAwareBlocker;
 import me.lucko.networkinterceptor.blockers.WhitelistBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
@@ -200,19 +203,24 @@ public class NetworkInterceptor extends JavaPlugin {
 
         List<String> list = ImmutableList.copyOf(configuration.getStringList("targets"));
         options = generatePluginOptions(configuration);
+        PluginAwareBlocker pluginBlocker = new PluginAwareBlocker(options);
+        ProcessAwareBlocker processBlocker = new ProcessAwareBlocker(options);
 
         String mode = configuration.getString("mode", "deny");
         switch (mode.toLowerCase()) {
             case "allow":
                 getLogger().info("Using whitelist blocking strategy (allow)");
-                this.blocker = new WhitelistBlocker(list, options);
+                this.blocker = new WhitelistBlocker(list);
                 break;
             case "deny":
                 getLogger().info("Using blacklist blocking strategy (deny)");
-                this.blocker = new BlacklistBlocker(list, options);
+                this.blocker = new BlacklistBlocker(list);
                 break;
             default:
                 getLogger().severe("Unknown mode: " + mode);
+        }
+        if (this.blocker != null) {
+            this.blocker = new CompositeBlocker(this.blocker, pluginBlocker, processBlocker);
         }
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             getLogger().info("Using a mapping blocker");
