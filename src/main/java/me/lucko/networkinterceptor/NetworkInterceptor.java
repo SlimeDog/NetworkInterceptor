@@ -5,7 +5,10 @@ import com.google.common.collect.ImmutableList;
 import me.lucko.networkinterceptor.blockers.AllowBlocker;
 import me.lucko.networkinterceptor.blockers.BlockBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
+import me.lucko.networkinterceptor.blockers.CompositeBlocker;
 import me.lucko.networkinterceptor.blockers.LearningBlocker;
+import me.lucko.networkinterceptor.blockers.PluginAwareBlocker;
+import me.lucko.networkinterceptor.blockers.ProcessAwareBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
 import me.lucko.networkinterceptor.interceptors.SecurityManagerInterceptor;
@@ -201,19 +204,24 @@ public class NetworkInterceptor extends JavaPlugin {
 
         List<String> list = ImmutableList.copyOf(configuration.getStringList("targets"));
         options = generatePluginOptions(configuration);
+        PluginAwareBlocker pluginBlocker = new PluginAwareBlocker(options);
+        ProcessAwareBlocker processBlocker = new ProcessAwareBlocker(options);
 
         String mode = configuration.getString("mode", "deny");
         switch (mode.toLowerCase()) {
             case "allow":
                 getLogger().info("Using blocking strategy allow");
-                this.blocker = new AllowBlocker(list, options);
+                this.blocker = new AllowBlocker(list);
                 break;
             case "deny":
                 getLogger().info("Using blocking strategy deny");
-                this.blocker = new BlockBlocker(list, options);
+                this.blocker = new BlockBlocker(list);
                 break;
             default:
                 getLogger().severe("Unknown mode: " + mode);
+        }
+        if (this.blocker != null) {
+            this.blocker = new CompositeBlocker(this.blocker, pluginBlocker, processBlocker);
         }
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             getLogger().info("Using a mapping blocker");

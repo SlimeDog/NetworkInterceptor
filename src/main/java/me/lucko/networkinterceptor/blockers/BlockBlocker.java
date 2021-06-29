@@ -1,21 +1,18 @@
 package me.lucko.networkinterceptor.blockers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
-import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 import java.util.List;
 
-public class BlockBlocker extends PluginAwareBlocker {
+public class BlockBlocker implements Blocker {
     private final List<String> blocked;
 
-    public BlockBlocker(List<String> blocked, PluginOptions options) {
-        super(options);
+    public BlockBlocker(List<String> blocked) {
         this.blocked = blocked;
     }
 
     @Override
     public boolean shouldBlock(InterceptEvent event) {
-        boolean original = this.blocked.contains(event.getHost().toLowerCase());
-        return shouldBeBlockedInternal(event, original);
+        return this.blocked.contains(event.getHost().toLowerCase());
     }
 }
