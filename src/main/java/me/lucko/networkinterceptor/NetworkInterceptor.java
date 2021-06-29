@@ -231,8 +231,6 @@ public class NetworkInterceptor extends JavaPlugin {
             getLogger().warning("Unknown keep type: " + keepTypeName + ". Defaulting to ALL");
             keepType = KeepPlugins.ALL;
         }
-        // TODO - re-implement in config
-        boolean keepConsequtives = configuration.getBoolean("keep-consequtives", false);
         // TODO - re-implement in config (or remove!)
         boolean allowNonPlugin = configuration.getBoolean("keep-non-plugins", false);
         Set<String> trustedPlugins = new HashSet<>(configuration.getStringList("trusted-plugins"));
@@ -245,7 +243,7 @@ public class NetworkInterceptor extends JavaPlugin {
                 trustedProcesses.add(process);
             }
         }
-        return new PluginOptions(keepType, keepConsequtives, allowNonPlugin, trustedPlugins, trustedProcesses);
+        return new PluginOptions(keepType, allowNonPlugin, trustedPlugins, trustedProcesses);
     }
 
     enum InterceptMethod {

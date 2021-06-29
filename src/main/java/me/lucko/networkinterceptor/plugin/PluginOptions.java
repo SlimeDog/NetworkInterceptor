@@ -14,18 +14,14 @@ import me.lucko.networkinterceptor.NetworkInterceptor;
 
 public class PluginOptions {
     private final KeepPlugins keepType;
-    private final boolean keepConsequtives;
     private final boolean allowNonPlugin;
     private final Set<DefinedProcesses> trustedProcesses;
     private final Set<JavaPlugin> trustedPlugins;
     private final Set<String> pluginNames;
 
-    public PluginOptions(KeepPlugins keepType, boolean keepConsequtives,
-            boolean allowNonPlugin, Set<String> trustedPlugins, Set<DefinedProcesses> trustedProcesses) {
+    public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins,
+            Set<DefinedProcesses> trustedProcesses) {
         this.keepType = keepType;
-        this.keepConsequtives = keepConsequtives;
-        // this.targetPlugins =
-        // targetPlugins.stream().map(String::toLowerCase).collect(Collectors.toSet());
         this.allowNonPlugin = allowNonPlugin;
         this.trustedProcesses = trustedProcesses;
         this.pluginNames = trustedPlugins;
@@ -65,10 +61,6 @@ public class PluginOptions {
 
     public KeepPlugins getKeepType() {
         return keepType;
-    }
-
-    public boolean shouldKeepConsequtives() {
-        return keepConsequtives;
     }
 
     public boolean shouldAllowNonPlugin() {
