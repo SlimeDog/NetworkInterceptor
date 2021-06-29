@@ -5,6 +5,7 @@ import me.lucko.networkinterceptor.InterceptEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 public abstract class AbstractEventLogger implements EventLogger {
@@ -28,6 +29,11 @@ public abstract class AbstractEventLogger implements EventLogger {
         JavaPlugin trustedPlugin = event.getTrustedPlugin();
         if (trustedPlugin != null) {
             sb.append(" (by trusted-plugin ").append(trustedPlugin.getName()).append(")");
+        } else {
+            Set<JavaPlugin> traced = event.getOrderedTracedPlugins();
+            if (!traced.isEmpty()) {
+                sb.append(" (by plugin ").append(traced.iterator().next().getName()).append(")");
+            }
         }
         sb.append("\n");
 
