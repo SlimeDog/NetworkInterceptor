@@ -34,11 +34,11 @@ public abstract class PluginAwareBlocker implements Blocker {
     }
 
     protected boolean shouldBeBlockedInternal(InterceptEvent event, boolean original) {
-        if (!shouldBlockProcesses(event)) {
-            return false; // allow because of allowed process
-        }
         if (!shouldBlockPlugins(event)) {
             return false; // allow because of allowed plugin
+        }
+        if (!shouldBlockProcesses(event)) {
+            return false; // allow because of allowed process
         }
         return original; // default
     }
