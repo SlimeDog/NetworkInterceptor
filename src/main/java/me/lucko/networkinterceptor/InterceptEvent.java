@@ -72,6 +72,9 @@ public class InterceptEvent {
     }
 
     public void setOriginalHost(String host) {
+        if (host != null && host.equals(this.host)) {
+            return; // do not set exactly the same original host
+        }
         this.originalHost = host;
     }
 

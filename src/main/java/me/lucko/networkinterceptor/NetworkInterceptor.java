@@ -8,7 +8,6 @@ import me.lucko.networkinterceptor.blockers.Blocker;
 import me.lucko.networkinterceptor.blockers.CompositeBlocker;
 import me.lucko.networkinterceptor.blockers.LearningBlocker;
 import me.lucko.networkinterceptor.blockers.PluginAwareBlocker;
-import me.lucko.networkinterceptor.blockers.ProcessAwareBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
 import me.lucko.networkinterceptor.interceptors.SecurityManagerInterceptor;
@@ -16,7 +15,6 @@ import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
 import me.lucko.networkinterceptor.loggers.FileLogger;
-import me.lucko.networkinterceptor.plugin.DefinedProcesses;
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
 
@@ -60,9 +58,6 @@ public class NetworkInterceptor extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (blocker instanceof LearningBlocker) {
-            ((LearningBlocker) blocker).scheduleCleanup();
-        }
         if (options != null) { // search now that the plugin is enabled
             options.searchForPlugins(this);
         }
@@ -133,7 +128,7 @@ public class NetworkInterceptor extends JavaPlugin {
         }
         this.interceptors.clear();
         if (blocker instanceof LearningBlocker) {
-            ((LearningBlocker) blocker).cancelCleanup();
+            ((LearningBlocker) blocker).clear();
         }
     }
 
@@ -205,7 +200,6 @@ public class NetworkInterceptor extends JavaPlugin {
         List<String> list = ImmutableList.copyOf(configuration.getStringList("targets"));
         options = generatePluginOptions(configuration);
         PluginAwareBlocker pluginBlocker = new PluginAwareBlocker(options);
-        ProcessAwareBlocker processBlocker = new ProcessAwareBlocker(options);
 
         String mode = configuration.getString("mode", "deny");
         switch (mode.toLowerCase()) {
@@ -221,12 +215,12 @@ public class NetworkInterceptor extends JavaPlugin {
                 getLogger().severe("Unknown mode: " + mode);
         }
         if (this.blocker != null) {
-            this.blocker = new CompositeBlocker(this.blocker, pluginBlocker, processBlocker);
+            this.blocker = new CompositeBlocker(this.blocker, pluginBlocker);
         }
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             getLogger().info("Using a mapping blocker");
             long similarStackTimeoutMs = configuration.getLong("mapping.timer", 100L);
-            blocker = new LearningBlocker(this, blocker, similarStackTimeoutMs);
+            blocker = new LearningBlocker(blocker, similarStackTimeoutMs);
         }
     }
 
@@ -243,16 +237,7 @@ public class NetworkInterceptor extends JavaPlugin {
         // TODO - re-implement in config (or remove!)
         boolean allowNonPlugin = configuration.getBoolean("keep-non-plugins", false);
         Set<String> trustedPlugins = new HashSet<>(configuration.getStringList("trusted-plugins"));
-        Set<DefinedProcesses> trustedProcesses = new HashSet<>();
-        for (String processName : configuration.getStringList("trusted-processes")) {
-            DefinedProcesses process = DefinedProcesses.getDefinedProcess(processName);
-            if (process == null) {
-                getLogger().warning("Unknown trusted process: " + processName);
-            } else {
-                trustedProcesses.add(process);
-            }
-        }
-        return new PluginOptions(keepType, allowNonPlugin, trustedPlugins, trustedProcesses);
+        return new PluginOptions(keepType, allowNonPlugin, trustedPlugins);
     }
 
     enum InterceptMethod {

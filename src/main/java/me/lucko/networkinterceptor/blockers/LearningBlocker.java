@@ -1,69 +1,67 @@
 package me.lucko.networkinterceptor.blockers;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 
 public class LearningBlocker implements Blocker {
-    private static final long STACK_TIMEOUT_CLEAR_DELAY = 70 * 1000L; // TODO - configurable
-    private final long similarStackTimeoutMs;
-    private final JavaPlugin plugin;
     private final Blocker delegate;
-    private final Map<StackTraces, StackTraces> cachedAllowedTraces = new HashMap<>();
-    private BukkitTask cleanupTask;
+    private final Cache<StackTraces, StackTraces> cachedAllowedTraces;
+    private final Cache<StackTraces, StackTraces> cachedBlockedTraces;
 
-    public LearningBlocker(JavaPlugin plugin, Blocker delegate, long similarStackTimeoutMs) {
-        this.plugin = plugin;
+    public LearningBlocker(Blocker delegate, long similarStackTimeoutMs) {
         this.delegate = delegate;
-        this.similarStackTimeoutMs = similarStackTimeoutMs;
-    }
-
-    public void cancelCleanup() {
-        if (cleanupTask != null) {
-            cleanupTask.cancel();
-        }
-    }
-
-    public void scheduleCleanup() {
-        cancelCleanup();
-        cleanupTask = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::cleanOldTraces,
-                STACK_TIMEOUT_CLEAR_DELAY, STACK_TIMEOUT_CLEAR_DELAY);
+        cachedAllowedTraces = CacheBuilder.newBuilder().expireAfterWrite(similarStackTimeoutMs, TimeUnit.MILLISECONDS)
+                .build();
+        cachedBlockedTraces = CacheBuilder.newBuilder().expireAfterWrite(similarStackTimeoutMs, TimeUnit.MILLISECONDS)
+                .build();
     }
 
     @Override
     public boolean shouldBlock(InterceptEvent event) {
         boolean rawBlock = delegate.shouldBlock(event);
-        // unmodifiable map
         StackTraces traces = new StackTraces(event.getNonInternalStackTraceWithPlugins(), event.getHost());
-        if (!rawBlock) { // allowed by default -> allow
-            cachedAllowedTraces.put(traces, traces);
-            return rawBlock; // allow
-        }
-        // not allowed by default
-        StackTraces prev = cachedAllowedTraces.get(traces);
-        long lastAllowed = System.currentTimeMillis() - similarStackTimeoutMs;
-        if (prev != null && prev.stamp >= lastAllowed) { // TODO - configurable ?
+        StackTraces prev = cachedAllowedTraces.getIfPresent(traces);
+        if (prev != null) {
             // similar trace has been allowed in the past
             event.setOriginalHost(prev.originalHost);
+        }
+        if (!rawBlock) { // allowed by default -> allow
+            if (prev == null) {
+                cachedAllowedTraces.put(traces, traces);
+            } else { // update expiry
+                cachedAllowedTraces.put(prev, prev);
+            }
             return false; // allow
         }
-        return rawBlock; // block
+        // not allowed by default
+        if (prev != null) { // has original allowed host
+            return false; // allow
+        }
+        prev = cachedBlockedTraces.getIfPresent(traces); // see if there's a FQDN that has previously been blocked
+        if (prev != null) {
+            event.setOriginalHost(prev.originalHost); // blocked original
+        } else {
+            cachedBlockedTraces.put(traces, traces);
+        }
+        return true; // block
     }
 
-    private void cleanOldTraces() {
-        long oldestStamp = System.currentTimeMillis() - similarStackTimeoutMs;
-        cachedAllowedTraces.values().removeIf(val -> val.stamp < oldestStamp);
+    public void clear() {
+        cachedAllowedTraces.invalidateAll();
+        cachedBlockedTraces.invalidateAll();
     }
 
     private class StackTraces {
         private final Map<StackTraceElement, JavaPlugin> payload;
         private final String originalHost;
-        private final long stamp = System.currentTimeMillis();
 
         private StackTraces(Map<StackTraceElement, JavaPlugin> payload, String originalHost) {
             this.payload = payload;

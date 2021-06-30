@@ -15,15 +15,12 @@ import me.lucko.networkinterceptor.NetworkInterceptor;
 public class PluginOptions {
     private final KeepPlugins keepType;
     private final boolean allowNonPlugin;
-    private final Set<DefinedProcesses> trustedProcesses;
     private final Set<JavaPlugin> trustedPlugins;
     private final Set<String> pluginNames;
 
-    public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins,
-            Set<DefinedProcesses> trustedProcesses) {
+    public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins) {
         this.keepType = keepType;
         this.allowNonPlugin = allowNonPlugin;
-        this.trustedProcesses = trustedProcesses;
         this.pluginNames = trustedPlugins;
         this.trustedPlugins = new HashSet<>();
     }
@@ -69,32 +66,6 @@ public class PluginOptions {
 
     public boolean isTrusted(JavaPlugin plugin) {
         return trustedPlugins.contains(plugin);
-    }
-
-    public boolean isFromTrustedProcess(StackTraceElement[] elements, String host) {
-        return isFromTrustedProcess(elements, host, 0);
-    }
-
-    public boolean isFromTrustedProcess(StackTraceElement[] elements, String host, int ignoreFirst) {
-        for (StackTraceElement element : elements) {
-            if (ignoreFirst > 0) {
-                ignoreFirst--;
-                continue;
-            }
-            if (isFromTrustedProcess(element, host)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean isFromTrustedProcess(StackTraceElement element, String host) {
-        for (DefinedProcesses process : trustedProcesses) {
-            if (process.isOfType(element, host)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
