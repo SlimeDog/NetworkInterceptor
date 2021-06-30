@@ -26,15 +26,7 @@ public abstract class AbstractEventLogger implements EventLogger {
         if (origHost != null) {
             sb.append(" (").append(origHost).append(")");
         }
-        JavaPlugin trustedPlugin = event.getTrustedPlugin();
-        if (trustedPlugin != null) {
-            sb.append(" by trusted-plugin ").append(trustedPlugin.getName());
-        } else {
-            Set<JavaPlugin> traced = event.getOrderedTracedPlugins();
-            if (!traced.isEmpty()) {
-                sb.append(" by plugin ").append(traced.iterator().next().getName());
-            }
-        }
+        appendPluginIfPossible(sb, event);
         sb.append("\n");
 
         // print stacktrace
@@ -54,14 +46,27 @@ public abstract class AbstractEventLogger implements EventLogger {
         getLogger().info(sb.toString());
     }
 
+    private void appendPluginIfPossible(StringBuilder sb, InterceptEvent event) {
+        JavaPlugin trustedPlugin = event.getTrustedPlugin();
+        if (trustedPlugin != null) {
+            sb.append(" by trusted-plugin ").append(trustedPlugin.getName());
+        } else {
+            Set<JavaPlugin> traced = event.getOrderedTracedPlugins();
+            if (!traced.isEmpty()) {
+                sb.append(" by plugin ").append(traced.iterator().next().getName());
+            }
+        }
+    }
+
     @Override
     public void logBlock(InterceptEvent event) {
-        StringBuilder sb = new StringBuilder("Blocked connection to host ");
+        StringBuilder sb = new StringBuilder("Blocked connection to host "); //<target> by trusted-plugin <plugin>");
         sb.append(event.getHost());
         String origHost = event.getOriginalHost();
         if (origHost != null) {
             sb.append(" (").append(origHost).append(")");
         }
+        appendPluginIfPossible(sb, event);
         getLogger().info(sb.toString());
     }
 }
