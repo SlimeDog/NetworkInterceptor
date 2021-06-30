@@ -21,18 +21,18 @@ public abstract class AbstractEventLogger implements EventLogger {
     public void logAttempt(InterceptEvent event) {
         String host = event.getHost();
 
-        StringBuilder sb = new StringBuilder("Intercepted outgoing connection to host ").append(host);
+        StringBuilder sb = new StringBuilder("Intercepted connection to host ").append(host);
         String origHost = event.getOriginalHost();
         if (origHost != null) {
             sb.append(" (").append(origHost).append(")");
         }
         JavaPlugin trustedPlugin = event.getTrustedPlugin();
         if (trustedPlugin != null) {
-            sb.append(" (by trusted-plugin ").append(trustedPlugin.getName()).append(")");
+            sb.append(" by trusted-plugin ").append(trustedPlugin.getName());
         } else {
             Set<JavaPlugin> traced = event.getOrderedTracedPlugins();
             if (!traced.isEmpty()) {
-                sb.append(" (by plugin ").append(traced.iterator().next().getName()).append(")");
+                sb.append(" by plugin ").append(traced.iterator().next().getName());
             }
         }
         sb.append("\n");
