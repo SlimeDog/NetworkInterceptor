@@ -24,6 +24,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -140,15 +141,16 @@ public class NetworkInterceptor extends JavaPlugin {
         }
 
         Set<InterceptMethod> enabled = EnumSet.noneOf(InterceptMethod.class);
-        for (String method : methods) {
+        for (String method : new ArrayList<>(methods)) {
             try {
                 enabled.add(InterceptMethod.fromString(method));
             } catch (IllegalArgumentException e) {
                 getLogger().severe("Unknown method: " + method);
+                methods.remove(method);
             }
         }
 
-        getLogger().info("Interceptors: " + enabled);
+        getLogger().info("Interceptors: " + methods);
 
         for (InterceptMethod method : enabled) {
             try {
