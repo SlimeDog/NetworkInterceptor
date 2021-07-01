@@ -13,9 +13,12 @@ commands:
     description: Main plugin command
     usage: /<command> reload
     aliases: [ni]
-    permission: networkinterceptor.command.reload
+    permission: networkinterceptor.command
 
 permissions:
+  networkinterceptor.command:
+    description: Allows using the main command
+    default: op
   networkinterceptor.command.reload:
     description: Allows reloading the config
     default: op

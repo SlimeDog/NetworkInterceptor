@@ -26,7 +26,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
             return true;
         }
 
-        if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("networkinterceptor.reload")) {
+        if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("networkinterceptor.command.reload")) {
             this.plugin.reload();
 
             sender.sendMessage(ChatColor.GOLD + "NetworkInterceptor configuration reloaded.");
