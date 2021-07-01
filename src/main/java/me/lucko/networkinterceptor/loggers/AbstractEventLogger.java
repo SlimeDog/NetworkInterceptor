@@ -41,7 +41,7 @@ public abstract class AbstractEventLogger implements EventLogger {
                 sb.append("\n");
             }
         } else if (this.includeTraces) {
-            sb.append("(Identical stack trace omitted - see the one above this one)\n");
+            sb.append("\tat (identical stack trace omitted)\n");
         }
 
         sb.setLength(sb.length() - 1);
