@@ -54,13 +54,10 @@ public class InterceptEvent {
             }
 
             if (shouldPrint) {
-                // sb.append("\tat ").append(element);
                 JavaPlugin providingPlugin;
                 try {
-                    // append the name of the plugin
                     Class<?> clazz = Class.forName(element.getClassName());
                     providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
-                    // sb.append(" [").append(providingPlugin.getName()).append(']');
                     tracedPlugins.add(providingPlugin);
                 } catch (Exception e) {
                     // ignore
