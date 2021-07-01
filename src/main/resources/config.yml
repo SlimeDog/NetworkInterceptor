@@ -7,30 +7,7 @@
 # Implementation: drives_a_ford
 # Testing: SlimeDog
 #
-# Minecraft version support: 1.17.x
-#
-# NetworkInterceptor was conceived when FQDNs (fully-qualified domain names) were
-# sufficient to define a network connection target. Times have changed. Today,
-# Mojang, Paper, and many plugins are multi-hosted. Numeric IP addresses have
-# proliferated to the point that defining a connection target is complicated.
-# Cloudflare creates additional complication. This redesign is intended to
-# address those issues, by defining multiple ways to define the connections
-# that will be monitored and blocked:
-# - trusted plugins list
-# - FQDN list
-#
-# A note about SpigotMC premium plugins:
-# loadConfig0() makes a call to api.spigotmc.org for anti-piracy protection.
-# But since premium plugins are required to work without internet connections
-# (per premium guidelines), the outbound call may be safely blocked.
-#
-# At of 2020-08-01, premium plugins we have tested included:
-# - AAC
-# - AACAdditionPro
-# - AntiAFKPlus
-# - ForceResourcepacks aka WorldResourcepacks
-# - Panilla
-# - PyroWeatherPro
+# Minecraft version support: 1.12.2, 1.13,2, 1.14.4, 1.15.2, 1.16.5, 1.17.x
 
 # Network requests may be detected by either or both of the following methods.
 #
@@ -58,7 +35,7 @@ bstats-enable: true
 # In allow mode, outbound network connections to specified targets will be allowed.
 # In deny mode, outbound network connections to specified targets will be denied (blocked).
 # In either mode, trusted plugins may be specified.
-mode: allow
+mode: deny
 
 # Enable/disable logging of outbound network connections.
 #
@@ -76,6 +53,11 @@ logging:
   include-traces: false
   mode: file
 
+# Enable/disable blocking.
+# If blocking is disabled, logging will still occur unless disabled above.
+blocking:
+  enabled: false
+
 # Configure whether fully qualified domain names (FQDNs) are mapped to their IP addresses
 # This will allow calls to IP addresses that are the result of a call to a specific FQDN
 # within a certain amount of time of the former.
@@ -84,95 +66,48 @@ mapping:
   # The time (in ms) within which IPs are allowed to pass as per their FQDN permissions
   timer: 1000
 
-# Enable/disable blocking.
-# If blocking is disabled, logging will still occur unless disabled above.
-blocking:
-  enabled: false
-
 # Trusted plugins
 # In allow mode, outbound network connections by these plugins will be allowed.
 # In deny mode, outbound network connections by these plugins will be allowed,
 # unless the target is explicitly blocked in the targets list.
+#
+# If LuckPerms is installed, we recommend listing it as a trusted plugin,
+# to simplify configuration.
 trusted-plugins:
-  - LuckPerms
+  - none
+  # LuckPerms
 
 # The target list
 # Entries should be lowercase
 # In allow mode, outbound network connections to these targets will be allowed.
 # In deny mode, outbound network connections to these targets will be blocked.
 targets:
-  # Aikar timings
-  - 'timings.aikar.co'
-  - 'timings.spigotmc.org'
 
-  # bStats metrics service
-  - 'bstats.org'
+  # A list of disallowed FQDNs and IP addresses
+  - 'example.com'
+  - 'example.org'
 
-  # Github API: Not required, but used by Paper
-  - 'api.github.com'
-
-  # LuckPerms
-  - 'bytebin.lucko.me'            # pastebin
-  - 'metadata.luckperms.net'      # pastebin
-  - 'nexus.lucko.me'              # dependencies
-  - 'repo.maven.apache.org'       # auto-install-translations: true
-
-  # Minecraft snooper
-  - 'snoop.minecraft.net'
-
-  # Mojang authentication
-  - 'api.mojang.com'
-  - 'sessionserver.mojang.com'
-  - 'launcher.mojang.com'
-  - 'launchermeta.mojang.com'
-
-  # Paper version and update check
-  - 'papermc.io'
-
-  # PlaceholderAPI ecloud
-  - 'api.extendedclip.com'
-
-  # SpigotMC library loader
-  - '199.232.192.209'
-  - '199.232.192.215'
-  - '199.232.196.215'
-
-  # SpigotMC plugin update check
-  - 'api.spiget.org'
-  - 'api.spigotmc.org'
-
-  # SpigotMC version and update check
-  - 'hub.spigotmc.org'
-
-# This section is used to detect plugins manually from their package.
-# This becomes useful when a plugin manually loads some library.
-# That can mean that the class is not available for the (default) class loader,
-# which in turn can render it impossible to get the plugin corresponding
-# to a class that's responsible for a network call.
+# Manual plugin detection
 #
-# If the functionality is enabled and there is something specified in here,
-# a new blocker instance is initiated.
+# Some plugins (for example, LuckPerms) loads libraries without the standard
+# class loader, so their classes cannot be detected by PluginClassLoader.
+# This means that the intercepts cannot be linked to a plugin, which is a
+# useful feature. As a workaround, we support manual assignment.
 #
-# This functionality should be used in conjunction with trusted plugins.
-# If the plugins listed here are not trusted, all it does is add the
-# corresponding plugin to the stacktrace (only shown if enabled in the logging section).
-# If the plugins listed here are also listed as trusted, it also treats
-# them as such and adds them to the message as a trusted plugin.
+# This feature may be used if a stack trace is not associated with a plugin, but
+# inspection shows that it should be assigned. An example from the intercept.log:
+# ------------------------------------------------------------------------------
+# Thu Jul 01 00:40:14 PDT 2021: Intercepted connection to host metadata.luckperms.net
+#         at me.lucko.luckperms.lib.okhttp3.internal.connection.RouteSelector.resetNextProxy(RouteSelector.java:115)
+# ------------------------------------------------------------------------------
+# shows that metadata.luckperms.net should be assigned to LuckPerms.
 #
-# One may opt to disable this feature after the initial startup of the server.
-# In our experience, LuckPerms performs some network connections during this time
-# and disabling the feature later can improve performance.
-#
-# The section is layed out as follows:
-# manual-plugin-detection:
-#   enabled: false # whether or not to enable this feature
-#   disable-after-startup: true # whether or not to disable after startup
-#     PluginName: # the name of the plugin
-#       - package.name # the list of package names that belong to this plugin
+# This feature may be disabled after the initial startup of the server. In our
+# experience, LuckPerms performs some network connections during this time, and
+# disabling the feature after startup can improve performance.
 manual-plugin-detection:
   enabled: false
   disable-after-startup: true
   plugins:
-    # LuckPerms
     LuckPerms:
       - me.lucko.luckperms
