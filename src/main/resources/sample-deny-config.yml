@@ -7,30 +7,7 @@
 # Implementation: drives_a_ford
 # Testing: SlimeDog
 #
-# Minecraft version support: 1.17.x
-#
-# NetworkInterceptor was conceived when FQDNs (fully-qualified domain names) were
-# sufficient to define a network connection target. Times have changed. Today,
-# Mojang, Paper, and many plugins are multi-hosted. Numeric IP addresses have
-# proliferated to the point that defining a connection target is complicated.
-# Cloudflare creates additional complication. This redesign is intended to
-# address those issues, by defining multiple ways to define the connections
-# that will be monitored and blocked:
-# - trusted plugins list
-# - FQDN list
-#
-# A note about SpigotMC premium plugins:
-# loadConfig0() makes a call to api.spigotmc.org for anti-piracy protection.
-# But since premium plugins are required to work without internet connections
-# (per premium guidelines), the outbound call may be safely blocked.
-#
-# At of 2020-08-01, premium plugins we have tested included:
-# - AAC
-# - AACAdditionPro
-# - AntiAFKPlus
-# - ForceResourcepacks aka WorldResourcepacks
-# - Panilla
-# - PyroWeatherPro
+# Minecraft version support: 1.12.2, 1.13,2, 1.14.4, 1.15.2, 1.16.5, 1.17.x
 
 # Network requests may be detected by either or both of the following methods.
 #
@@ -76,6 +53,11 @@ logging:
   include-traces: false
   mode: file
 
+# Enable/disable blocking.
+# If blocking is disabled, logging will still occur unless disabled above.
+blocking:
+  enabled: false
+
 # Configure whether fully qualified domain names (FQDNs) are mapped to their IP addresses
 # This will allow calls to IP addresses that are the result of a call to a specific FQDN
 # within a certain amount of time of the former.
@@ -84,23 +66,49 @@ mapping:
   # The time (in ms) within which IPs are allowed to pass as per their FQDN permissions
   timer: 1000
 
-# Enable/disable blocking.
-# If blocking is disabled, logging will still occur unless disabled above.
-block:
-  enabled: true
-
 # Trusted plugins
 # In allow mode, outbound network connections by these plugins will be allowed.
 # In deny mode, outbound network connections by these plugins will be allowed,
 # unless the target is explicitly blocked in the targets list.
+#
+# If LuckPerms is installed, we recommend listing it as a trusted plugin,
+# to simplify configuration.
 trusted-plugins:
   - none
+  # LuckPerms
 
 # The target list
 # Entries should be lowercase
 # In allow mode, outbound network connections to these targets will be allowed.
 # In deny mode, outbound network connections to these targets will be blocked.
 targets:
+
   # A list of disallowed FQDNs and IP addresses
   - 'example.com'
   - 'example.org'
+
+# Manual plugin detection
+#
+# Some plugins (for example, LuckPerms) loads libraries without the standard
+# class loader, so their classes cannot be detected by PluginClassLoader.
+# This means that the intercepts cannot be linked to a plugin, which is a
+# useful feature. As a workaround, we support manual assignment.
+#
+# This feature may be used if a stack trace is not associated with a plugin, but
+# inspection shows that it should be assigned. An example from the intercept.log:
+# ------------------------------------------------------------------------------
+# Thu Jul 01 00:40:14 PDT 2021: Intercepted connection to host metadata.luckperms.net
+#         at me.lucko.luckperms.lib.okhttp3.internal.connection.RouteSelector.resetNextProxy(RouteSelector.java:115)
+# ------------------------------------------------------------------------------
+# shows that metadata.luckperms.net should be assigned to LuckPerms.
+#
+# This feature may be disabled after the initial startup of the server. In our
+# experience, LuckPerms performs some network connections during this time, and
+# disabling the feature after startup can improve performance.
+manual-plugin-detection:
+  enabled: false
+  disable-after-startup: true
+  plugins:
+    LuckPerms:
+      - me.lucko.luckperms
+
