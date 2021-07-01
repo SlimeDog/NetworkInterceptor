@@ -7,6 +7,7 @@ import me.lucko.networkinterceptor.blockers.BlockBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
 import me.lucko.networkinterceptor.blockers.CompositeBlocker;
 import me.lucko.networkinterceptor.blockers.LearningBlocker;
+import me.lucko.networkinterceptor.blockers.ManualPluginDetectingBlocker;
 import me.lucko.networkinterceptor.blockers.PluginAwareBlocker;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.interceptors.ProxySelectorInterceptor;
@@ -16,6 +17,7 @@ import me.lucko.networkinterceptor.loggers.ConsoleLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
 import me.lucko.networkinterceptor.loggers.FileLogger;
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
+import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 import org.bstats.bukkit.Metrics;
@@ -38,6 +40,7 @@ public class NetworkInterceptor extends JavaPlugin {
     private EventLogger logger = null;
     private Blocker blocker = null;
     private PluginOptions options = null;
+    private boolean registerManualStopTask = false;
 
     private boolean ignoreAllowed = false;
 
@@ -61,6 +64,18 @@ public class NetworkInterceptor extends JavaPlugin {
     public void onEnable() {
         if (options != null) { // search now that the plugin is enabled
             options.searchForPlugins(this);
+        }
+        if (registerManualStopTask) {
+            getServer().getScheduler().runTaskLater(this, () -> {
+                if (this.blocker instanceof CompositeBlocker) {
+                    ((CompositeBlocker) this.blocker).stopUsingManualBlocker();
+                } else if (this.blocker instanceof LearningBlocker) {
+                    Blocker delegate = ((LearningBlocker) this.blocker).getDelegate();
+                    if (delegate instanceof CompositeBlocker) {
+                        ((CompositeBlocker) delegate).stopUsingManualBlocker();
+                    }
+                }
+            }, 1L);
         }
         getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand(this));
     }
@@ -217,7 +232,16 @@ public class NetworkInterceptor extends JavaPlugin {
                 getLogger().severe("Unknown mode: " + mode);
         }
         if (this.blocker != null) {
-            this.blocker = new CompositeBlocker(this.blocker, pluginBlocker);
+            ManualPluginOptions manOptions = new ManualPluginOptions(
+                    configuration.getConfigurationSection("manual-plugin-detection"));
+            ManualPluginDetectingBlocker manBlocker;
+            if (manOptions.isEmpty()) { // either disable or empty
+                manBlocker = null;
+            } else {
+                manBlocker = new ManualPluginDetectingBlocker(options, manOptions);
+            }
+            this.blocker = new CompositeBlocker(manBlocker, this.blocker, pluginBlocker);
+            registerManualStopTask = manBlocker != null && manOptions.disableAfterStartup();
         }
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             getLogger().info("Using a mapping blocker");

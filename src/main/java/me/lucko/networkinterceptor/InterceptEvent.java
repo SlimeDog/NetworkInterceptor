@@ -31,6 +31,20 @@ public class InterceptEvent {
         return this.stackTrace;
     }
 
+    public void updateTraceElement(StackTraceElement trace, JavaPlugin plugin) {
+        if (!nonInternalStackTrace.containsKey(trace)) {
+            throw new IllegalArgumentException("Stack trace not within event non-internal trace: " + trace);
+        }
+        JavaPlugin prev = nonInternalStackTrace.get(trace);
+        if (prev != null) {
+            throw new IllegalStateException("Stack trace " + trace + " already mapped to " + prev);
+        }
+        if (plugin == null) {
+            throw new IllegalArgumentException("Cannot update trace to null plugin");
+        }
+        nonInternalStackTrace.put(trace, plugin);
+    }
+
     public Map<StackTraceElement, JavaPlugin> getNonInternalStackTraceWithPlugins() {
         return Collections.unmodifiableMap(nonInternalStackTrace);
     }

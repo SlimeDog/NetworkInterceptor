@@ -5,14 +5,23 @@ import java.util.Arrays;
 import me.lucko.networkinterceptor.InterceptEvent;
 
 public class CompositeBlocker implements Blocker {
+    private final ManualPluginDetectingBlocker manual;
     private final Blocker[] delegates;
+    private boolean useManualBlocker = true;
 
-    public CompositeBlocker(Blocker... delegates) {
+    public CompositeBlocker(ManualPluginDetectingBlocker manualBlocker, Blocker... delegates) {
+        this.manual = manualBlocker;
+        if (manual == null) {
+            useManualBlocker = false;
+        }
         this.delegates = delegates;
     }
 
     @Override
     public boolean shouldBlock(InterceptEvent event) {
+        if (useManualBlocker && !manual.shouldBlock(event)) {
+            return false; // allowed by manual plugin detecting blockeru
+        }
         for (Blocker delegate : delegates) {
             boolean shouldBlock;
             try {
@@ -30,6 +39,10 @@ public class CompositeBlocker implements Blocker {
 
     public Blocker[] getDelegates() {
         return Arrays.copyOf(delegates, delegates.length);
+    }
+
+    public void stopUsingManualBlocker() {
+        useManualBlocker = false;
     }
 
 }

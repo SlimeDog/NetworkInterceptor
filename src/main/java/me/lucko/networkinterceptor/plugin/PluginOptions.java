@@ -16,11 +16,13 @@ public class PluginOptions {
     private final KeepPlugins keepType;
     private final boolean allowNonPlugin;
     private final Set<JavaPlugin> trustedPlugins;
+    private final Set<String> allTrustedPluginNames;
     private final Set<String> pluginNames;
 
     public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins) {
         this.keepType = keepType;
         this.allowNonPlugin = allowNonPlugin;
+        this.allTrustedPluginNames = new HashSet<>(trustedPlugins);
         this.pluginNames = trustedPlugins;
         this.trustedPlugins = new HashSet<>();
     }
@@ -66,6 +68,10 @@ public class PluginOptions {
 
     public boolean isTrusted(JavaPlugin plugin) {
         return trustedPlugins.contains(plugin);
+    }
+
+    public boolean isListedAsTrustedPluginName(String pluginName) {
+        return allTrustedPluginNames.contains(pluginName);
     }
 
 }
