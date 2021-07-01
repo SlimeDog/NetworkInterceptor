@@ -15,6 +15,7 @@ public class InterceptEvent {
     private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
     private final Set<JavaPlugin> tracedPlugins = new LinkedHashSet<>();
     private String originalHost;
+    private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
     private JavaPlugin trustedPlugin;
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace) {
@@ -87,10 +88,15 @@ public class InterceptEvent {
     }
 
     public void setOriginalHost(String host) {
+        isRepeat = true;
         if (host != null && host.equals(this.host)) {
             return; // do not set exactly the same original host
         }
         this.originalHost = host;
+    }
+
+    public boolean isRepeatCall() {
+        return isRepeat;
     }
 
     public String getOriginalHost() {

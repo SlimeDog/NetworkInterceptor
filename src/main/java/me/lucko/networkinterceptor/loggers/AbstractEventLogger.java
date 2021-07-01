@@ -30,7 +30,7 @@ public abstract class AbstractEventLogger implements EventLogger {
         sb.append("\n");
 
         // print stacktrace
-        if (this.includeTraces) {
+        if (this.includeTraces && !event.isRepeatCall()) {
             Map<StackTraceElement, JavaPlugin> map = event.getNonInternalStackTraceWithPlugins();
             for (StackTraceElement element : map.keySet()) {
                 sb.append("\tat ").append(element);
@@ -40,6 +40,8 @@ public abstract class AbstractEventLogger implements EventLogger {
                 }
                 sb.append("\n");
             }
+        } else if (this.includeTraces) {
+            sb.append("(Identical stack trace omitted - see the one above this one)\n");
         }
 
         sb.setLength(sb.length() - 1);
