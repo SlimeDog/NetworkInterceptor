@@ -264,4 +264,16 @@ public class NetworkInterceptor extends JavaPlugin {
         }
     }
 
+    public Blocker getBlocker() {
+        return blocker;
+    }
+
+    public EventLogger getEventLogger() {
+        return logger;
+    }
+
+    public Map<InterceptMethod, Interceptor> getInterceptors() {
+        return new EnumMap<>(interceptors);
+    }
+
 }
