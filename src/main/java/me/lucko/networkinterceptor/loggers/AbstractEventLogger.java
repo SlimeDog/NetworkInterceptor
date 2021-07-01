@@ -21,7 +21,7 @@ public abstract class AbstractEventLogger implements EventLogger {
     public void logAttempt(InterceptEvent event) {
         String host = event.getHost();
 
-        StringBuilder sb = new StringBuilder("Intercepted connection to host ").append(host);
+        StringBuilder sb = new StringBuilder("Intercepted connection to ").append(host);
         String origHost = event.getOriginalHost();
         if (origHost != null) {
             sb.append(" (").append(origHost).append(")");
@@ -60,7 +60,7 @@ public abstract class AbstractEventLogger implements EventLogger {
 
     @Override
     public void logBlock(InterceptEvent event) {
-        StringBuilder sb = new StringBuilder("Blocked connection to host ");
+        StringBuilder sb = new StringBuilder("Blocked connection to ");
         sb.append(event.getHost());
         String origHost = event.getOriginalHost();
         if (origHost != null) {
