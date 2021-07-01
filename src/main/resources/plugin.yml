@@ -22,3 +22,6 @@ permissions:
   networkinterceptor.command.reload:
     description: Allows reloading the config
     default: op
+  networkinterceptor.command.info:
+    description: Allows showing info (similar to startup)
+    default: op
