@@ -9,6 +9,7 @@ import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class InterceptEvent {
+    private static final int MAX_INTERNAL_TRACES = 2;
     private final String host;
     private final StackTraceElement[] stackTrace;
     private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
@@ -40,15 +41,18 @@ public class InterceptEvent {
 
     private void generateNonInternalStackTrace() {
         boolean shouldPrint = false;
+        int internalTraces = 0;
         for (StackTraceElement element : stackTrace) {
             if (!shouldPrint) {
-                boolean isInternal = element.getClassName().startsWith("me.lucko.networkinterceptor")
-                        || element.getClassName().startsWith("java.net")
+                boolean internalToPlugin = element.getClassName().startsWith("me.lucko.networkinterceptor");
+                boolean isInternal = internalToPlugin || element.getClassName().startsWith("java.net")
                         || element.getClassName().startsWith("java.security")
                         || element.getClassName().startsWith("sun.net")
                         || element.getClassName().startsWith("sun.security.ssl");
 
                 if (!isInternal) {
+                    shouldPrint = true;
+                } else if (internalToPlugin && internalTraces++ >= MAX_INTERNAL_TRACES) {
                     shouldPrint = true;
                 }
             }
