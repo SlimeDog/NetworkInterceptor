@@ -59,6 +59,10 @@ public class LearningBlocker implements Blocker {
         cachedBlockedTraces.invalidateAll();
     }
 
+    public Blocker getDelegate() {
+        return delegate;
+    }
+
     private class StackTraces {
         private final Map<StackTraceElement, JavaPlugin> payload;
         private final String originalHost;

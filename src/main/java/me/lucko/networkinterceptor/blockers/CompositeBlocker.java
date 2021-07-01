@@ -1,5 +1,7 @@
 package me.lucko.networkinterceptor.blockers;
 
+import java.util.Arrays;
+
 import me.lucko.networkinterceptor.InterceptEvent;
 
 public class CompositeBlocker implements Blocker {
@@ -24,6 +26,10 @@ public class CompositeBlocker implements Blocker {
             }
         }
         return true; // not allowed by any delegate -> block
+    }
+
+    public Blocker[] getDelegates() {
+        return Arrays.copyOf(delegates, delegates.length);
     }
 
 }
