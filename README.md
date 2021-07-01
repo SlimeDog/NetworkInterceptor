@@ -1,4 +1,4 @@
-**NetworkInterceptor 1.0** was made with <3 by Luck. All credit for the original design and implementation belong to him.
+**NetworkInterceptor 1.0** was made with :heart: by Luck. All credit for the original design and implementation belong to him.
 
 ### Overview
 **NetworkInterceptor** detects and (optionally) blocks outgoing network connections. Some examples include:
