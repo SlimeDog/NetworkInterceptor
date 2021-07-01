@@ -115,7 +115,6 @@ targets:
   - 'bytebin.lucko.me'            # pastebin
   - 'metadata.luckperms.net'      # pastebin
   - 'nexus.lucko.me'              # dependencies
-  - 'repo.maven.apache.org'       # auto-install-translations: true
 
   # Minecraft snooper
   - 'snoop.minecraft.net'
@@ -133,9 +132,7 @@ targets:
   - 'api.extendedclip.com'
 
   # SpigotMC library loader
-  - '199.232.192.209'
-  - '199.232.192.215'
-  - '199.232.196.215'
+  - 'repo.maven.apache.org'
 
   # SpigotMC plugin update check
   - 'api.spiget.org'
