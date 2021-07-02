@@ -263,7 +263,7 @@ public class NetworkInterceptor extends JavaPlugin {
             long similarStackTimeoutMs = configuration.getLong("mapping.timer", -1L);
             if (similarStackTimeoutMs < 0) {
                 getLogger().severe("Mapping timer incorrect or not specified");
-                throw new IllegalConfigStateException("mapping.timer", similarStackTimeoutMs,
+                throw new IllegalConfigStateException("mapping.timer", configuration.get("mapping.timer", null),
                         "(Need a positive number)");
             }
             getLogger().info("Using a mapping blocker with timer of " + similarStackTimeoutMs + "ms");
