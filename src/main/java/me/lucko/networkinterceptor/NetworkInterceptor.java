@@ -244,8 +244,8 @@ public class NetworkInterceptor extends JavaPlugin {
             registerManualStopTask = manBlocker != null && manOptions.disableAfterStartup();
         }
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
-            getLogger().info("Using a mapping blocker");
             long similarStackTimeoutMs = configuration.getLong("mapping.timer", 100L);
+            getLogger().info("Using a mapping blocker with timer of " + similarStackTimeoutMs + "ms");
             blocker = new LearningBlocker(blocker, similarStackTimeoutMs);
         }
     }

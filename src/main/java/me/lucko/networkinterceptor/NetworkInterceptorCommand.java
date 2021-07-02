@@ -36,7 +36,8 @@ public class NetworkInterceptorCommand implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(ChatColor.RED + "Running NetworkInterceptor v" + this.plugin.getDescription().getVersion());
+            sender.sendMessage(
+                    ChatColor.RED + "Running NetworkInterceptor v" + this.plugin.getDescription().getVersion());
             sender.sendMessage(ChatColor.GRAY + "Use '/networkinterceptor reload' to reload the configuration.");
 
             return true;
@@ -65,7 +66,8 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     public String getInterceptorsMessage() {
-        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Interceptors: [security-manager, proxy-selector]
+        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Interceptors:
+        // [security-manager, proxy-selector]
         List<String> methods = plugin.getConfig().getStringList("methods");
         if (methods.isEmpty()) {
             return "No methods are defined";
@@ -80,7 +82,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
         }
         Map<InterceptMethod, Interceptor> interceptors = plugin.getInterceptors();
         if (methods.size() != interceptors.size()) {
-            return "Real interceptors: " + interceptors + "\nConfig defined: " + methods; 
+            return "Real interceptors: " + interceptors + "\nConfig defined: " + methods;
         }
         return "Interceptors: " + methods;
     }
@@ -107,7 +109,8 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     private String getBlockerMessage() {
-        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Using blocking strategy deny
+        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Using blocking strategy
+        // deny
         // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Using a mapping blocker
         Blocker blocker = plugin.getBlocker();
         String blockerMessage;
@@ -120,7 +123,8 @@ public class NetworkInterceptorCommand implements TabExecutor {
             }
         } else if (blocker instanceof LearningBlocker) {
             Blocker delegate = ((LearningBlocker) blocker).getDelegate();
-            blockerMessage = getCompositeBlockerMessage(delegate) + "\nUsing a mapping blocker";
+            blockerMessage = getCompositeBlockerMessage(delegate) + "\nUsing a mapping blocker with timer of "
+                    + ((LearningBlocker) blocker).getTimeoutMs() + "ms";
         } else {
             blockerMessage = getCompositeBlockerMessage(blocker);
         }

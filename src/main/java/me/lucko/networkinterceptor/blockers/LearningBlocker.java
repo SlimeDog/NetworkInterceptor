@@ -15,9 +15,11 @@ public class LearningBlocker implements Blocker {
     private final Blocker delegate;
     private final Cache<StackTraces, StackTraces> cachedAllowedTraces;
     private final Cache<StackTraces, StackTraces> cachedBlockedTraces;
+    private final long similarStackTimeoutMs;
 
     public LearningBlocker(Blocker delegate, long similarStackTimeoutMs) {
         this.delegate = delegate;
+        this.similarStackTimeoutMs = similarStackTimeoutMs;
         cachedAllowedTraces = CacheBuilder.newBuilder().expireAfterWrite(similarStackTimeoutMs, TimeUnit.MILLISECONDS)
                 .build();
         cachedBlockedTraces = CacheBuilder.newBuilder().expireAfterWrite(similarStackTimeoutMs, TimeUnit.MILLISECONDS)
@@ -61,6 +63,10 @@ public class LearningBlocker implements Blocker {
 
     public Blocker getDelegate() {
         return delegate;
+    }
+
+    public long getTimeoutMs() {
+        return similarStackTimeoutMs;
     }
 
     private class StackTraces {
