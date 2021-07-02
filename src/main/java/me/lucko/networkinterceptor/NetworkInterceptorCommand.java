@@ -59,7 +59,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     private void sendInfoMessage(CommandSender sender) {
-        sender.sendMessage(getBlockerMessage());
+        sender.sendMessage(getBlockerMessage().split("\n"));
         sender.sendMessage(getLoggerMessage());
         sender.sendMessage(getInterceptorsMessage());
     }
