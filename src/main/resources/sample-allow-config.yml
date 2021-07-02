@@ -152,7 +152,7 @@ targets:
 # This feature may be disabled after the initial startup of the server. In our
 # experience, LuckPerms performs some network connections during this time, and
 # disabling the feature after startup can improve performance.
-manual-plugin-detection:
+manual-plugin-assignment:
   enabled: false
   disable-after-startup: true
   plugins:

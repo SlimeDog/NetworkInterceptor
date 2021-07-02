@@ -233,7 +233,7 @@ public class NetworkInterceptor extends JavaPlugin {
         }
         if (this.blocker != null) {
             ManualPluginOptions manOptions = new ManualPluginOptions(
-                    configuration.getConfigurationSection("manual-plugin-detection"));
+                    configuration.getConfigurationSection("manual-plugin-assignment"));
             ManualPluginDetectingBlocker manBlocker;
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
