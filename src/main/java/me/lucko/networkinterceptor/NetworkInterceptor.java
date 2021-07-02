@@ -27,6 +27,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -89,8 +90,13 @@ public class NetworkInterceptor extends JavaPlugin {
         reloadConfig();
 
         disable();
-
-        enable();
+        try {
+            enable();
+        } catch (IllegalConfigStateException e) {
+            getLogger().severe(e.getMessage());
+            getLogger().severe("Disabling plugin");
+            getServer().getPluginManager().disablePlugin(this);
+        }
     }
 
     public void logAttempt(InterceptEvent event) {
@@ -116,7 +122,7 @@ public class NetworkInterceptor extends JavaPlugin {
         return this.blocker != null && this.blocker.shouldBlock(event);
     }
 
-    private void enable() {
+    private void enable() throws IllegalConfigStateException {
         FileConfiguration config = getConfig();
 
         setupBlockers(config);
@@ -188,7 +194,11 @@ public class NetworkInterceptor extends JavaPlugin {
         // this option is undocumented
         this.ignoreAllowed = configuration.getBoolean("logging.ignore-allowed", false);
 
-        String mode = configuration.getString("logging.mode", "console");
+        String mode = configuration.getString("logging.mode", null);
+        if (mode == null) {
+            getLogger().severe("Unknown logging mode: " + mode);
+            throw new IllegalConfigStateException("logging.mode", mode, "all", "console", "file");
+        }
         boolean includeTraces = configuration.getBoolean("logging.include-traces", true);
         switch (mode.toLowerCase()) {
             case "all":
@@ -205,6 +215,7 @@ public class NetworkInterceptor extends JavaPlugin {
                 break;
             default:
                 getLogger().severe("Unknown logging mode: " + mode);
+                throw new IllegalConfigStateException("logging.mode", mode, "all", "console", "file");
         }
     }
 
@@ -218,7 +229,11 @@ public class NetworkInterceptor extends JavaPlugin {
         options = generatePluginOptions(configuration);
         PluginAwareBlocker pluginBlocker = new PluginAwareBlocker(options);
 
-        String mode = configuration.getString("mode", "deny");
+        String mode = configuration.getString("mode", null);
+        if (mode == null) {
+            getLogger().severe("Unknown mode: " + mode);
+            throw new IllegalConfigStateException("mode", mode, "allow", "deny");
+        }
         switch (mode.toLowerCase()) {
             case "allow":
                 getLogger().info("Using blocking strategy allow");
@@ -230,6 +245,7 @@ public class NetworkInterceptor extends JavaPlugin {
                 break;
             default:
                 getLogger().severe("Unknown mode: " + mode);
+                throw new IllegalConfigStateException("mode", mode, "allow", "deny");
         }
         if (this.blocker != null) {
             ManualPluginOptions manOptions = new ManualPluginOptions(
@@ -244,7 +260,12 @@ public class NetworkInterceptor extends JavaPlugin {
             registerManualStopTask = manBlocker != null && manOptions.disableAfterStartup();
         }
         if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
-            long similarStackTimeoutMs = configuration.getLong("mapping.timer", 100L);
+            long similarStackTimeoutMs = configuration.getLong("mapping.timer", -1L);
+            if (similarStackTimeoutMs < 0) {
+                getLogger().severe("Mapping timer incorrect or not specified");
+                throw new IllegalConfigStateException("mapping.timer", similarStackTimeoutMs,
+                        "(Need a positive number)");
+            }
             getLogger().info("Using a mapping blocker with timer of " + similarStackTimeoutMs + "ms");
             blocker = new LearningBlocker(blocker, similarStackTimeoutMs);
         }
@@ -298,6 +319,19 @@ public class NetworkInterceptor extends JavaPlugin {
 
     public Map<InterceptMethod, Interceptor> getInterceptors() {
         return new EnumMap<>(interceptors);
+    }
+
+    public static class IllegalConfigStateException extends IllegalStateException {
+
+        public IllegalConfigStateException(String path, Object value, Object... options) {
+            super(getMessage(path, value, options));
+        }
+
+        private static final String getMessage(String path, Object value, Object[] options) {
+            return "Illegal config value for '" + path + "': " + value + (options.length == 0 ? ""
+                    : (options.length == 1 ? " " + options[0] : " (Available: " + Arrays.asList(options) + ")"));
+        }
+
     }
 
 }
