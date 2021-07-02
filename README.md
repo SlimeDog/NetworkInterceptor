@@ -28,8 +28,7 @@ All **NetworkInterceptor** commands are accessible at the console, and in-game w
 All **NetworkInterceptor** messages may be localized. Message changes take effect on plugin reload or server restart.
 
 ### Version Support
-**NetworkInterceptor** 1.0 was certified for Spigot 1.12.2, 1.13.2, 1.14.4, 1.15.2, and 1.16.5.
-**NetworkInterceptor** 2.0.0 is certified for Spigot and Paper 1.17.x.
+**NetworkInterceptor** 2.0.0 is certified for Spigot 1.12.2, 1.13.2, 1.14.4, 1.15.2; and for Spigot and Paper 1.16.5 and 1.17.x.
 
 **NetworkInterceptor** may or may not work on previous Spigot releases or other non-Spigot variants.
 
