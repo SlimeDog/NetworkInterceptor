@@ -66,8 +66,6 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     public String getInterceptorsMessage() {
-        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Interceptors:
-        // [security-manager, proxy-selector]
         List<String> methods = plugin.getConfig().getStringList("methods");
         if (methods.isEmpty()) {
             return "No methods are defined";
@@ -88,7 +86,6 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     private String getLoggerMessage() {
-        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Using console logger
         if (!plugin.getConfig().getBoolean("logging.enabled", true)) {
             return "Logging is not enabled";
         }
@@ -109,9 +106,6 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     private String getBlockerMessage() {
-        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Using blocking strategy
-        // deny
-        // [07:53:17] [Server thread/INFO]: [NetworkInterceptor] Using a mapping blocker
         Blocker blocker = plugin.getBlocker();
         String blockerMessage;
         if (blocker == null) {
