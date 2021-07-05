@@ -29,7 +29,7 @@ methods:
   - proxy-selector
 
 # bStats metrics
-bstats-enable: true
+enable-metrics: true
 
 # Processing mode is allow or deny
 # In allow mode, outbound network connections to specified targets will be allowed.
