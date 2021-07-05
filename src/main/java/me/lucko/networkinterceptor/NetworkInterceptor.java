@@ -55,10 +55,12 @@ public class NetworkInterceptor extends JavaPlugin {
         enable();
 
         // check and enable bStats
-        if (getConfig().getBoolean("enable-metrics", true)) {
+        boolean useMetrics = getConfig().getBoolean("enable-metrics", true);
+        if (useMetrics) {
             int pluginId = 11822;
             new Metrics(this, pluginId);
         }
+        getLogger().info(useMetrics ? "Using metrics" : "Not using metrics");
     }
 
     @Override
