@@ -248,8 +248,11 @@ public class NetworkInterceptor extends JavaPlugin {
                 throw new IllegalConfigStateException("mode", mode, "allow", "deny");
         }
         if (this.blocker != null) {
-            ManualPluginOptions manOptions = new ManualPluginOptions(
-                    configuration.getConfigurationSection("manual-plugin-assignment"));
+            ManualPluginOptions manOptions = new ManualPluginOptions(null);
+            // passing null to the above means the options is empty and the manual blocker
+            // is not initialized
+            // the below is the correct way to initialize this functiaonlity (in the future)
+            // configuration.getConfigurationSection("manual-plugin-assignment"));
             ManualPluginDetectingBlocker manBlocker;
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
