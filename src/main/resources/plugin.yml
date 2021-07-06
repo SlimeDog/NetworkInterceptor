@@ -5,6 +5,7 @@ main: ${project.groupId}.${project.artifactId}.NetworkInterceptor
 description: ${project.description}
 authors: [drives_a_ford, Luck, SlimeDog]
 load: STARTUP
+loadbefore: [LuckPerms]
 depend: []
 softdepend: []
 
