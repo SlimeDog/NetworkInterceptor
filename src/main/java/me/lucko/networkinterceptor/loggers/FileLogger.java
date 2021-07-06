@@ -36,6 +36,8 @@ public class FileLogger extends AbstractEventLogger {
         this.logger.setUseParentHandlers(false);
         this.logger.setLevel(Level.ALL);
         this.logger.setFilter(record -> true);
+        this.logger.info("Current Server version: " + plugin.getServer().getVersion());
+        this.logger.info("Current NetworkInterceptor version: " + plugin.getDescription().getVersion());
     }
 
     @Override
