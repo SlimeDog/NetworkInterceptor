@@ -60,7 +60,7 @@ public class NetworkInterceptor extends JavaPlugin {
             int pluginId = 11822;
             new Metrics(this, pluginId);
         }
-        getLogger().info(useMetrics ? "Using metrics" : "Not using metrics");
+        getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
 
     @Override

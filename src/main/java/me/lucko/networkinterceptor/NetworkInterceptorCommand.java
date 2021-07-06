@@ -61,7 +61,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
 
     private void sendInfoMessage(CommandSender sender) {
         boolean useMetrics = plugin.getConfig().getBoolean("enable-metrics", true);
-        sender.sendMessage(useMetrics ? "Using metrics" : "Not using metrics");
+        sender.sendMessage(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
         sender.sendMessage(getBlockerMessage().split("\n"));
         sender.sendMessage(getLoggerMessage());
         sender.sendMessage(getInterceptorsMessage());
