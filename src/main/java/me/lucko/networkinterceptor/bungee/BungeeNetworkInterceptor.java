@@ -20,6 +20,7 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     private BungeeConfiguration bungeeConfig;
 
     public BungeeNetworkInterceptor() {
+        saveDefaultConfig();
         loadConfig();
         delegate = new CommonNetworkInterceptor<BungeeNetworkInterceptor>(this);
     }
