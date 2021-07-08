@@ -1,6 +1,6 @@
 package me.lucko.networkinterceptor.loggers;
 
-import me.lucko.networkinterceptor.NetworkInterceptor;
+import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class FileLogger extends AbstractEventLogger {
     private final Logger logger;
 
-    public FileLogger(NetworkInterceptor plugin) {
+    public FileLogger(NetworkInterceptorPlugin plugin) {
         super(true);
         File file = new File(plugin.getDataFolder(), "intercept.log");
         this.logger = Logger.getLogger(FileLogger.class.getName());
@@ -36,8 +36,8 @@ public class FileLogger extends AbstractEventLogger {
         this.logger.setUseParentHandlers(false);
         this.logger.setLevel(Level.ALL);
         this.logger.setFilter(record -> true);
-        this.logger.info("Current Server version: " + plugin.getServer().getVersion());
-        this.logger.info("Current NetworkInterceptor version: " + plugin.getDescription().getVersion());
+        this.logger.info("Current Server version: " + plugin.getServerVersion());
+        this.logger.info("Current NetworkInterceptor version: " + plugin.getPluginVersion());
     }
 
     @Override

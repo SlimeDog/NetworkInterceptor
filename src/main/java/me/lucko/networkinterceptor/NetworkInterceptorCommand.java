@@ -6,12 +6,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.util.StringUtil;
 
-import me.lucko.networkinterceptor.NetworkInterceptor.InterceptMethod;
 import me.lucko.networkinterceptor.blockers.AllowBlocker;
 import me.lucko.networkinterceptor.blockers.Blocker;
 import me.lucko.networkinterceptor.blockers.CompositeBlocker;
 import me.lucko.networkinterceptor.blockers.LearningBlocker;
 import me.lucko.networkinterceptor.blockers.PluginAwareBlocker;
+import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.InterceptMethod;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
@@ -80,7 +80,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
                 methods.remove(method);
             }
         }
-        Map<InterceptMethod, Interceptor> interceptors = plugin.getInterceptors();
+        Map<InterceptMethod, Interceptor> interceptors = plugin.getDelegate().getInterceptors();
         if (methods.size() != interceptors.size()) {
             return "Real interceptors: " + interceptors + "\nConfig defined: " + methods;
         }
@@ -91,7 +91,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
         if (!plugin.getConfig().getBoolean("logging.enabled", true)) {
             return "Logging is not enabled";
         }
-        EventLogger logger = plugin.getEventLogger();
+        EventLogger logger = plugin.getDelegate().getEventLogger();
         if (logger == null) {
             String mode = plugin.getConfig().getString("logging.mode", "console");
             return "Unknown logging mode: " + mode;
@@ -108,7 +108,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     private String getBlockerMessage() {
-        Blocker blocker = plugin.getBlocker();
+        Blocker blocker = plugin.getDelegate().getBlocker();
         String blockerMessage;
         if (blocker == null) {
             String mode = plugin.getConfig().getString("mode", "deny");

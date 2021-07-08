@@ -1,13 +1,13 @@
 package me.lucko.networkinterceptor.loggers;
 
-import me.lucko.networkinterceptor.NetworkInterceptor;
+import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.util.logging.Logger;
 
 public class ConsoleLogger extends AbstractEventLogger {
-    private final NetworkInterceptor plugin;
+    private final NetworkInterceptorPlugin plugin;
 
-    public ConsoleLogger(NetworkInterceptor plugin, boolean includeTraces) {
+    public ConsoleLogger(NetworkInterceptorPlugin plugin, boolean includeTraces) {
         super(includeTraces);
         this.plugin = plugin;
     }

@@ -1,0 +1,27 @@
+name: ${project.name}
+version: ${project.version}
+api-version: 1.13
+main: ${project.groupId}.${project.artifactId}.bungee.BungeeNetworkInterceptor
+description: ${project.description}
+authors: [drives_a_ford, Luck, SlimeDog]
+load: STARTUP
+depend: []
+softdepend: []
+
+commands:
+  networkinterceptor:
+    description: Main plugin command
+    usage: /<command> reload
+    aliases: [ni]
+    permission: networkinterceptor.command
+
+permissions:
+  networkinterceptor.command:
+    description: Allows using the main command
+    default: op
+  networkinterceptor.command.reload:
+    description: Allows reloading the config
+    default: op
+  networkinterceptor.command.info:
+    description: Allows showing info (similar to startup)
+    default: op

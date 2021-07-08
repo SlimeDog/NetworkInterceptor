@@ -1,18 +1,18 @@
 package me.lucko.networkinterceptor.interceptors;
 
 import me.lucko.networkinterceptor.InterceptEvent;
-import me.lucko.networkinterceptor.NetworkInterceptor;
+import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.utils.SneakyThrow;
 
 import java.net.SocketTimeoutException;
 import java.security.Permission;
 
 public class SecurityManagerInterceptor extends SecurityManager implements Interceptor {
-    private final NetworkInterceptor plugin;
+    private final NetworkInterceptorPlugin plugin;
 
     private boolean enabled = true;
 
-    public SecurityManagerInterceptor(NetworkInterceptor plugin) {
+    public SecurityManagerInterceptor(NetworkInterceptorPlugin plugin) {
         this.plugin = plugin;
     }
 
@@ -33,12 +33,12 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
         StackTraceElement[] trace = new Exception().getStackTrace();
         InterceptEvent event = new InterceptEvent(host, trace);
 
-        boolean blocked = this.plugin.shouldBlock(event);
+        boolean blocked = this.plugin.getDelegate().shouldBlock(event);
 
-        this.plugin.logAttempt(event);
+        this.plugin.getDelegate().logAttempt(event);
 
         if (blocked) {
-            this.plugin.logBlock(event);
+            this.plugin.getDelegate().logBlock(event);
             SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
             throw new AssertionError();
         }

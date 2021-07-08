@@ -8,14 +8,12 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import me.lucko.networkinterceptor.NetworkInterceptor;
+import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
-public class PluginOptions {
+public abstract class PluginOptions<T> {
     private final KeepPlugins keepType;
     private final boolean allowNonPlugin;
-    private final Set<JavaPlugin> trustedPlugins;
     private final Set<String> allTrustedPluginNames;
     private final Set<String> pluginNames;
 
@@ -24,13 +22,12 @@ public class PluginOptions {
         this.allowNonPlugin = allowNonPlugin;
         this.allTrustedPluginNames = new HashSet<>(trustedPlugins);
         this.pluginNames = trustedPlugins;
-        this.trustedPlugins = new HashSet<>();
     }
 
-    public void searchForPlugins(NetworkInterceptor owner) {
+    public void searchForPlugins(NetworkInterceptorPlugin owner) {
         List<String> toBeLoaded = findAndAddPlugins(pluginNames, owner);
         if (!toBeLoaded.isEmpty()) {
-            owner.getServer().getScheduler().runTaskLater(owner, () -> {
+            owner.runTaskLater(() -> {
                 List<String> residual = findAndAddPlugins(toBeLoaded, owner);
                 if (!residual.isEmpty()) {
                     for (String name : residual) {
@@ -41,22 +38,17 @@ public class PluginOptions {
         }
     }
 
-    private List<String> findAndAddPlugins(Collection<String> pluginNames, JavaPlugin owner) {
+    private List<String> findAndAddPlugins(Collection<String> pluginNames, NetworkInterceptorPlugin owner) {
         List<String> remainder = new ArrayList<>();
         for (String name : pluginNames) {
-            Plugin plugin = Bukkit.getPluginManager().getPlugin(name);
-            if (plugin == null) {
+            if (!attemptAddPlugin(name)) {
                 remainder.add(name);
-                continue;
             }
-            if (!(plugin instanceof JavaPlugin)) {
-                owner.getLogger().warning("Plugin of unknown type (" + name + "): " + plugin);
-                continue;
-            }
-            this.trustedPlugins.add((JavaPlugin) plugin);
         }
         return remainder;
     }
+
+    protected abstract boolean attemptAddPlugin(String name);
 
     public KeepPlugins getKeepType() {
         return keepType;
@@ -66,9 +58,11 @@ public class PluginOptions {
         return allowNonPlugin;
     }
 
-    public boolean isTrusted(JavaPlugin plugin) {
-        return trustedPlugins.contains(plugin);
-    }
+    public abstract boolean isTrusted(T plugin);
+
+    // public boolean isTrusted(JavaPlugin plugin) {
+    //     return trustedPlugins.contains(plugin);
+    // }
 
     public boolean isListedAsTrustedPluginName(String pluginName) {
         return allTrustedPluginNames.contains(pluginName);
