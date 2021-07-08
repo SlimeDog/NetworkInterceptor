@@ -55,6 +55,12 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
                 e.printStackTrace();
             }
         }
+    }
+
+    public void saveConfig() {
+        if (configuration == null) {
+            loadConfig();
+        }
         try {
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration,
                     new File(getDataFolder(), "config.yml"));
