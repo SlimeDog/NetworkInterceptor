@@ -4,7 +4,7 @@ import me.lucko.networkinterceptor.InterceptEvent;
 
 import java.util.List;
 
-public class BlockBlocker implements Blocker {
+public class BlockBlocker<PLUGIN> implements Blocker<PLUGIN> {
     private final List<String> blocked;
 
     public BlockBlocker(List<String> blocked) {
@@ -12,7 +12,7 @@ public class BlockBlocker implements Blocker {
     }
 
     @Override
-    public boolean shouldBlock(InterceptEvent event) {
+    public boolean shouldBlock(InterceptEvent<PLUGIN> event) {
         return this.blocked.contains(event.getHost().toLowerCase());
     }
 }

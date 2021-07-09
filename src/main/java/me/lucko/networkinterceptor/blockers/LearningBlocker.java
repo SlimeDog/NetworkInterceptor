@@ -7,17 +7,15 @@ import java.util.concurrent.TimeUnit;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import me.lucko.networkinterceptor.InterceptEvent;
 
-public class LearningBlocker implements Blocker {
-    private final Blocker delegate;
+public class LearningBlocker<PLUGIN> implements Blocker<PLUGIN> {
+    private final Blocker<PLUGIN> delegate;
     private final Cache<StackTraces, StackTraces> cachedAllowedTraces;
     private final Cache<StackTraces, StackTraces> cachedBlockedTraces;
     private final long similarStackTimeoutMs;
 
-    public LearningBlocker(Blocker delegate, long similarStackTimeoutMs) {
+    public LearningBlocker(Blocker<PLUGIN> delegate, long similarStackTimeoutMs) {
         this.delegate = delegate;
         this.similarStackTimeoutMs = similarStackTimeoutMs;
         cachedAllowedTraces = CacheBuilder.newBuilder().expireAfterWrite(similarStackTimeoutMs, TimeUnit.MILLISECONDS)
@@ -27,7 +25,7 @@ public class LearningBlocker implements Blocker {
     }
 
     @Override
-    public boolean shouldBlock(InterceptEvent event) {
+    public boolean shouldBlock(InterceptEvent<PLUGIN> event) {
         boolean rawBlock = delegate.shouldBlock(event);
         StackTraces traces = new StackTraces(event.getNonInternalStackTraceWithPlugins(), event.getHost());
         StackTraces prev = cachedAllowedTraces.getIfPresent(traces);
@@ -61,7 +59,7 @@ public class LearningBlocker implements Blocker {
         cachedBlockedTraces.invalidateAll();
     }
 
-    public Blocker getDelegate() {
+    public Blocker<PLUGIN> getDelegate() {
         return delegate;
     }
 
@@ -70,10 +68,10 @@ public class LearningBlocker implements Blocker {
     }
 
     private class StackTraces {
-        private final Map<StackTraceElement, JavaPlugin> payload;
+        private final Map<StackTraceElement, PLUGIN> payload;
         private final String originalHost;
 
-        private StackTraces(Map<StackTraceElement, JavaPlugin> payload, String originalHost) {
+        private StackTraces(Map<StackTraceElement, PLUGIN> payload, String originalHost) {
             this.payload = payload;
             this.originalHost = originalHost;
         }
@@ -88,9 +86,10 @@ public class LearningBlocker implements Blocker {
             if (this == other) {
                 return true;
             }
-            if (!(other instanceof StackTraces)) {
+            if (!(other instanceof LearningBlocker.StackTraces)) {
                 return false;
             }
+            @SuppressWarnings("unchecked")
             StackTraces o = (StackTraces) other;
             return payload.equals(o.payload); // original host not included
         }

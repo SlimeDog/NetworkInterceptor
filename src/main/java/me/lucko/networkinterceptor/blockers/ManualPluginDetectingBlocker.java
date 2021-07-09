@@ -3,7 +3,6 @@ package me.lucko.networkinterceptor.blockers;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
@@ -24,42 +23,55 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
  * InterceptorEvent (going through the stack trace to find plguins). This is why
  * it should not be used when the server is fully operational.
  */
-public class ManualPluginDetectingBlocker implements Blocker {
-    private final PluginOptions pluginOptions;
+public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
+    private final PluginOptions<PLUGIN> pluginOptions;
     private final ManualPluginOptions manualPluginOptions;
+    private final boolean isBungee;
 
-    public ManualPluginDetectingBlocker(PluginOptions pluginOptions, ManualPluginOptions manualPluginOptions) {
+    public ManualPluginDetectingBlocker(PluginOptions<PLUGIN> pluginOptions, ManualPluginOptions manualPluginOptions,
+            boolean isBungee) {
         this.pluginOptions = pluginOptions;
         this.manualPluginOptions = manualPluginOptions;
+        this.isBungee = isBungee;
     }
 
     @Override
-    public boolean shouldBlock(InterceptEvent event) {
+    public boolean shouldBlock(InterceptEvent<PLUGIN> event) {
         String pluginName = findFirstPluginName(event);
         if (pluginName == null) { // none found
             return true; // block
         }
         boolean shouldBlock = !pluginOptions.isListedAsTrustedPluginName(pluginName);
         if (!shouldBlock) { // try to add trusted plugin
-            JavaPlugin plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin(pluginName);
-            if (plugin != null) {
-                event.setTrustedPlugin(plugin);
+            if (!isBungee) {
+                @SuppressWarnings("unchecked")
+                PLUGIN plugin = (PLUGIN) Bukkit.getPluginManager().getPlugin(pluginName);
+                if (plugin != null) {
+                    event.setTrustedPlugin(plugin);
+                }
+            } else {
+                // TODO - bungee stuff
             }
         }
         return shouldBlock;
     }
 
-    private String findFirstPluginName(InterceptEvent event) {
-        for (Map.Entry<StackTraceElement, JavaPlugin> entry : event.getNonInternalStackTraceWithPlugins().entrySet()) {
+    private String findFirstPluginName(InterceptEvent<PLUGIN> event) {
+        for (Map.Entry<StackTraceElement, PLUGIN> entry : event.getNonInternalStackTraceWithPlugins().entrySet()) {
             if (entry.getValue() != null) {
                 continue; // already found
             }
             StackTraceElement trace = entry.getKey();
             String pluginName = manualPluginOptions.getPluginNameFor(trace.getClassName());
             if (pluginName != null) {
-                JavaPlugin plugin = (JavaPlugin) Bukkit.getPluginManager().getPlugin(pluginName);
-                if (plugin != null) {
-                    event.updateTraceElement(trace, plugin);
+                if (!isBungee) {
+                    @SuppressWarnings("unchecked")
+                    PLUGIN plugin = (PLUGIN) Bukkit.getPluginManager().getPlugin(pluginName);
+                    if (plugin != null) {
+                        event.updateTraceElement(trace, plugin);
+                    }
+                } else {
+                    // TODO - bungee stuff
                 }
                 return pluginName;
             }
