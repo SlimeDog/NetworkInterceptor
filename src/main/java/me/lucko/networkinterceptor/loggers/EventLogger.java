@@ -2,10 +2,10 @@ package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 
-public interface EventLogger {
+public interface EventLogger<PLUGIN> {
 
-    void logAttempt(InterceptEvent event);
+    void logAttempt(InterceptEvent<PLUGIN> event);
 
-    void logBlock(InterceptEvent event);
+    void logBlock(InterceptEvent<PLUGIN> event);
 
 }

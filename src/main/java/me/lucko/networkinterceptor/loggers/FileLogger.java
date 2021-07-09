@@ -11,11 +11,11 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-public class FileLogger extends AbstractEventLogger {
+public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final Logger logger;
 
-    public FileLogger(NetworkInterceptorPlugin plugin) {
-        super(true);
+    public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin) {
+        super(true, plugin.isBungee());
         File file = new File(plugin.getDataFolder(), "intercept.log");
         this.logger = Logger.getLogger(FileLogger.class.getName());
         try {

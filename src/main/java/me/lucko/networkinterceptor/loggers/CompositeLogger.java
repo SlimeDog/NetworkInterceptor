@@ -7,17 +7,18 @@ import me.lucko.networkinterceptor.InterceptEvent;
 
 import java.util.List;
 
-public class CompositeLogger implements EventLogger {
-    private final List<EventLogger> loggers;
+public class CompositeLogger<PLUGIN> implements EventLogger<PLUGIN> {
+    private final List<EventLogger<PLUGIN>> loggers;
 
-    public CompositeLogger(EventLogger... loggers) {
+    @SafeVarargs // hopefully
+    public CompositeLogger(EventLogger<PLUGIN>... loggers) {
         Preconditions.checkArgument(loggers.length != 0, "no loggers specified");
         this.loggers = ImmutableList.copyOf(loggers);
     }
 
     @Override
-    public void logAttempt(InterceptEvent event) {
-        for (EventLogger logger : this.loggers) {
+    public void logAttempt(InterceptEvent<PLUGIN> event) {
+        for (EventLogger<PLUGIN> logger : this.loggers) {
             try {
                 logger.logAttempt(event);
             } catch (Exception e) {
@@ -27,8 +28,8 @@ public class CompositeLogger implements EventLogger {
     }
 
     @Override
-    public void logBlock(InterceptEvent event) {
-        for (EventLogger logger : this.loggers) {
+    public void logBlock(InterceptEvent<PLUGIN> event) {
+        for (EventLogger<PLUGIN> logger : this.loggers) {
             try {
                 logger.logBlock(event);
             } catch (Exception e) {
