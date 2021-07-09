@@ -6,9 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
-
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 public abstract class PluginOptions<T> {
