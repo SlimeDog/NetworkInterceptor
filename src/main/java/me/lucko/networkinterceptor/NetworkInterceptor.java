@@ -124,4 +124,9 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         return delegate;
     }
 
+    @Override
+    public JavaPlugin asPlugin() {
+        return this;
+    }
+
 }

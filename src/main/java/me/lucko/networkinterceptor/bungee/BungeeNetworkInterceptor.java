@@ -115,4 +115,9 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
         return delegate;
     }
 
+    @Override
+    public Plugin asPlugin() {
+        return this;
+    }
+
 }

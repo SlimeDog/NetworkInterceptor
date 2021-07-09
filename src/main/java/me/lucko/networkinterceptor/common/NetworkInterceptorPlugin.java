@@ -33,4 +33,6 @@ public interface NetworkInterceptorPlugin<PLUGIN> {
 
     CommonNetworkInterceptor<? extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> getDelegate();
 
+    PLUGIN asPlugin();
+
 }
