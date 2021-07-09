@@ -12,12 +12,12 @@ import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.List;
 
-public class ProxySelectorInterceptor implements Interceptor {
+public class ProxySelectorInterceptor<PLUGIN> implements Interceptor {
     // private static final List<Proxy> DUMMY_PROXY = new DummyProxyList();
 
-    private final NetworkInterceptorPlugin plugin;
+    private final NetworkInterceptorPlugin<PLUGIN> plugin;
 
-    public ProxySelectorInterceptor(NetworkInterceptorPlugin plugin) {
+    public ProxySelectorInterceptor(NetworkInterceptorPlugin<PLUGIN> plugin) {
         this.plugin = plugin;
     }
 
@@ -28,19 +28,22 @@ public class ProxySelectorInterceptor implements Interceptor {
             return;
         }
 
-        this.plugin.getLogger().info("[ProxySelectorInterceptor] Replacing '" + selector.getClass().getName() + "' selector with logged variant.");
-        ProxySelector.setDefault(new LoggingSelector(selector));
+        this.plugin.getLogger().info("[ProxySelectorInterceptor] Replacing '" + selector.getClass().getName()
+                + "' selector with logged variant.");
+        ProxySelector.setDefault(new LoggingSelector<PLUGIN>(selector));
     }
 
     @Override
     public void disable() {
         ProxySelector selector = ProxySelector.getDefault();
         if (selector instanceof LoggingSelector) {
-            ProxySelector.setDefault(((LoggingSelector) selector).delegate);
+            @SuppressWarnings("unchecked")
+            LoggingSelector<PLUGIN> logSelector = ((LoggingSelector<PLUGIN>) selector);
+            ProxySelector.setDefault(logSelector.delegate);
         }
     }
 
-    private final class LoggingSelector extends ProxySelector {
+    private final class LoggingSelector<U> extends ProxySelector {
         private final ProxySelector delegate;
 
         private LoggingSelector(ProxySelector delegate) {
@@ -51,7 +54,7 @@ public class ProxySelectorInterceptor implements Interceptor {
         public List<Proxy> select(URI uri) {
             String host = uri.getHost();
             StackTraceElement[] trace = new Exception().getStackTrace();
-            InterceptEvent event = new InterceptEvent(host, trace);
+            InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee());
 
             boolean blocked = ProxySelectorInterceptor.this.plugin.getDelegate().shouldBlock(event);
 

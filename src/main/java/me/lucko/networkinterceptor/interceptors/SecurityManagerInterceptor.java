@@ -7,12 +7,12 @@ import me.lucko.networkinterceptor.utils.SneakyThrow;
 import java.net.SocketTimeoutException;
 import java.security.Permission;
 
-public class SecurityManagerInterceptor extends SecurityManager implements Interceptor {
-    private final NetworkInterceptorPlugin plugin;
+public class SecurityManagerInterceptor<PLUGIN> extends SecurityManager implements Interceptor {
+    private final NetworkInterceptorPlugin<PLUGIN> plugin;
 
     private boolean enabled = true;
 
-    public SecurityManagerInterceptor(NetworkInterceptorPlugin plugin) {
+    public SecurityManagerInterceptor(NetworkInterceptorPlugin<PLUGIN> plugin) {
         this.plugin = plugin;
     }
 
@@ -31,7 +31,7 @@ public class SecurityManagerInterceptor extends SecurityManager implements Inter
     @Override
     public void checkConnect(String host, int port) {
         StackTraceElement[] trace = new Exception().getStackTrace();
-        InterceptEvent event = new InterceptEvent(host, trace);
+        InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee());
 
         boolean blocked = this.plugin.getDelegate().shouldBlock(event);
 
