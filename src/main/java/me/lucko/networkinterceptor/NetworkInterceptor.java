@@ -37,11 +37,12 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
                 if (delegate.getBlocker() instanceof CompositeBlocker) {
-                    ((CompositeBlocker) delegate.getBlocker()).stopUsingManualBlocker();
+                    ((CompositeBlocker<JavaPlugin>) delegate.getBlocker()).stopUsingManualBlocker();
                 } else if (delegate.getBlocker() instanceof LearningBlocker) {
-                    Blocker delegate = ((LearningBlocker) this.delegate.getBlocker()).getDelegate();
+                    Blocker<JavaPlugin> delegate = ((LearningBlocker<JavaPlugin>) this.delegate.getBlocker())
+                            .getDelegate();
                     if (delegate instanceof CompositeBlocker) {
-                        ((CompositeBlocker) delegate).stopUsingManualBlocker();
+                        ((CompositeBlocker<JavaPlugin>) delegate).stopUsingManualBlocker();
                     }
                 }
             }, 1L);
@@ -66,14 +67,6 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
             getLogger().severe("Disabling plugin");
             getServer().getPluginManager().disablePlugin(this);
         }
-    }
-
-    public void logBlock(InterceptEvent event) {
-        delegate.logAttempt(event);
-    }
-
-    public boolean shouldBlock(InterceptEvent event) {
-        return delegate.shouldBlock(event);
     }
 
     private void enable() throws IllegalConfigStateException {
