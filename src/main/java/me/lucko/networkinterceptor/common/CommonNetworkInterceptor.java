@@ -42,7 +42,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
     private EventLogger logger = null;
     private Blocker blocker = null;
-    private PluginOptions<T> options = null;
+    private PluginOptions<PLUGIN> options = null;
     // private boolean registerManualStopTask = false;
 
     private boolean ignoreAllowed = false;
@@ -268,7 +268,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         }
     }
 
-    private PluginOptions<T> generatePluginOptions(AbstractConfiguration configuration) {
+    private PluginOptions<PLUGIN> generatePluginOptions(AbstractConfiguration configuration) {
         // TODO - re-implement in config
         String keepTypeName = configuration.getString("keep-type", "ALL");
         KeepPlugins keepType;
@@ -283,13 +283,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         Set<String> trustedPlugins = new HashSet<>(configuration.getStringList("trusted-plugins"));
         if (plugin.isBukkit()) {
             @SuppressWarnings("unchecked")
-            PluginOptions<T> opts = (PluginOptions<T>) new BukkitPluginOptions<JavaPlugin>((JavaPlugin) plugin,
-                    keepType, allowNonPlugin, trustedPlugins);
+            PluginOptions<PLUGIN> opts = (PluginOptions<PLUGIN>) new BukkitPluginOptions<JavaPlugin>(
+                    (JavaPlugin) plugin, keepType, allowNonPlugin, trustedPlugins);
             return opts;
         } else if (plugin.isBungee()) {
             @SuppressWarnings("unchecked")
-            PluginOptions<T> opts = (PluginOptions<T>) new BungeePluginOptions<Plugin>((Plugin) plugin, keepType,
-                    allowNonPlugin, trustedPlugins);
+            PluginOptions<PLUGIN> opts = (PluginOptions<PLUGIN>) new BungeePluginOptions<Plugin>((Plugin) plugin,
+                    keepType, allowNonPlugin, trustedPlugins);
             return opts;
         }
         throw new IllegalStateException("Unknown type of plugin: " + plugin);

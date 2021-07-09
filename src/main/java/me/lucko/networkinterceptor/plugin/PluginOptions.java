@@ -8,7 +8,7 @@ import java.util.Set;
 
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
-public abstract class PluginOptions<T> {
+public abstract class PluginOptions<PLUGIN> {
     private final KeepPlugins keepType;
     private final boolean allowNonPlugin;
     private final Set<String> allTrustedPluginNames;
@@ -21,7 +21,7 @@ public abstract class PluginOptions<T> {
         this.pluginNames = trustedPlugins;
     }
 
-    public void searchForPlugins(NetworkInterceptorPlugin owner) {
+    public void searchForPlugins(NetworkInterceptorPlugin<PLUGIN> owner) {
         List<String> toBeLoaded = findAndAddPlugins(pluginNames, owner);
         if (!toBeLoaded.isEmpty()) {
             owner.runTaskLater(() -> {
@@ -35,7 +35,7 @@ public abstract class PluginOptions<T> {
         }
     }
 
-    private List<String> findAndAddPlugins(Collection<String> pluginNames, NetworkInterceptorPlugin owner) {
+    private List<String> findAndAddPlugins(Collection<String> pluginNames, NetworkInterceptorPlugin<PLUGIN> owner) {
         List<String> remainder = new ArrayList<>();
         for (String name : pluginNames) {
             if (!attemptAddPlugin(name)) {
@@ -55,7 +55,7 @@ public abstract class PluginOptions<T> {
         return allowNonPlugin;
     }
 
-    public abstract boolean isTrusted(T plugin);
+    public abstract boolean isTrusted(PLUGIN plugin);
 
     // public boolean isTrusted(JavaPlugin plugin) {
     //     return trustedPlugins.contains(plugin);
