@@ -40,8 +40,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> {
     private final T plugin;
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
-    private EventLogger logger = null;
-    private Blocker blocker = null;
+    private EventLogger<PLUGIN> logger = null;
+    private Blocker<PLUGIN> blocker = null;
     private PluginOptions<PLUGIN> options = null;
     // private boolean registerManualStopTask = false;
 
@@ -92,7 +92,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         }
     }
 
-    public void logAttempt(InterceptEvent event) {
+    public void logAttempt(InterceptEvent<PLUGIN> event) {
         if (this.logger == null) {
             return;
         }
@@ -104,14 +104,14 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         this.logger.logAttempt(event);
     }
 
-    public void logBlock(InterceptEvent event) {
+    public void logBlock(InterceptEvent<PLUGIN> event) {
         if (this.logger == null) {
             return;
         }
         this.logger.logBlock(event);
     }
 
-    public boolean shouldBlock(InterceptEvent event) {
+    public boolean shouldBlock(InterceptEvent<PLUGIN> event) {
         return this.blocker != null && this.blocker.shouldBlock(event);
     }
 
@@ -143,7 +143,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         }
         this.interceptors.clear();
         if (blocker instanceof LearningBlocker) {
-            ((LearningBlocker) blocker).clear();
+            ((LearningBlocker<PLUGIN>) blocker).clear();
         }
     }
 
@@ -196,15 +196,16 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         switch (mode.toLowerCase()) {
             case "all":
                 plugin.getLogger().info("Using console+file combined logger");
-                this.logger = new CompositeLogger(new ConsoleLogger(plugin, includeTraces), new FileLogger(plugin));
+                this.logger = new CompositeLogger<>(new ConsoleLogger<>(plugin, includeTraces),
+                        new FileLogger<>(plugin));
                 break;
             case "console":
                 plugin.getLogger().info("Using console logger");
-                this.logger = new ConsoleLogger(plugin, includeTraces);
+                this.logger = new ConsoleLogger<>(plugin, includeTraces);
                 break;
             case "file":
                 plugin.getLogger().info("Using file logger");
-                this.logger = new FileLogger(plugin);
+                this.logger = new FileLogger<>(plugin);
                 break;
             default:
                 plugin.getLogger().severe("Unknown logging mode: " + mode);
@@ -220,7 +221,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
 
         List<String> list = ImmutableList.copyOf(configuration.getStringList("targets"));
         options = generatePluginOptions(configuration);
-        PluginAwareBlocker pluginBlocker = new PluginAwareBlocker(options);
+        PluginAwareBlocker<PLUGIN> pluginBlocker = new PluginAwareBlocker<>(options);
 
         String mode = configuration.getString("mode", null);
         if (mode == null) {
@@ -230,11 +231,11 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         switch (mode.toLowerCase()) {
             case "allow":
                 plugin.getLogger().info("Using blocking strategy allow");
-                this.blocker = new AllowBlocker(list);
+                this.blocker = new AllowBlocker<>(list);
                 break;
             case "deny":
                 plugin.getLogger().info("Using blocking strategy deny");
-                this.blocker = new BlockBlocker(list);
+                this.blocker = new BlockBlocker<>(list);
                 break;
             default:
                 plugin.getLogger().severe("Unknown mode: " + mode);
@@ -246,13 +247,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             // is not initialized
             // the below is the correct way to initialize this functiaonlity (in the future)
             // configuration.getConfigurationSection("manual-plugin-assignment"));
-            ManualPluginDetectingBlocker manBlocker;
+            ManualPluginDetectingBlocker<PLUGIN> manBlocker;
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
             } else {
-                manBlocker = new ManualPluginDetectingBlocker(options, manOptions);
+                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee());
             }
-            this.blocker = new CompositeBlocker(manBlocker, this.blocker, pluginBlocker);
+            this.blocker = new CompositeBlocker<>(manBlocker, this.blocker, pluginBlocker);
             // registerManualStopTask = manBlocker != null &&
             // manOptions.disableAfterStartup();
         }
@@ -264,7 +265,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                         "(Need a positive number)");
             }
             plugin.getLogger().info("Using a mapping blocker with timer of " + similarStackTimeoutMs + "ms");
-            blocker = new LearningBlocker(blocker, similarStackTimeoutMs);
+            blocker = new LearningBlocker<>(blocker, similarStackTimeoutMs);
         }
     }
 
@@ -317,11 +318,11 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         }
     }
 
-    public Blocker getBlocker() {
+    public Blocker<PLUGIN> getBlocker() {
         return blocker;
     }
 
-    public EventLogger getEventLogger() {
+    public EventLogger<PLUGIN> getEventLogger() {
         return logger;
     }
 
