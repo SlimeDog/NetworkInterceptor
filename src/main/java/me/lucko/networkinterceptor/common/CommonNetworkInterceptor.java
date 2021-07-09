@@ -37,7 +37,7 @@ import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
 import net.md_5.bungee.api.plugin.Plugin;
 
-public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin> {
+public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> {
     private final T plugin;
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
     private EventLogger logger = null;

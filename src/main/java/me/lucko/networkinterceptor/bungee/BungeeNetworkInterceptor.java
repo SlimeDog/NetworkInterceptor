@@ -14,15 +14,15 @@ import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
-public class BungeeNetworkInterceptor extends Plugin implements NetworkInterceptorPlugin {
-    private final CommonNetworkInterceptor<BungeeNetworkInterceptor> delegate;
+public class BungeeNetworkInterceptor extends Plugin implements NetworkInterceptorPlugin<Plugin> {
+    private final CommonNetworkInterceptor<BungeeNetworkInterceptor, Plugin> delegate;
     private Configuration configuration;
     private BungeeConfiguration bungeeConfig;
 
     public BungeeNetworkInterceptor() {
         saveDefaultConfig();
         loadConfig();
-        delegate = new CommonNetworkInterceptor<BungeeNetworkInterceptor>(this);
+        delegate = new CommonNetworkInterceptor<>(this);
     }
 
     private void loadConfig() {
@@ -111,7 +111,7 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     }
 
     @Override
-    public CommonNetworkInterceptor<?> getDelegate() {
+    public CommonNetworkInterceptor<BungeeNetworkInterceptor, Plugin> getDelegate() {
         return delegate;
     }
 
