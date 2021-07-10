@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
+import me.lucko.networkinterceptor.NetworkInterceptorCommand;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
@@ -35,6 +36,8 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
             e.printStackTrace();
         }
         bungeeConfig = new BungeeConfiguration(configuration, "");
+
+        getProxy().getPluginManager().registerCommand(this, new NetworkInterceptorCommand<>(this).asBungeeCommand());
     }
 
     @Override

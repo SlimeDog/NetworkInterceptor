@@ -47,7 +47,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
                 }
             }, 1L);
         }
-        getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand<JavaPlugin>(this));
+        getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand<>(this).asSpigotCommand());
     }
 
     @Override
