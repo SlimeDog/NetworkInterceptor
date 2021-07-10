@@ -106,8 +106,9 @@ targets:
   - 'timings.aikar.co'
   - 'timings.spigotmc.org'
 
-  # bStats metrics service
+  # Metrics services
   - 'bstats.org'
+  - 'mcstats.spigotmc.org'
 
   # Github API: Not required, but used by Paper
   - 'api.github.com'
