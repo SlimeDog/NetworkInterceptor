@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -118,6 +119,20 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     @Override
     public Plugin asPlugin() {
         return this;
+    }
+
+    @Override
+    public void reload() {
+        reloadConfig();
+
+        delegate.disable();
+        try {
+            delegate.enable();
+        } catch (IllegalConfigStateException e) {
+            getLogger().severe(e.getMessage());
+            getLogger().severe("Disabling plugin");
+            disablePlugin();
+        }
     }
 
 }
