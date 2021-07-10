@@ -35,4 +35,6 @@ public interface NetworkInterceptorPlugin<PLUGIN> {
 
     PLUGIN asPlugin();
 
+    void reload();
+
 }

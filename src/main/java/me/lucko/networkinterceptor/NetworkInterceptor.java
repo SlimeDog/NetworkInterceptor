@@ -47,7 +47,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
                 }
             }, 1L);
         }
-        getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand(this));
+        getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand<JavaPlugin>(this));
     }
 
     @Override
@@ -55,6 +55,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         disable();
     }
 
+    @Override
     public void reload() {
         reloadConfig();
         config = new BukkitConfiguration(getConfig());
