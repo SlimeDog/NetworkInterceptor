@@ -4,11 +4,11 @@ import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.util.logging.Logger;
 
-public class ConsoleLogger extends AbstractEventLogger {
-    private final NetworkInterceptorPlugin plugin;
+public class ConsoleLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
+    private final NetworkInterceptorPlugin<PLUGIN> plugin;
 
-    public ConsoleLogger(NetworkInterceptorPlugin plugin, boolean includeTraces) {
-        super(includeTraces);
+    public ConsoleLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean includeTraces) {
+        super(includeTraces, plugin.isBungee());
         this.plugin = plugin;
     }
 

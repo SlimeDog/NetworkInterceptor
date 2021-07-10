@@ -12,8 +12,8 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfig
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptorPlugin {
-    private final CommonNetworkInterceptor<NetworkInterceptor> delegate;
+public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptorPlugin<JavaPlugin> {
+    private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
     private BukkitConfiguration config;
     private boolean registerManualStopTask = false;
 
@@ -22,7 +22,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         // this is seen as bad practice, but we want to try and catch as
         // many requests as possible
         config = new BukkitConfiguration(getConfig());
-        delegate = new CommonNetworkInterceptor<NetworkInterceptor>(this);
+        delegate = new CommonNetworkInterceptor<>(this);
 
         // check and enable bStats
         boolean useMetrics = getConfig().getBoolean("enable-metrics", true);
@@ -37,11 +37,12 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
                 if (delegate.getBlocker() instanceof CompositeBlocker) {
-                    ((CompositeBlocker) delegate.getBlocker()).stopUsingManualBlocker();
+                    ((CompositeBlocker<JavaPlugin>) delegate.getBlocker()).stopUsingManualBlocker();
                 } else if (delegate.getBlocker() instanceof LearningBlocker) {
-                    Blocker delegate = ((LearningBlocker) this.delegate.getBlocker()).getDelegate();
+                    Blocker<JavaPlugin> delegate = ((LearningBlocker<JavaPlugin>) this.delegate.getBlocker())
+                            .getDelegate();
                     if (delegate instanceof CompositeBlocker) {
-                        ((CompositeBlocker) delegate).stopUsingManualBlocker();
+                        ((CompositeBlocker<JavaPlugin>) delegate).stopUsingManualBlocker();
                     }
                 }
             }, 1L);
@@ -66,14 +67,6 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
             getLogger().severe("Disabling plugin");
             getServer().getPluginManager().disablePlugin(this);
         }
-    }
-
-    public void logBlock(InterceptEvent event) {
-        delegate.logAttempt(event);
-    }
-
-    public boolean shouldBlock(InterceptEvent event) {
-        return delegate.shouldBlock(event);
     }
 
     private void enable() throws IllegalConfigStateException {
@@ -120,8 +113,13 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
-    public CommonNetworkInterceptor<?> getDelegate() {
+    public CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> getDelegate() {
         return delegate;
+    }
+
+    @Override
+    public JavaPlugin asPlugin() {
+        return this;
     }
 
 }

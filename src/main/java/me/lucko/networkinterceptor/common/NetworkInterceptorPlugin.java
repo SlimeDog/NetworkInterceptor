@@ -3,7 +3,7 @@ package me.lucko.networkinterceptor.common;
 import java.io.File;
 import java.util.logging.Logger;
 
-public interface NetworkInterceptorPlugin {
+public interface NetworkInterceptorPlugin<PLUGIN> {
 
     void saveDefaultConfig();
 
@@ -31,6 +31,8 @@ public interface NetworkInterceptorPlugin {
 
     boolean isBungee();
 
-    CommonNetworkInterceptor<?> getDelegate();
+    CommonNetworkInterceptor<? extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> getDelegate();
+
+    PLUGIN asPlugin();
 
 }

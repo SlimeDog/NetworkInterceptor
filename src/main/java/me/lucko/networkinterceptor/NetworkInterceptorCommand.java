@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
 import me.lucko.networkinterceptor.blockers.AllowBlocker;
@@ -91,7 +92,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
         if (!plugin.getConfig().getBoolean("logging.enabled", true)) {
             return "Logging is not enabled";
         }
-        EventLogger logger = plugin.getDelegate().getEventLogger();
+        EventLogger<JavaPlugin> logger = plugin.getDelegate().getEventLogger();
         if (logger == null) {
             String mode = plugin.getConfig().getString("logging.mode", "console");
             return "Unknown logging mode: " + mode;
@@ -108,7 +109,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
     }
 
     private String getBlockerMessage() {
-        Blocker blocker = plugin.getDelegate().getBlocker();
+        Blocker<JavaPlugin> blocker = plugin.getDelegate().getBlocker();
         String blockerMessage;
         if (blocker == null) {
             String mode = plugin.getConfig().getString("mode", "deny");
@@ -118,27 +119,27 @@ public class NetworkInterceptorCommand implements TabExecutor {
                 blockerMessage = "Blocking is not enabled";
             }
         } else if (blocker instanceof LearningBlocker) {
-            Blocker delegate = ((LearningBlocker) blocker).getDelegate();
+            Blocker<JavaPlugin> delegate = ((LearningBlocker<JavaPlugin>) blocker).getDelegate();
             blockerMessage = getCompositeBlockerMessage(delegate) + "\nUsing a mapping blocker with timer of "
-                    + ((LearningBlocker) blocker).getTimeoutMs() + "ms";
+                    + ((LearningBlocker<JavaPlugin>) blocker).getTimeoutMs() + "ms";
         } else {
             blockerMessage = getCompositeBlockerMessage(blocker);
         }
         return blockerMessage;
     }
 
-    private String getCompositeBlockerMessage(Blocker blocker) {
+    private String getCompositeBlockerMessage(Blocker<JavaPlugin> blocker) {
         String blockerMessage;
         if (!(blocker instanceof CompositeBlocker)) {
             blockerMessage = "Unknown type of delegate: " + blocker;
         } else {
-            CompositeBlocker compositeBlocker = (CompositeBlocker) blocker;
-            Blocker[] delegates = compositeBlocker.getDelegates();
+            CompositeBlocker<JavaPlugin> compositeBlocker = (CompositeBlocker<JavaPlugin>) blocker;
+            Blocker<JavaPlugin>[] delegates = compositeBlocker.getDelegates();
             if (delegates.length != 2) {
                 blockerMessage = "Unknown delegates: " + Arrays.asList(delegates);
             } else {
-                Blocker mainBlocker = delegates[0];
-                Blocker pluginBlocker = delegates[1];
+                Blocker<JavaPlugin> mainBlocker = delegates[0];
+                Blocker<JavaPlugin> pluginBlocker = delegates[1];
                 if (!(pluginBlocker instanceof PluginAwareBlocker)) {
                     blockerMessage = "Miscondigured delegates: " + Arrays.asList(delegates);
                 } else {
@@ -149,7 +150,7 @@ public class NetworkInterceptorCommand implements TabExecutor {
         return blockerMessage;
     }
 
-    private String getMainBlockerMessage(Blocker mainBlocker) {
+    private String getMainBlockerMessage(Blocker<JavaPlugin> mainBlocker) {
         if (mainBlocker instanceof AllowBlocker) {
             return "Using blocking strategy allow";
         } else {

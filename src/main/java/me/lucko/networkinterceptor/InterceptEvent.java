@@ -8,19 +8,21 @@ import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class InterceptEvent {
+public class InterceptEvent<PLUGIN> {
     private static final int MAX_INTERNAL_TRACES = 2;
     private final String host;
     private final StackTraceElement[] stackTrace;
-    private final Map<StackTraceElement, JavaPlugin> nonInternalStackTrace = new LinkedHashMap<>();
-    private final Set<JavaPlugin> tracedPlugins = new LinkedHashSet<>();
+    private final Map<StackTraceElement, PLUGIN> nonInternalStackTrace = new LinkedHashMap<>();
+    private final Set<PLUGIN> tracedPlugins = new LinkedHashSet<>();
+    private final boolean isBungee;
     private String originalHost;
     private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
-    private JavaPlugin trustedPlugin;
+    private PLUGIN trustedPlugin;
 
-    public InterceptEvent(String host, StackTraceElement[] stackTrace) {
+    public InterceptEvent(String host, StackTraceElement[] stackTrace, boolean isBungee) {
         this.host = host;
         this.stackTrace = stackTrace;
+        this.isBungee = isBungee;
         generateNonInternalStackTrace();
     }
 
@@ -32,11 +34,11 @@ public class InterceptEvent {
         return this.stackTrace;
     }
 
-    public void updateTraceElement(StackTraceElement trace, JavaPlugin plugin) {
+    public void updateTraceElement(StackTraceElement trace, PLUGIN plugin) {
         if (!nonInternalStackTrace.containsKey(trace)) {
             throw new IllegalArgumentException("Stack trace not within event non-internal trace: " + trace);
         }
-        JavaPlugin prev = nonInternalStackTrace.get(trace);
+        PLUGIN prev = nonInternalStackTrace.get(trace);
         if (prev != null) {
             throw new IllegalStateException("Stack trace " + trace + " already mapped to " + prev);
         }
@@ -46,11 +48,11 @@ public class InterceptEvent {
         nonInternalStackTrace.put(trace, plugin);
     }
 
-    public Map<StackTraceElement, JavaPlugin> getNonInternalStackTraceWithPlugins() {
+    public Map<StackTraceElement, PLUGIN> getNonInternalStackTraceWithPlugins() {
         return Collections.unmodifiableMap(nonInternalStackTrace);
     }
 
-    public Set<JavaPlugin> getOrderedTracedPlugins() {
+    public Set<PLUGIN> getOrderedTracedPlugins() {
         return new LinkedHashSet<>(tracedPlugins);
     }
 
@@ -73,17 +75,26 @@ public class InterceptEvent {
             }
 
             if (shouldPrint) {
-                JavaPlugin providingPlugin;
-                try {
-                    Class<?> clazz = Class.forName(element.getClassName());
-                    providingPlugin = JavaPlugin.getProvidingPlugin(clazz);
+                PLUGIN providingPlugin = getProvidingPlugin(element);
+                if (providingPlugin != null) {
                     tracedPlugins.add(providingPlugin);
-                } catch (Exception e) {
-                    // ignore
-                    providingPlugin = null;
                 }
                 nonInternalStackTrace.put(element, providingPlugin);
             }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private PLUGIN getProvidingPlugin(StackTraceElement element) {
+        if (!isBungee) {
+            try {
+                Class<?> clazz = Class.forName(element.getClassName());
+                return (PLUGIN) JavaPlugin.getProvidingPlugin(clazz);
+            } catch (Exception e) {
+                return null;
+            }
+        } else {
+            return null; // TODO - bungee support?
         }
     }
 
@@ -103,11 +114,11 @@ public class InterceptEvent {
         return originalHost;
     }
 
-    public void setTrustedPlugin(JavaPlugin plugin) {
+    public void setTrustedPlugin(PLUGIN plugin) {
         this.trustedPlugin = plugin;
     }
 
-    public JavaPlugin getTrustedPlugin() {
+    public PLUGIN getTrustedPlugin() {
         return trustedPlugin;
     }
 
