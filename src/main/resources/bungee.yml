@@ -3,7 +3,7 @@ version: ${project.version}
 api-version: 1.13
 main: ${project.groupId}.${project.artifactId}.bungee.BungeeNetworkInterceptor
 description: ${project.description}
-authors: [drives_a_ford, Luck, SlimeDog]
+author: drives_a_ford, Luck, SlimeDog
 load: STARTUP
 depend: []
 softdepend: []
