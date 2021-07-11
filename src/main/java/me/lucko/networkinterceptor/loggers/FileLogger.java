@@ -14,12 +14,16 @@ import java.util.logging.Logger;
 public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final Logger logger;
 
-    public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin) {
+    public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean truncateFile) {
         super(true, plugin.isBungee());
         File file = new File(plugin.getDataFolder(), "intercept.log");
         this.logger = Logger.getLogger(FileLogger.class.getName());
         try {
             file.getParentFile().mkdirs();
+            if (truncateFile && file.exists()) {
+                plugin.getLogger().info("Truncating old log file");
+                file.delete();
+            }
             file.createNewFile();
 
             FileHandler fileHandler = new FileHandler(file.getAbsolutePath(), 0, 1, true);

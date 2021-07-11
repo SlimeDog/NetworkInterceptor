@@ -52,6 +52,7 @@ logging:
   enabled: true
   include-traces: false
   mode: file
+  truncate-file-on-start: false
 
 # Enable/disable blocking.
 # If blocking is disabled, logging will still occur unless disabled above.

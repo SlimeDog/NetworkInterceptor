@@ -43,6 +43,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
     private EventLogger<PLUGIN> logger = null;
     private Blocker<PLUGIN> blocker = null;
     private PluginOptions<PLUGIN> options = null;
+    private boolean isOnStartup = true;
     // private boolean registerManualStopTask = false;
 
     private boolean ignoreAllowed = false;
@@ -72,6 +73,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             options.searchForPlugins(plugin);
         }
         plugin.onEnable();
+        isOnStartup = false;
     }
 
     public void onDisable() {
@@ -192,12 +194,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             plugin.getLogger().severe("Unknown logging mode: " + mode);
             throw new IllegalConfigStateException("logging.mode", mode, "all", "console", "file");
         }
+        boolean truncateFile = configuration.getBoolean("truncate-file-on-start", false) && isOnStartup;
         boolean includeTraces = configuration.getBoolean("logging.include-traces", true);
         switch (mode.toLowerCase()) {
             case "all":
                 plugin.getLogger().info("Using console+file combined logger");
                 this.logger = new CompositeLogger<>(new ConsoleLogger<>(plugin, includeTraces),
-                        new FileLogger<>(plugin));
+                        new FileLogger<>(plugin, truncateFile));
                 break;
             case "console":
                 plugin.getLogger().info("Using console logger");
@@ -205,7 +208,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                 break;
             case "file":
                 plugin.getLogger().info("Using file logger");
-                this.logger = new FileLogger<>(plugin);
+                this.logger = new FileLogger<>(plugin, truncateFile);
                 break;
             default:
                 plugin.getLogger().severe("Unknown logging mode: " + mode);
