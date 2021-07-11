@@ -6,7 +6,7 @@
 
     <groupId>me.lucko</groupId>
     <artifactId>networkinterceptor</artifactId>
-    <version>2.0.0-Bungee-5</version>
+    <version>2.0.0-Bungee-6</version>
     <packaging>jar</packaging>
 
     <name>NetworkInterceptor</name>
