@@ -193,9 +193,9 @@ public class NetworkInterceptorCommand<PLUGIN> {
 
     public static class BungeeWrapper extends net.md_5.bungee.api.plugin.Command
             implements net.md_5.bungee.api.plugin.TabExecutor {
-        private static final String NAME = "bungeenetworkinterceptor";
+        private static final String NAME = "networkinterceptorbungee";
         private static final String PERMISSION = "networkinterceptor.command";
-        private static final String ALIASES = "bni";
+        private static final String ALIASES = "nib";
         private static final List<String> OPTIONS = Collections.unmodifiableList(Arrays.asList("reload", "info"));
         private final NetworkInterceptorCommand<Plugin> cmd;
 
