@@ -4,7 +4,6 @@ import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.utils.SneakyThrow;
 
-import java.lang.reflect.Field;
 import java.net.SocketTimeoutException;
 import java.security.Permission;
 
@@ -19,25 +18,7 @@ public class SecurityManagerInterceptor<PLUGIN> extends SecurityManager implemen
 
     @Override
     public void enable() {
-        if (plugin.isBungee()) {
-            plugin.getLogger().warning("Attempting a hard reset of the BungeeSecurityManager");
-            try {
-                setSecurityManagerReflection();
-            } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (plugin.isBukkit()) {
-            System.setSecurityManager(this);
-        } else {
-            throw new IllegalStateException("Unknown plugin: " + plugin);
-        }
-    }
-
-    private void setSecurityManagerReflection()
-            throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-        Field field = System.class.getDeclaredField("security");
-        field.setAccessible(true);
-        field.set(null, this);
+        System.setSecurityManager(this);
     }
 
     @Override

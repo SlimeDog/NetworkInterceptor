@@ -1,6 +1,7 @@
 package me.lucko.networkinterceptor.common;
 
 import java.lang.reflect.Constructor;
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
@@ -128,6 +129,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             try {
                 interceptor.enable();
             } catch (Exception e) {
+                if (e instanceof AccessControlException) {
+                    if (plugin.isBungee()) {
+                        plugin.getLogger().warning("Since bungee provides its own security manager, "
+                                + "the Security Manager Interceptor is unable to be used with a Bungee instance");
+                        return;
+                    } // else - log the severe stuff below
+                }
                 plugin.getLogger().log(Level.SEVERE,
                         "Exception occurred whilst enabling " + interceptor.getClass().getName(), e);
             }
