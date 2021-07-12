@@ -83,6 +83,9 @@ trusted-plugins:
 # Entries should be lowercase.
 # In allow mode, outbound network connections to these targets will be allowed.
 # In deny mode, outbound network connections to these targets will be blocked.
+#
+# A good place to start looking is the sample-allow-config.yml content.
+# Then review the intercept log to discover more.
 targets:
 
   - 'example.com'
