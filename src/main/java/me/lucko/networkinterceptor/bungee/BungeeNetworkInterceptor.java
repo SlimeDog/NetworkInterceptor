@@ -42,7 +42,7 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
 
     @Override
     public void onEnable() {
-
+        delegate.onEnable();
     }
 
     @Override

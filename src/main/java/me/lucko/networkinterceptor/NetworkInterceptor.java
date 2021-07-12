@@ -33,7 +33,9 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
 
+    @Override
     public void onEnable() {
+        delegate.onEnable();
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
                 if (delegate.getBlocker() instanceof CompositeBlocker) {
