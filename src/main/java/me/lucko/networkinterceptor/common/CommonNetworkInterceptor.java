@@ -202,7 +202,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             plugin.getLogger().severe("Unknown logging mode: " + mode);
             throw new IllegalConfigStateException("logging.mode", mode, "all", "console", "file");
         }
-        boolean truncateFile = configuration.getBoolean("logging.truncate-file-on-start", false) && isOnStartup;
+        boolean truncateFile = configuration.getBoolean("logging.truncate-file-on-start", true) && isOnStartup;
         boolean includeTraces = configuration.getBoolean("logging.include-traces", true);
         switch (mode.toLowerCase()) {
             case "all":
