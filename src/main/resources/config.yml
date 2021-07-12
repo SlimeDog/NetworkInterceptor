@@ -78,11 +78,11 @@ trusted-plugins:
   # LuckPerms
 
 # The target list
-# Entries should be lowercase
+# A list of disallowed FQDNs and IP addresses
+# Entries should be lowercase.
 # In allow mode, outbound network connections to these targets will be allowed.
 # In deny mode, outbound network connections to these targets will be blocked.
 #
-# A list of disallowed FQDNs and IP addresses
 # A good place to start looking is the sample-allow-config.yml content.
 # Then review the intercept log to discover more.
 targets:
