@@ -134,7 +134,7 @@ public class InterceptEvent<PLUGIN> {
         private BungeePluginFinder() {
             try {
                 this.pluginClassloaderClass = Class.forName("net.md_5.bungee.api.plugin.PluginClassloader");
-                this.pluginField = pluginClassloaderClass.getField("plugin");
+                this.pluginField = pluginClassloaderClass.getDeclaredField("plugin");
                 this.pluginField.setAccessible(true);
             } catch (ClassNotFoundException | NoSuchFieldException | SecurityException e) {
                 throw new RuntimeException(e);
