@@ -1,5 +1,6 @@
 package me.lucko.networkinterceptor;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -8,6 +9,8 @@ import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.md_5.bungee.api.plugin.Plugin;
+
 public class InterceptEvent<PLUGIN> {
     private static final int MAX_INTERNAL_TRACES = 2;
     private final String host;
@@ -15,6 +18,7 @@ public class InterceptEvent<PLUGIN> {
     private final Map<StackTraceElement, PLUGIN> nonInternalStackTrace = new LinkedHashMap<>();
     private final Set<PLUGIN> tracedPlugins = new LinkedHashSet<>();
     private final boolean isBungee;
+    private final BungeePluginFinder bungeePluginFinder;
     private String originalHost;
     private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
     private PLUGIN trustedPlugin;
@@ -23,6 +27,7 @@ public class InterceptEvent<PLUGIN> {
         this.host = host;
         this.stackTrace = stackTrace;
         this.isBungee = isBungee;
+        bungeePluginFinder = isBungee ? new BungeePluginFinder() : null;
         generateNonInternalStackTrace();
     }
 
@@ -94,7 +99,7 @@ public class InterceptEvent<PLUGIN> {
                 return null;
             }
         } else {
-            return null; // TODO - bungee support?
+            return (PLUGIN) bungeePluginFinder.findPlugin(element);
         }
     }
 
@@ -120,6 +125,35 @@ public class InterceptEvent<PLUGIN> {
 
     public PLUGIN getTrustedPlugin() {
         return trustedPlugin;
+    }
+
+    private class BungeePluginFinder {
+        private final Class<?> pluginClassloaderClass;
+        private final Field pluginField;
+
+        private BungeePluginFinder() {
+            try {
+                this.pluginClassloaderClass = Class.forName("net.md_5.bungee.api.plugin.PluginClassloader");
+                this.pluginField = pluginClassloaderClass.getField("plugin");
+                this.pluginField.setAccessible(true);
+            } catch (ClassNotFoundException | NoSuchFieldException | SecurityException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        public Plugin findPlugin(StackTraceElement element) {
+            ClassLoader cl = element.getClass().getClassLoader();
+            if (!cl.getClass().isAssignableFrom(pluginClassloaderClass)) {
+                return null;
+            }
+            try {
+                return (Plugin) pluginField.get(cl);
+            } catch (IllegalArgumentException | IllegalAccessException e) {
+                System.err.println("Problem finding BungeeCoord plugin for network connection:");
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
 }
