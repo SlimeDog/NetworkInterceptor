@@ -12,16 +12,16 @@
 # Network requests may be detected by either or both of the following methods.
 #
 # security-manager:
-#   - Installs a custom SecurityManager into the server
-#   - Will intercept all outgoing network requests
-#   - May be incompatible with other plugins which install a security manager
-#   - In particular, note that AAC disables itself if the security-manager method is enabled.
+# * Installs a custom SecurityManager into the server
+# * Will intercept all outgoing network requests
+# * May be incompatible with other plugins which install a security manager
+# * In particular, note that AAC disables itself if the security-manager method is enabled.
 #
 # proxy-selector:
-#  - Installs a custom ProxySelector into the server
-#  - Will intercept most outgoing HTTP requests
-#  - Will not catch requests which specifically define their proxy
-#  - Should not be incompatible with anything
+# * Installs a custom ProxySelector into the server
+# * Will intercept most outgoing HTTP requests
+# * Will not catch requests which specifically define their proxy
+# * Should not be incompatible with anything
 #
 # Both methods may be enabled, and are recommended.
 methods:
@@ -72,8 +72,7 @@ mapping:
 # In deny mode, outbound network connections by these plugins will be allowed,
 # unless the target is explicitly blocked in the targets list.
 #
-# If LuckPerms is installed, we recommend listing it as a trusted plugin,
-# to simplify configuration.
+# If LuckPerms is installed, we recommend listing it as a trusted plugin, to simplify configuration.
 trusted-plugins:
   - none
   # LuckPerms
