@@ -143,7 +143,7 @@ public class InterceptEvent<PLUGIN> {
 
         public Plugin findPlugin(StackTraceElement element) {
             ClassLoader cl = element.getClass().getClassLoader();
-            if (!cl.getClass().isAssignableFrom(pluginClassloaderClass)) {
+            if (cl == null || !cl.getClass().isAssignableFrom(pluginClassloaderClass)) {
                 return null;
             }
             try {
