@@ -6,7 +6,7 @@
 
     <groupId>me.lucko</groupId>
     <artifactId>networkinterceptor</artifactId>
-    <version>2.0.4</version>
+    <version>2.0.5</version>
     <packaging>jar</packaging>
 
     <name>NetworkInterceptor</name>
@@ -75,13 +75,6 @@
               <artifactId>bungeecord-api</artifactId>
               <version>1.16-R0.5-SNAPSHOT</version>
               <type>jar</type>
-              <scope>provided</scope>
-          </dependency>
-          <dependency>
-              <groupId>net.md-5</groupId>
-              <artifactId>bungeecord-api</artifactId>
-              <version>1.16-R0.5-SNAPSHOT</version>
-              <type>javadoc</type>
               <scope>provided</scope>
           </dependency>
     </dependencies>
