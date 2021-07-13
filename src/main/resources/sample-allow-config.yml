@@ -12,16 +12,16 @@
 # Network requests may be detected by either or both of the following methods.
 #
 # security-manager:
-#   - Installs a custom SecurityManager into the server
-#   - Will intercept all outgoing network requests
-#   - May be incompatible with other plugins which install a security manager
-#   - In particular, note that AAC disables itself if the security-manager method is enabled.
+# * Installs a custom SecurityManager into the server
+# * Will intercept all outgoing network requests
+# * May be incompatible with other plugins which install a security manager
+# * In particular, note that AAC disables itself if the security-manager method is enabled.
 #
 # proxy-selector:
-#  - Installs a custom ProxySelector into the server
-#  - Will intercept most outgoing HTTP requests
-#  - Will not catch requests which specifically define their proxy
-#  - Should not be incompatible with anything
+# * Installs a custom ProxySelector into the server
+# * Will intercept most outgoing HTTP requests
+# * Will not catch requests which specifically define their proxy
+# * Should not be incompatible with anything
 #
 # Both methods may be enabled, and are recommended.
 methods:
@@ -121,17 +121,21 @@ targets:
   - 'api.extendedclip.com'
 
   # SpigotMC library loader
+  # For plugins that utilize the SpigotMC library loader, e.g., ntdLuckyBlock
   - 'repo.maven.apache.org'
 
   ########## Generally good: plugin version/update check #######################
 
-  # SpigotMC plugin update check
-  - 'api.spiget.org'
-  - 'api.spigotmc.org'
+  # Plugin update checks
+  - 'api.github.com'                    # EssentialsX
+  - 'api.spiget.org'                    # Alternate for SpigotMC plugins
+  - 'api.spigotmc.org'                  # Standard for SpigotMC plugins
+  - 'gist.githubusercontent.com'        # PremiumVanish (probably also SuperVanish)
+  - 'raw.githubusercontent.com'         # DiscordSRV
 
   ########## Recommended #######################################################
 
   # LuckPerms
-  - 'bytebin.lucko.me'            # pastebin
-  - 'metadata.luckperms.net'      # dependencies
-  - 'nexus.lucko.me'              # dependencies
+  - 'bytebin.lucko.me'                  # pastebin
+  - 'metadata.luckperms.net'            # dependencies
+  - 'nexus.lucko.me'                    # dependencies
