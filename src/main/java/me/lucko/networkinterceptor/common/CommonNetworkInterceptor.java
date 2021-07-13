@@ -73,13 +73,11 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         if (options != null) { // search now that the plugin is enabled
             options.searchForPlugins(plugin);
         }
-        plugin.onEnable();
         isOnStartup = false;
     }
 
     public void onDisable() {
         disable();
-        plugin.onDisable();
     }
 
     public void reload() {

@@ -46,6 +46,11 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     }
 
     @Override
+    public void onDisable() {
+        delegate.onDisable();
+    }
+
+    @Override
     public void saveDefaultConfig() {
         if (!getDataFolder().exists())
             getDataFolder().mkdir();
