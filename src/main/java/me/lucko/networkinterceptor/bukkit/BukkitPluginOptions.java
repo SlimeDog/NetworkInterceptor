@@ -27,10 +27,10 @@ public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> 
         }
         if (!(plugin instanceof JavaPlugin)) {
             owner.getLogger().warning("Plugin of unknown type (" + name + "): " + plugin);
-            return true;
+            return false;
         }
         this.trustedPlugins.add((JavaPlugin) plugin);
-        return false;
+        return true;
     }
 
     @Override

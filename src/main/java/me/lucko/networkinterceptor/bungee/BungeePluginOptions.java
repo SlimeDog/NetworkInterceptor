@@ -23,7 +23,7 @@ public class BungeePluginOptions<T extends Plugin> extends PluginOptions<T> {
             return false;
         }
         this.trustedPlugins.add(plugin);
-        return false;
+        return true;
     }
 
     @Override
