@@ -59,14 +59,6 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
 
         enable();
 
-        // check and enable bStats
-        boolean useMetrics = plugin.getConfiguration().getBoolean("enable-metrics", true);
-        if (useMetrics) {
-            // int pluginId = 11822;
-            // new Metrics(this, pluginId);
-            // TODO - move metrics
-        }
-        plugin.getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
 
     public void onEnable() {
