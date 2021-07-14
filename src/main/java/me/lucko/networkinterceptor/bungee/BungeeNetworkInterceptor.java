@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
+import org.bstats.bungeecord.Metrics;
+
 import me.lucko.networkinterceptor.NetworkInterceptorCommand;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
@@ -25,6 +27,14 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
         saveDefaultConfig();
         loadConfig();
         delegate = new CommonNetworkInterceptor<>(this);
+
+        // check and enable bStats
+        boolean useMetrics = getConfiguration().getBoolean("enable-metrics", true);
+        if (useMetrics) {
+            int pluginId = 12035;
+            new Metrics(this, pluginId);
+        }
+        getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
 
     private void loadConfig() {
