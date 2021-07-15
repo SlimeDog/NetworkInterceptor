@@ -73,7 +73,7 @@ mapping:
 # unless the target is explicitly blocked in the targets list.
 #
 # If LuckPerms is installed, we recommend listing it as a trusted plugin, to simplify configuration.
-# Remove [] on the next line, and add the following line (without the # comment.
+# Remove [] on the next line, and add the following line (without the # comment).
 # - LuckPerms
 trusted-plugins: []
 
