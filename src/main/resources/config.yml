@@ -73,9 +73,9 @@ mapping:
 # unless the target is explicitly blocked in the targets list.
 #
 # If LuckPerms is installed, we recommend listing it as a trusted plugin, to simplify configuration.
-trusted-plugins:
-  - none
-  # LuckPerms
+# Remove [] on the next line, and add the following line (without the # comment
+# - LuckPerms
+trusted-plugins: []
 
 # The target list
 # A list of disallowed FQDNs and IP addresses
