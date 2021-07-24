@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -19,6 +21,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
+import me.lucko.networkinterceptor.NetworkInterceptorCommand;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
@@ -62,6 +65,12 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
             Metrics metrics = metricsFactory.make(this, pluginId);
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
+
+        CommandManager commandManager = server.getCommandManager();
+        CommandMeta meta = commandManager.metaBuilder("networkinterceptorvelocity")
+                .aliases("niv").build();
+
+        commandManager.register(meta, new NetworkInterceptorCommand<>(this).asVelocityCommand());
     }
 
     @Override

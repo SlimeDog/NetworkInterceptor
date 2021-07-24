@@ -28,6 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.plugin.PluginContainer;
+
 public class NetworkInterceptorCommand<PLUGIN> {
     private static final List<String> OPTIONS = Arrays.asList("reload", "info");
 
@@ -169,6 +172,11 @@ public class NetworkInterceptorCommand<PLUGIN> {
         return new BungeeWrapper((NetworkInterceptorCommand<Plugin>) this);
     }
 
+    @SuppressWarnings("unchecked")
+    public VelocityWrapper asVelocityCommand() {
+        return new VelocityWrapper((NetworkInterceptorCommand<PluginContainer>) this);
+    }
+
     public static class SpigotWrapper implements TabExecutor {
         private final NetworkInterceptorCommand<JavaPlugin> cmd;
 
@@ -217,5 +225,18 @@ public class NetworkInterceptorCommand<PLUGIN> {
             cmd.onCommand(new CommonCommandSender.Bungee(sender), args);
         }
 
+    }
+
+    public static class VelocityWrapper implements SimpleCommand {
+        private final NetworkInterceptorCommand<PluginContainer> cmd;
+
+        private VelocityWrapper(NetworkInterceptorCommand<PluginContainer> cmd) {
+            this.cmd = cmd;
+        }
+
+        @Override
+        public void execute(Invocation invocation) {
+            cmd.onCommand(new CommonCommandSender.Velocity(invocation.source()), invocation.arguments());
+        }
     }
 }
