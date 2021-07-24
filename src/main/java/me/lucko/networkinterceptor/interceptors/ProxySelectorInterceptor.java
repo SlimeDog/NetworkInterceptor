@@ -54,7 +54,7 @@ public class ProxySelectorInterceptor<PLUGIN> implements Interceptor {
         public List<Proxy> select(URI uri) {
             String host = uri.getHost();
             StackTraceElement[] trace = new Exception().getStackTrace();
-            InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee());
+            InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee(), plugin.isVelocity());
 
             boolean blocked = ProxySelectorInterceptor.this.plugin.getDelegate().shouldBlock(event);
 
