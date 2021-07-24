@@ -22,12 +22,12 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfig
 
 @Plugin(id = "networkinterceptor", name = "NetworkInterceptor", version = VelocityNetworkInterceptorInfo.VERSION, //
         description = "Plugin to monitor and block outgoing network requests", authors = { "drives_a_ford" })
-public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<VelocityNetworkInterceptor> {
+public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Object> { // no plugin class to extend!
     private final ProxyServer server;
     private final Logger logger;
     private final VelictyLoggerWrapper loggerWrapper;
     private final Path dataDirectory;
-    private final CommonNetworkInterceptor<VelocityNetworkInterceptor, VelocityNetworkInterceptor> delegate;
+    private final CommonNetworkInterceptor<VelocityNetworkInterceptor, Object> delegate;
     private VelocityConfiguration config;
 
     @Inject
@@ -131,7 +131,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Velo
     }
 
     @Override
-    public CommonNetworkInterceptor<VelocityNetworkInterceptor, VelocityNetworkInterceptor> getDelegate() {
+    public CommonNetworkInterceptor<VelocityNetworkInterceptor, Object> getDelegate() {
         return delegate;
     }
 
