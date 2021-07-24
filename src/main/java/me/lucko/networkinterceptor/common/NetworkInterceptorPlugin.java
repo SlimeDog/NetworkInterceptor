@@ -31,6 +31,8 @@ public interface NetworkInterceptorPlugin<PLUGIN> {
 
     boolean isBungee();
 
+    boolean isVelocity();
+
     CommonNetworkInterceptor<? extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> getDelegate();
 
     PLUGIN asPlugin();

@@ -6,7 +6,19 @@
 
     <groupId>me.lucko</groupId>
     <artifactId>networkinterceptor</artifactId>
+    <!--
+      NB!
+        When bumping version, make sure (manually) bump the version in VelocityNetworkInterceptorInfo class.
+        This is due to the way the decorator works which makes getting this information fomr the pom more difficult.
+      NB!
+    -->
     <version>3.0.0</version>
+    <!--
+      NB!
+        When bumping version, make sure (manually) bump the version in VelocityNetworkInterceptorInfo class.
+        This is due to the way the decorator works which makes getting this information fomr the pom more difficult.
+      NB!
+    -->
     <packaging>jar</packaging>
 
     <name>NetworkInterceptor</name>
@@ -29,6 +41,10 @@
                 <includes>
                     <include>*.yml</include>
                 </includes>
+            </resource>
+            <resource>
+              <filtering>true</filtering>
+              <directory>src/main/java/me/lucko/networkinterceptor/velocity/VelocityNetworkInterceptor.java</directory>
             </resource>
         </resources>
         <plugins>
@@ -83,6 +99,12 @@
               <type>jar</type>
               <scope>provided</scope>
           </dependency>
+          <dependency>
+              <groupId>com.velocitypowered</groupId>
+              <artifactId>velocity-api</artifactId>
+              <version>3.0.0</version>
+              <scope>provided</scope>
+          </dependency>
     </dependencies>
 
     <repositories>
@@ -93,6 +115,10 @@
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>velocity</id>
+            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
         </repository>
     </repositories>
 
