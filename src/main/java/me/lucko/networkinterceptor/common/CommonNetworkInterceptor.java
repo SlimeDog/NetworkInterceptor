@@ -254,7 +254,8 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
             } else {
-                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee());
+                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee(),
+                        plugin.isVelocity());
             }
             this.blocker = new CompositeBlocker<>(manBlocker, this.blocker, pluginBlocker);
             // registerManualStopTask = manBlocker != null &&

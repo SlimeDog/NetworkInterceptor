@@ -27,12 +27,14 @@ public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
     private final PluginOptions<PLUGIN> pluginOptions;
     private final ManualPluginOptions manualPluginOptions;
     private final boolean isBungee;
+    private final boolean isVelocity;
 
     public ManualPluginDetectingBlocker(PluginOptions<PLUGIN> pluginOptions, ManualPluginOptions manualPluginOptions,
-            boolean isBungee) {
+            boolean isBungee, boolean isVelocity) {
         this.pluginOptions = pluginOptions;
         this.manualPluginOptions = manualPluginOptions;
         this.isBungee = isBungee;
+        this.isVelocity = isVelocity;
     }
 
     @Override
@@ -64,14 +66,16 @@ public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
             StackTraceElement trace = entry.getKey();
             String pluginName = manualPluginOptions.getPluginNameFor(trace.getClassName());
             if (pluginName != null) {
-                if (!isBungee) {
+                if (!isBungee && !isVelocity) {
                     @SuppressWarnings("unchecked")
                     PLUGIN plugin = (PLUGIN) Bukkit.getPluginManager().getPlugin(pluginName);
                     if (plugin != null) {
                         event.updateTraceElement(trace, plugin);
                     }
-                } else {
+                } else if (isBungee) {
                     // TODO - bungee stuff
+                } else {
+                    // TODO - velocity stuff
                 }
                 return pluginName;
             }
