@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
@@ -20,14 +21,15 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
-@Plugin(id = "networkinterceptor", name = "NetworkInterceptor", version = VelocityNetworkInterceptorInfo.VERSION, //
-        description = "Plugin to monitor and block outgoing network requests", authors = { "drives_a_ford" })
-public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Object> { // no plugin class to extend!
+@Plugin(id = VelocityNetworkInterceptorInfo.ID, name = VelocityNetworkInterceptorInfo.NAME, //
+        version = VelocityNetworkInterceptorInfo.VERSION, //
+        description = VelocityNetworkInterceptorInfo.DESCRIPTION, authors = { "drives_a_ford" })
+public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<PluginContainer> {
     private final ProxyServer server;
     private final Logger logger;
     private final VelictyLoggerWrapper loggerWrapper;
     private final Path dataDirectory;
-    private final CommonNetworkInterceptor<VelocityNetworkInterceptor, Object> delegate;
+    private final CommonNetworkInterceptor<VelocityNetworkInterceptor, PluginContainer> delegate;
     private VelocityConfiguration config;
 
     @Inject
@@ -92,7 +94,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Obje
 
     @Override
     public void disablePlugin() {
-        server.getPluginManager().getPlugin("networkinterceptor");
+        getLogger().severe("Plugin should now disable but I am unaware as to how this should be done");
     }
 
     @Override
@@ -131,13 +133,13 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Obje
     }
 
     @Override
-    public CommonNetworkInterceptor<VelocityNetworkInterceptor, Object> getDelegate() {
+    public CommonNetworkInterceptor<VelocityNetworkInterceptor, PluginContainer> getDelegate() {
         return delegate;
     }
 
     @Override
-    public VelocityNetworkInterceptor asPlugin() {
-        return this;
+    public PluginContainer asPlugin() {
+        return server.getPluginManager().getPlugin("NetworkInterceptor").get();
     }
 
     @Override
@@ -153,4 +155,9 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Obje
             disablePlugin();
         }
     }
+
+    public ProxyServer getServer() {
+        return server;
+    }
+
 }
