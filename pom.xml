@@ -42,10 +42,6 @@
                     <include>*.yml</include>
                 </includes>
             </resource>
-            <resource>
-              <filtering>true</filtering>
-              <directory>src/main/java/me/lucko/networkinterceptor/velocity/VelocityNetworkInterceptor.java</directory>
-            </resource>
         </resources>
         <plugins>
 
