@@ -9,11 +9,14 @@ import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
+import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
@@ -31,9 +34,11 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
     private final Path dataDirectory;
     private final CommonNetworkInterceptor<VelocityNetworkInterceptor, PluginContainer> delegate;
     private VelocityConfiguration config;
+    private final Metrics.Factory metricsFactory;
 
     @Inject
-    public VelocityNetworkInterceptor(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
+    public VelocityNetworkInterceptor(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory,
+            Metrics.Factory metricsFactory) {
         this.server = server;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
@@ -41,6 +46,22 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         saveDefaultConfig();
         reloadConfig();
         this.delegate = new CommonNetworkInterceptor<>(this);
+        this.metricsFactory = metricsFactory;
+    }
+
+    @Subscribe
+    public void onProxyInitialization(ProxyInitializeEvent event) {
+        // All you have to do is adding the following two lines in your
+        // onProxyInitialization method.
+        // You can find the plugin ids of your plugins on the page
+        // https://bstats.org/what-is-my-plugin-id
+        // check and enable bStats
+        boolean useMetrics = getConfiguration().getBoolean("enable-metrics", true);
+        if (useMetrics && false) {
+            int pluginId = -1; // TODO - ID
+            Metrics metrics = metricsFactory.make(this, pluginId);
+        }
+        getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
 
     @Override

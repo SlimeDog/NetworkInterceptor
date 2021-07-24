@@ -83,11 +83,17 @@
             <scope>compile</scope>
           </dependency>
           <dependency>
-              <groupId>org.bstats</groupId>
-              <artifactId>bstats-bungeecord</artifactId>
-              <version>2.2.1</version>
-              <scope>compile</scope>
-            </dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bungeecord</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-velocity</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+          </dependency>
           <dependency>
               <groupId>net.md-5</groupId>
               <artifactId>bungeecord-api</artifactId>
