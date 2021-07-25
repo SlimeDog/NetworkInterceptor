@@ -1,5 +1,6 @@
 package me.lucko.networkinterceptor.loggers;
 
+import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.io.File;
@@ -17,6 +18,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean truncateFile) {
         super(true, plugin.isBungee());
         File file = new File(plugin.getDataFolder(), "intercept.log");
+        System.out.println("Initializing file logger that logs to the file " + file);
         this.logger = Logger.getLogger(FileLogger.class.getName());
         try {
             file.getParentFile().mkdirs();
@@ -42,10 +44,25 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
         this.logger.setFilter(record -> true);
         this.logger.info("Current Server version: " + plugin.getServerVersion());
         this.logger.info("Current NetworkInterceptor version: " + plugin.getPluginVersion());
+        System.out.println("File logger uses logger: " + this.logger);
     }
 
     @Override
     public Logger getLogger() {
         return this.logger;
+    }
+
+    @Override
+    public void logAttempt(InterceptEvent<PLUGIN> event) {
+        System.out.println("Logging (attempt) to FILE: " + event);
+        super.logAttempt(event);
+        System.out.println("Logged  (attempt) to FILE: " + event);
+    }
+
+    @Override
+    public void logBlock(InterceptEvent<PLUGIN> event) {
+        System.out.println("Logging (blocked) to FILE: " + event);
+        super.logBlock(event);
+        System.out.println("Logged  (blocked) to FILE: " + event);
     }
 }
