@@ -60,9 +60,9 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         // https://bstats.org/what-is-my-plugin-id
         // check and enable bStats
         boolean useMetrics = getConfiguration().getBoolean("enable-metrics", true);
-        if (useMetrics && false) {
-            int pluginId = -1; // TODO - ID
-            Metrics metrics = metricsFactory.make(this, pluginId);
+        if (useMetrics) {
+            int pluginId = 12197;
+            metricsFactory.make(this, pluginId);
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
 
