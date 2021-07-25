@@ -59,6 +59,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         // You can find the plugin ids of your plugins on the page
         // https://bstats.org/what-is-my-plugin-id
         // check and enable bStats
+        this.onEnable();
         boolean useMetrics = getConfiguration().getBoolean("enable-metrics", true);
         if (useMetrics) {
             int pluginId = 12197;
