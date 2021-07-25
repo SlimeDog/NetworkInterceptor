@@ -42,8 +42,16 @@ public class NetworkInterceptorCommand<PLUGIN> {
 
     public boolean onCommand(CommonCommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.send(ChatColor.RED + "Running NetworkInterceptor v" + this.plugin.getPluginVersion());
-            sender.send(ChatColor.GRAY + "Use '/networkinterceptor reload' to reload the configuration.");
+            String versionMsg = "Running NetworkInterceptor v" + this.plugin.getPluginVersion();
+            if (plugin.isBukkit() || plugin.isBungee()) {
+                versionMsg = ChatColor.RED + versionMsg;
+            }
+            sender.send(versionMsg);
+            String helpMsg = "Use '/networkinterceptor reload' to reload the configuration.";
+            if (plugin.isBukkit() || plugin.isBungee()) {
+                helpMsg = ChatColor.GRAY + helpMsg;
+            }
+            sender.send(helpMsg);
 
             return true;
         }
@@ -51,7 +59,11 @@ public class NetworkInterceptorCommand<PLUGIN> {
         if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("networkinterceptor.command.reload")) {
             this.plugin.reload();
 
-            sender.send(ChatColor.GOLD + "NetworkInterceptor configuration reloaded.");
+            String msg = "NetworkInterceptor configuration reloaded.";
+            if (plugin.isBukkit() || plugin.isBungee()) {
+                msg = ChatColor.GRAY + msg;
+            }
+            sender.send(msg);
 
             return true;
         } else if (args[0].equalsIgnoreCase("info") && sender.hasPermission("networkinterceptor.command.info")) {
@@ -59,7 +71,11 @@ public class NetworkInterceptorCommand<PLUGIN> {
             return true;
         }
 
-        sender.send(ChatColor.RED + "Unknown subcommand.");
+        String msg = "Unknown subcommand.";
+        if (plugin.isBukkit() || plugin.isBungee()) {
+            msg = ChatColor.RED + msg;
+        }
+        sender.send(msg);
 
         return true;
     }
