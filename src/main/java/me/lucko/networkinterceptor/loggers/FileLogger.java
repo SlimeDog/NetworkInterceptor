@@ -62,15 +62,17 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
 
     @Override
     public void logAttempt(InterceptEvent<PLUGIN> event) {
-        System.out.println("Logging (attempt) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
+        Logger parent = this.logger.getParent();
+        System.out.println("Logging (attempt) to FILE: " + event + " with logger " + this.logger + " @ " + this.logger.getLevel() + " and parent " + parent + " @ " + parent.getLevel());
         super.logAttempt(event);
-        System.out.println("Logged  (attempt) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
+        System.out.println("Logged  (attempt) to FILE: " + event + " with logger " + this.logger + " @ " + this.logger.getLevel() + " and parent @ " + parent.getLevel());
     }
 
     @Override
     public void logBlock(InterceptEvent<PLUGIN> event) {
-        System.out.println("Logging (blocked) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
+        Logger parent = this.logger.getParent();
+        System.out.println("Logging (blocked) to FILE: " + event + " with logger " + this.logger + " @ " + this.logger.getLevel() + " and parent " + parent + " @ " + parent.getLevel());
         super.logBlock(event);
-        System.out.println("Logged  (blocked) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
+        System.out.println("Logged  (blocked) to FILE: " + event + " with logger " + this.logger + " @ " + this.logger.getLevel() + " and parent @ " + parent.getLevel());
     }
 }
