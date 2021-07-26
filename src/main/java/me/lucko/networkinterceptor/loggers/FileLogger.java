@@ -5,7 +5,6 @@ import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -47,17 +46,9 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
         this.logger.info("Current NetworkInterceptor version: " + plugin.getPluginVersion());
         System.out.println("File logger uses logger: " + this.logger);
         System.out.println("Logger level: " + this.logger.getLevel());
-        try {
-            Method method = logger.getClass().getMethod("getParent");
-            Object parent = method.invoke(logger);
-            System.out.println("Parent logger for file logger: " + parent);
-            if (parent instanceof Logger) {
-                Logger parentLogger = (Logger) parent;
-                System.out.println("Parent logger level: " + parentLogger.getLevel());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Logger parent = this.logger.getParent();
+        System.out.println("Parent logger for file logger: " + parent);
+        System.out.println("Parent logger level: " + parent.getLevel());
     }
 
     @Override
