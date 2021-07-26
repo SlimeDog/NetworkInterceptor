@@ -47,12 +47,13 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
         System.out.println("File logger uses logger: " + this.logger);
         System.out.println("Logger level: " + this.logger.getLevel());
         Logger parent = this.logger.getParent();
-        if (parent != null) {
+        while (parent != null) {
             parent.setLevel(Level.ALL);
             parent.setFilter(record -> true);
+            System.out.println("Parent logger for file logger: " + parent);
+            System.out.println("Parent logger level: " + parent.getLevel());
+            parent = parent.getParent();
         }
-        System.out.println("Parent logger for file logger: " + parent);
-        System.out.println("Parent logger level: " + parent.getLevel());
     }
 
     @Override
