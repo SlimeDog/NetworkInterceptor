@@ -67,15 +67,15 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
 
     @Override
     public void logAttempt(InterceptEvent<PLUGIN> event) {
-        System.out.println("Logging (attempt) to FILE: " + event);
+        System.out.println("Logging (attempt) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
         super.logAttempt(event);
-        System.out.println("Logged  (attempt) to FILE: " + event);
+        System.out.println("Logged  (attempt) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
     }
 
     @Override
     public void logBlock(InterceptEvent<PLUGIN> event) {
-        System.out.println("Logging (blocked) to FILE: " + event);
+        System.out.println("Logging (blocked) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
         super.logBlock(event);
-        System.out.println("Logged  (blocked) to FILE: " + event);
+        System.out.println("Logged  (blocked) to FILE: " + event + " with logger " + this.logger + "@" + this.logger.getLevel());
     }
 }
