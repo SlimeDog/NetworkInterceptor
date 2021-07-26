@@ -5,6 +5,7 @@ import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Date;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
@@ -52,7 +53,28 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
             parent.setFilter(record -> true);
             System.out.println("Parent logger for file logger: " + parent);
             System.out.println("Parent logger level: " + parent.getLevel());
+            attemptJulLoggerLevel(parent);
             parent = parent.getParent();
+        }
+    }
+
+    private void attemptJulLoggerLevel(Logger logger) {
+        try {
+            Class<?> coreLoggerClass = Class.forName("org.apache.logging.log4j.jul.CoreLogger");
+            if (logger.getClass().isAssignableFrom(coreLoggerClass)) {
+                System.out.println("CoreLogger (attempting parent fix)");
+                Field loggerField = coreLoggerClass.getDeclaredField("logger");
+                loggerField.setAccessible(true);
+                Object parent = loggerField.get(logger);
+                if (parent instanceof Logger) {
+                    Logger realParent = (Logger) parent;
+                    realParent.setLevel(Level.ALL);
+                    realParent.setFilter(record -> true);
+                    attemptJulLoggerLevel(realParent);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
