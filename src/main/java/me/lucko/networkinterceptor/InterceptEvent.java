@@ -142,7 +142,13 @@ public class InterceptEvent<PLUGIN> {
         }
 
         public Plugin findPlugin(StackTraceElement element) {
-            ClassLoader cl = element.getClass().getClassLoader();
+            Class<?> clazz;
+            try {
+                clazz = Class.forName(element.getClassName());
+            } catch (ClassNotFoundException e1) {
+                return null;
+            }
+            ClassLoader cl = clazz.getClassLoader();
             if (cl == null || !cl.getClass().isAssignableFrom(pluginClassloaderClass)) {
                 return null;
             }
