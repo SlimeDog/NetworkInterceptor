@@ -12,7 +12,7 @@
         This is due to the way the decorator works which makes getting this information fomr the pom more difficult.
       NB!
     -->
-    <version>3.0.0-Vel-2-FLdebug-2</version>
+    <version>3.0.0-Vel-2-FLdebug-3</version>
     <!--
       NB!
         When bumping version, make sure (manually) bump the version in VelocityNetworkInterceptorInfo class.
