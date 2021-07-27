@@ -142,7 +142,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
 
     @Override
     public String getServerVersion() {
-        return server.getVersion().getVersion();
+        return "Velocity " + server.getVersion().getVersion();
     }
 
     @Override
