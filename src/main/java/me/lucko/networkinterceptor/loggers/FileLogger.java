@@ -85,10 +85,31 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
                     Object allLevel = allField.get(null);
                     Method setLevelMethod = log4JLoggerClass.getMethod("setLevel", lo4jLevelClass);
                     setLevelMethod.invoke(parent, allLevel);
+                    dealWithLog4JLogger(parent);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void dealWithLog4JLogger(Object logger) throws Exception {
+        Class<?> asyncLoggerClass = Class.forName("org.apache.logging.log4j.core.async.AsyncLogger");
+        Field theadLocalTranslatorTypeField = asyncLoggerClass.getDeclaredField("threadLocalTranslatorType");
+        Field varargTranslatorTypeField = asyncLoggerClass.getDeclaredField("varargTranslatorType");
+        theadLocalTranslatorTypeField.setAccessible(true);
+        varargTranslatorTypeField.setAccessible(true);
+        Object threadLocalTranslatorType = theadLocalTranslatorTypeField.get(logger);
+        Object varargTranslatorType = varargTranslatorTypeField.get(logger);
+        Method getTranslatorTypeMethod = asyncLoggerClass.getDeclaredMethod("getTranslatorType");
+        getTranslatorTypeMethod.setAccessible(true);
+        Object translatorType = getTranslatorTypeMethod.invoke(logger);
+        if (translatorType == threadLocalTranslatorType) {
+            System.out.println("Using threadLocalTranslatorType");
+        } else if (translatorType == varargTranslatorType) {
+            System.out.println("Using varargTranslatorType");
+        } else {
+            System.out.println("Unkonwn translator type: " + translatorType + " -> expected " + threadLocalTranslatorType + " or " + varargTranslatorType);
         }
     }
 
