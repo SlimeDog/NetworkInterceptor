@@ -107,12 +107,16 @@ targets:
   - 'timings.aikar.co'
   - 'timings.spigotmc.org'
 
-  # Metrics services
-  - 'bstats.org'
-  - 'mcstats.spigotmc.org'
+  # OpenDNS: Required for proxies
+  - '208.67.220.220'
+  - '208.67.222.222'
 
   # Github API: Not required, but used by Paper
   - 'api.github.com'
+
+  # Metrics services
+  - 'bstats.org'
+  - 'mcstats.spigotmc.org'
 
   # Minecraft snooper
   - 'snoop.minecraft.net'
