@@ -74,7 +74,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
                 Object parent = loggerField.get(logger);
                 if (log4JLoggerClass.isInstance(parent)) {
                     System.out.println("log4j Logger (attempting parent fix #2) - setting all");
-                    Field allField = log4JLoggerClass.getField("ALL");
+                    Field allField = lo4jLevelClass.getField("ALL");
                     Object allLevel = allField.get(null);
                     Method setLevelMethod = log4JLoggerClass.getMethod("setLevel", lo4jLevelClass);
                     setLevelMethod.invoke(parent, allLevel);
