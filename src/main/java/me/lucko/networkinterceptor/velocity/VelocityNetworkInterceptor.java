@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
@@ -38,6 +40,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
     private final CommonNetworkInterceptor<VelocityNetworkInterceptor, PluginContainer> delegate;
     private VelocityConfiguration config;
     private final Metrics.Factory metricsFactory;
+    private boolean isStartup = true;
 
     @Inject
     public VelocityNetworkInterceptor(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory,
@@ -68,10 +71,14 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
 
         CommandManager commandManager = server.getCommandManager();
-        CommandMeta meta = commandManager.metaBuilder("networkinterceptorvelocity")
-                .aliases("niv").build();
+        CommandMeta meta = commandManager.metaBuilder("networkinterceptorvelocity").aliases("niv").build();
 
         commandManager.register(meta, new NetworkInterceptorCommand<>(this).asVelocityCommand());
+        isStartup = false;
+        for (RepeatingTaskInfo info : repeatingTasksToSchedule) {
+            runRepeatingTask(info.runnable, info.ticks);
+        }
+        repeatingTasksToSchedule.clear();
     }
 
     @Override
@@ -148,6 +155,17 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         server.getScheduler().buildTask(this, runnable).delay(ticks * 50L, TimeUnit.MILLISECONDS).schedule();
     }
 
+    private List<RepeatingTaskInfo> repeatingTasksToSchedule = new ArrayList<>();
+
+    public void runRepeatingTask(Runnable runnable, long ticks) {
+        if (isStartup) {
+            repeatingTasksToSchedule.add(new RepeatingTaskInfo(runnable, ticks));
+            return;
+        }
+        server.getScheduler().buildTask(this, runnable).repeat(ticks * 50L, TimeUnit.MILLISECONDS)
+                .delay(ticks * 50L, TimeUnit.MILLISECONDS).schedule();
+    }
+
     @Override
     public boolean isBukkit() {
         return false;
@@ -189,6 +207,16 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
 
     public ProxyServer getServer() {
         return server;
+    }
+
+    private class RepeatingTaskInfo {
+        private final Runnable runnable;
+        private final long ticks;
+
+        public RepeatingTaskInfo(Runnable runnable, long ticks) {
+            this.runnable = runnable;
+            this.ticks = ticks;
+        }
     }
 
 }

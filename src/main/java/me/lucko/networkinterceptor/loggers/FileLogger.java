@@ -2,12 +2,17 @@ package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.velocity.VelocityNetworkInterceptor;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Date;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Level;
@@ -16,11 +21,27 @@ import java.util.logging.Logger;
 
 public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final Logger logger;
+    private final File myFile;
+    private final Formatter formatter;
+    private final VelocityWrapper velocityWrapper;
 
     public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean truncateFile) {
         super(true, plugin.isBungee(), plugin.isVelocity());
         File file = new File(plugin.getDataFolder(), "intercept.log");
+        this.myFile = file;
         System.out.println("Initializing file logger that logs to the file " + file);
+        formatter = new Formatter() {
+            @Override
+            public String format(LogRecord record) {
+                return new Date(record.getMillis()).toString() + ": " + record.getMessage() + "\n";
+            }
+        };
+        velocityWrapper = isVelocity ? new VelocityWrapper() : null;
+        if (isVelocity) {
+            ((VelocityNetworkInterceptor) plugin).runRepeatingTask(velocityWrapper::write, 20L);
+            logger = velocityWrapper;
+            return;
+        }
         this.logger = Logger.getLogger(FileLogger.class.getName());
         try {
             file.getParentFile().mkdirs();
@@ -31,12 +52,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
             file.createNewFile();
 
             FileHandler fileHandler = new FileHandler(file.getAbsolutePath(), 0, 1, true);
-            fileHandler.setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    return new Date(record.getMillis()).toString() + ": " + record.getMessage() + "\n";
-                }
-            });
+            fileHandler.setFormatter(formatter);
             this.logger.addHandler(fileHandler);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -132,5 +148,32 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
         System.out.println("Logging (blocked) to FILE: " + event + " with logger " + this.logger + " @ " + this.logger.getLevel() + " and parent " + parent + " @ " + parent.getLevel());
         super.logBlock(event);
         System.out.println("Logged  (blocked) to FILE: " + event + " with logger " + this.logger + " @ " + this.logger.getLevel() + " and parent @ " + parent.getLevel());
+    }
+    
+    private final class VelocityWrapper extends Logger {
+        private final Queue<String> queue = new LinkedBlockingQueue<>();
+
+        protected VelocityWrapper() {
+            super("VelocityWrapper", null);
+            
+        }
+
+        @Override
+        public void log(LogRecord record) {
+            queue.add(formatter.format(record));
+        }
+
+        private synchronized void write() {
+            try (BufferedWriter output = new BufferedWriter(new FileWriter(myFile, true))) {
+                while (!queue.isEmpty()) {
+                    output.write(queue.poll());
+                    output.newLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        
+
     }
 }
