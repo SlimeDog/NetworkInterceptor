@@ -57,6 +57,12 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
             attemptJulLoggerLevel(parent);
             parent = parent.getParent();
         }
+        // TODO - remove
+        this.logger.warning("(WARN) Current Server version: " + plugin.getServerVersion());
+        this.logger.warning("(WARN) Current NetworkInterceptor version: " + plugin.getPluginVersion());
+        this.logger.severe("(ERROR) Current Server version: " + plugin.getServerVersion());
+        this.logger.severe("(ERROR) Current NetworkInterceptor version: " + plugin.getPluginVersion());
+        // TODO - remove
     }
 
     private void attemptJulLoggerLevel(Logger logger) {
@@ -72,6 +78,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
                 Field loggerField = coreLoggerClass.getDeclaredField("logger");
                 loggerField.setAccessible(true);
                 Object parent = loggerField.get(logger);
+                System.out.println("REAL parent: " + parent + " of class " + parent.getClass());
                 if (log4JLoggerClass.isInstance(parent)) {
                     System.out.println("log4j Logger (attempting parent fix #2) - setting all");
                     Field allField = lo4jLevelClass.getField("ALL");
