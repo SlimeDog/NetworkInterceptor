@@ -18,15 +18,17 @@ public class InterceptEvent<PLUGIN> {
     private final Map<StackTraceElement, PLUGIN> nonInternalStackTrace = new LinkedHashMap<>();
     private final Set<PLUGIN> tracedPlugins = new LinkedHashSet<>();
     private final boolean isBungee;
+    private final boolean isVelocity;
     private final BungeePluginFinder bungeePluginFinder;
     private String originalHost;
     private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
     private PLUGIN trustedPlugin;
 
-    public InterceptEvent(String host, StackTraceElement[] stackTrace, boolean isBungee) {
+    public InterceptEvent(String host, StackTraceElement[] stackTrace, boolean isBungee, boolean isVelocity) {
         this.host = host;
         this.stackTrace = stackTrace;
         this.isBungee = isBungee;
+        this.isVelocity = isVelocity;
         bungeePluginFinder = isBungee ? new BungeePluginFinder() : null;
         generateNonInternalStackTrace();
     }
@@ -91,13 +93,15 @@ public class InterceptEvent<PLUGIN> {
 
     @SuppressWarnings("unchecked")
     private PLUGIN getProvidingPlugin(StackTraceElement element) {
-        if (!isBungee) {
+        if (!isBungee && !isVelocity) {
             try {
                 Class<?> clazz = Class.forName(element.getClassName());
                 return (PLUGIN) JavaPlugin.getProvidingPlugin(clazz);
             } catch (Exception e) {
                 return null;
             }
+        } else if (isVelocity) {
+            return null; // TODO - find
         } else {
             return (PLUGIN) bungeePluginFinder.findPlugin(element);
         }

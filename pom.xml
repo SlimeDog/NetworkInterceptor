@@ -6,7 +6,19 @@
 
     <groupId>me.lucko</groupId>
     <artifactId>networkinterceptor</artifactId>
-    <version>3.0.1</version>
+    <!--
+      NB!
+        When bumping version, make sure (manually) bump the version in VelocityNetworkInterceptorInfo class.
+        This is due to the way the decorator works which makes getting this information fomr the pom more difficult.
+      NB!
+    -->
+    <version>3.0.2</version>
+    <!--
+      NB!
+        When bumping version, make sure (manually) bump the version in VelocityNetworkInterceptorInfo class.
+        This is due to the way the decorator works which makes getting this information fomr the pom more difficult.
+      NB!
+    -->
     <packaging>jar</packaging>
 
     <name>NetworkInterceptor</name>
@@ -71,16 +83,28 @@
             <scope>compile</scope>
           </dependency>
           <dependency>
-              <groupId>org.bstats</groupId>
-              <artifactId>bstats-bungeecord</artifactId>
-              <version>2.2.1</version>
-              <scope>compile</scope>
-            </dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-bungeecord</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+          </dependency>
+          <dependency>
+            <groupId>org.bstats</groupId>
+            <artifactId>bstats-velocity</artifactId>
+            <version>2.2.1</version>
+            <scope>compile</scope>
+          </dependency>
           <dependency>
               <groupId>net.md-5</groupId>
               <artifactId>bungeecord-api</artifactId>
               <version>1.16-R0.5-SNAPSHOT</version>
               <type>jar</type>
+              <scope>provided</scope>
+          </dependency>
+          <dependency>
+              <groupId>com.velocitypowered</groupId>
+              <artifactId>velocity-api</artifactId>
+              <version>3.0.0</version>
               <scope>provided</scope>
           </dependency>
     </dependencies>
@@ -93,6 +117,10 @@
         <repository>
             <id>bungeecord-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
+            <id>velocity</id>
+            <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
         </repository>
     </repositories>
 

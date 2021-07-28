@@ -28,6 +28,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.velocitypowered.api.command.SimpleCommand;
+import com.velocitypowered.api.plugin.PluginContainer;
+
 public class NetworkInterceptorCommand<PLUGIN> {
     private static final List<String> OPTIONS = Arrays.asList("reload", "info");
 
@@ -39,8 +42,16 @@ public class NetworkInterceptorCommand<PLUGIN> {
 
     public boolean onCommand(CommonCommandSender sender, String[] args) {
         if (args.length == 0) {
-            sender.send(ChatColor.RED + "Running NetworkInterceptor v" + this.plugin.getPluginVersion());
-            sender.send(ChatColor.GRAY + "Use '/networkinterceptor reload' to reload the configuration.");
+            String versionMsg = "Running NetworkInterceptor v" + this.plugin.getPluginVersion();
+            if (plugin.isBukkit() || plugin.isBungee()) {
+                versionMsg = ChatColor.RED + versionMsg;
+            }
+            sender.send(versionMsg);
+            String helpMsg = "Use '/networkinterceptor reload' to reload the configuration.";
+            if (plugin.isBukkit() || plugin.isBungee()) {
+                helpMsg = ChatColor.GRAY + helpMsg;
+            }
+            sender.send(helpMsg);
 
             return true;
         }
@@ -48,7 +59,11 @@ public class NetworkInterceptorCommand<PLUGIN> {
         if (args[0].equalsIgnoreCase("reload") && sender.hasPermission("networkinterceptor.command.reload")) {
             this.plugin.reload();
 
-            sender.send(ChatColor.GOLD + "NetworkInterceptor configuration reloaded.");
+            String msg = "NetworkInterceptor configuration reloaded.";
+            if (plugin.isBukkit() || plugin.isBungee()) {
+                msg = ChatColor.GRAY + msg;
+            }
+            sender.send(msg);
 
             return true;
         } else if (args[0].equalsIgnoreCase("info") && sender.hasPermission("networkinterceptor.command.info")) {
@@ -56,7 +71,11 @@ public class NetworkInterceptorCommand<PLUGIN> {
             return true;
         }
 
-        sender.send(ChatColor.RED + "Unknown subcommand.");
+        String msg = "Unknown subcommand.";
+        if (plugin.isBukkit() || plugin.isBungee()) {
+            msg = ChatColor.RED + msg;
+        }
+        sender.send(msg);
 
         return true;
     }
@@ -169,6 +188,11 @@ public class NetworkInterceptorCommand<PLUGIN> {
         return new BungeeWrapper((NetworkInterceptorCommand<Plugin>) this);
     }
 
+    @SuppressWarnings("unchecked")
+    public VelocityWrapper asVelocityCommand() {
+        return new VelocityWrapper((NetworkInterceptorCommand<PluginContainer>) this);
+    }
+
     public static class SpigotWrapper implements TabExecutor {
         private final NetworkInterceptorCommand<JavaPlugin> cmd;
 
@@ -217,5 +241,18 @@ public class NetworkInterceptorCommand<PLUGIN> {
             cmd.onCommand(new CommonCommandSender.Bungee(sender), args);
         }
 
+    }
+
+    public static class VelocityWrapper implements SimpleCommand {
+        private final NetworkInterceptorCommand<PluginContainer> cmd;
+
+        private VelocityWrapper(NetworkInterceptorCommand<PluginContainer> cmd) {
+            this.cmd = cmd;
+        }
+
+        @Override
+        public void execute(Invocation invocation) {
+            cmd.onCommand(new CommonCommandSender.Velocity(invocation.source()), invocation.arguments());
+        }
     }
 }

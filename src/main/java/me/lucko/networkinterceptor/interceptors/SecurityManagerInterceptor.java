@@ -31,7 +31,7 @@ public class SecurityManagerInterceptor<PLUGIN> extends SecurityManager implemen
     @Override
     public void checkConnect(String host, int port) {
         StackTraceElement[] trace = new Exception().getStackTrace();
-        InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee());
+        InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee(), plugin.isVelocity());
 
         boolean blocked = this.plugin.getDelegate().shouldBlock(event);
 

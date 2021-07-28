@@ -36,6 +36,8 @@ import me.lucko.networkinterceptor.loggers.FileLogger;
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
 import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
+import me.lucko.networkinterceptor.velocity.VelocityNetworkInterceptor;
+import me.lucko.networkinterceptor.velocity.VelocityPluginOptions;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> {
@@ -252,7 +254,8 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
             } else {
-                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee());
+                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee(),
+                        plugin.isVelocity());
             }
             this.blocker = new CompositeBlocker<>(manBlocker, this.blocker, pluginBlocker);
             // registerManualStopTask = manBlocker != null &&
@@ -292,6 +295,11 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             @SuppressWarnings("unchecked")
             PluginOptions<PLUGIN> opts = (PluginOptions<PLUGIN>) new BungeePluginOptions<Plugin>((Plugin) plugin,
                     keepType, allowNonPlugin, trustedPlugins);
+            return opts;
+        } else if (plugin.isVelocity()) {
+            @SuppressWarnings("unchecked")
+            PluginOptions<PLUGIN> opts = (PluginOptions<PLUGIN>) new VelocityPluginOptions(
+                    (VelocityNetworkInterceptor) plugin, keepType, allowNonPlugin, trustedPlugins);
             return opts;
         }
         throw new IllegalStateException("Unknown type of plugin: " + plugin);

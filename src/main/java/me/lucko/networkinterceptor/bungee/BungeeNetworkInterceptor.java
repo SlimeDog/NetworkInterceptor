@@ -130,6 +130,11 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     }
 
     @Override
+    public boolean isVelocity() {
+        return false;
+    }
+
+    @Override
     public CommonNetworkInterceptor<BungeeNetworkInterceptor, Plugin> getDelegate() {
         return delegate;
     }

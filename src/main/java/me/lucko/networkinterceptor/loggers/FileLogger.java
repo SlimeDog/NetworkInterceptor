@@ -1,5 +1,6 @@
 package me.lucko.networkinterceptor.loggers;
 
+import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.io.File;
@@ -15,9 +16,15 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final Logger logger;
 
     public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean truncateFile) {
-        super(true, plugin.isBungee());
+        super(true, plugin.isBungee(), plugin.isVelocity());
         File file = new File(plugin.getDataFolder(), "intercept.log");
-        this.logger = Logger.getLogger(FileLogger.class.getName());
+        Formatter formatter = new Formatter() {
+            @Override
+            public String format(LogRecord record) {
+                return new Date(record.getMillis()).toString() + ": " + record.getMessage() + "\n";
+            }
+        };
+        this.logger = isVelocity ? new VelocityWrapper() : Logger.getLogger(FileLogger.class.getName());
         try {
             file.getParentFile().mkdirs();
             if (truncateFile && file.exists()) {
@@ -27,12 +34,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
             file.createNewFile();
 
             FileHandler fileHandler = new FileHandler(file.getAbsolutePath(), 0, 1, true);
-            fileHandler.setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    return new Date(record.getMillis()).toString() + ": " + record.getMessage() + "\n";
-                }
-            });
+            fileHandler.setFormatter(formatter);
             this.logger.addHandler(fileHandler);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -42,10 +44,35 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
         this.logger.setFilter(record -> true);
         this.logger.info("Current Server version: " + plugin.getServerVersion());
         this.logger.info("Current NetworkInterceptor version: " + plugin.getPluginVersion());
+        Logger parent = this.logger.getParent();
+        while (parent != null) {
+            parent.setLevel(Level.ALL);
+            parent.setFilter(record -> true);
+            parent = parent.getParent();
+        }
     }
 
     @Override
     public Logger getLogger() {
         return this.logger;
+    }
+
+    @Override
+    public void logAttempt(InterceptEvent<PLUGIN> event) {
+        super.logAttempt(event);
+    }
+
+    @Override
+    public void logBlock(InterceptEvent<PLUGIN> event) {
+        super.logBlock(event);
+    }
+
+    private final class VelocityWrapper extends Logger {
+
+        protected VelocityWrapper() {
+            super("VelocityWrapper", null);
+
+        }
+
     }
 }

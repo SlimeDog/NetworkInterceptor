@@ -11,11 +11,13 @@ import java.util.logging.Logger;
 
 public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN> {
     private final boolean includeTraces;
-    private final boolean isBungee;
+    protected final boolean isBungee;
+    protected final boolean isVelocity;
 
-    protected AbstractEventLogger(boolean includeTraces, boolean isBungee) {
+    protected AbstractEventLogger(boolean includeTraces, boolean isBungee, boolean isVelocity) {
         this.includeTraces = includeTraces;
         this.isBungee = isBungee;
+        this.isVelocity = isVelocity;
     }
 
     protected abstract Logger getLogger();
@@ -37,7 +39,7 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
             Map<StackTraceElement, PLUGIN> map = event.getNonInternalStackTraceWithPlugins();
             for (StackTraceElement element : map.keySet()) {
                 sb.append("\tat ").append(element);
-                if (!isBungee) {
+                if (!isBungee && !isVelocity) {
                     JavaPlugin providingPlugin = (JavaPlugin) map.get(element);
                     if (providingPlugin != null) {
                         sb.append(" [").append(providingPlugin.getName()).append(']');

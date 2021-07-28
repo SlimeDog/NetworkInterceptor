@@ -116,6 +116,11 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
+    public boolean isVelocity() {
+        return false;
+    }
+
+    @Override
     public CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> getDelegate() {
         return delegate;
     }
