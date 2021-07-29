@@ -6,4 +6,4 @@ description: ${project.description}
 author: drives_a_ford, Luck, SlimeDog
 load: STARTUP
 depend: []
-softdepend: []
+softdepend: [LuckPerms]
