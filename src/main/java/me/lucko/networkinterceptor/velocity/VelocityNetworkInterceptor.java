@@ -15,6 +15,7 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
@@ -31,7 +32,10 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfig
 
 @Plugin(id = VelocityNetworkInterceptorInfo.ID, name = VelocityNetworkInterceptorInfo.NAME, //
         version = VelocityNetworkInterceptorInfo.VERSION, //
-        description = VelocityNetworkInterceptorInfo.DESCRIPTION, authors = { "drives_a_ford" })
+        description = VelocityNetworkInterceptorInfo.DESCRIPTION, authors = { "drives_a_ford" },
+        dependencies = {
+          @Dependency(id = "luckperms", optional = true)
+        })
 public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<PluginContainer> {
     private final ProxyServer server;
     private final Logger logger;
