@@ -32,10 +32,8 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfig
 
 @Plugin(id = VelocityNetworkInterceptorInfo.ID, name = VelocityNetworkInterceptorInfo.NAME, //
         version = VelocityNetworkInterceptorInfo.VERSION, //
-        description = VelocityNetworkInterceptorInfo.DESCRIPTION, authors = { "drives_a_ford" },
-        dependencies = {
-          @Dependency(id = "luckperms", optional = true)
-        })
+        description = VelocityNetworkInterceptorInfo.DESCRIPTION, authors = { "drives_a_ford" }, dependencies = {
+                @Dependency(id = "luckperms", optional = true) })
 public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<PluginContainer> {
     private final ProxyServer server;
     private final Logger logger;
@@ -192,7 +190,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
 
     @Override
     public PluginContainer asPlugin() {
-        return server.getPluginManager().getPlugin("NetworkInterceptor").get();
+        return server.getPluginManager().getPlugin(VelocityNetworkInterceptorInfo.ID).get();
     }
 
     @Override
