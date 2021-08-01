@@ -24,11 +24,8 @@ For more detailed analysis of network traffic, we recommend trying [Wireshark](h
 ### Commands
 All **NetworkInterceptor** commands are accessible at the console, and in-game with appropriate permissions (default OP). Tab-completion is supported for all commands.
 
-### Message localization
-All **NetworkInterceptor** messages may be localized. Message changes take effect on plugin reload or server restart.
-
 ### Version Support
-**NetworkInterceptor** 2.0.0 is certified for Spigot 1.12.2, 1.13.2, 1.14.4, 1.15.2; and for Spigot and Paper 1.16.5 and 1.17.x.
+**NetworkInterceptor** 3.1.2 is certified for Spigot and Paper 1.16.5 and 1.17.x, BungeeCord and Waterfall 1.17, and Velocity 3.0.0.
 
 **NetworkInterceptor** may or may not work on previous Spigot releases or other non-Spigot variants.
 
