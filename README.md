@@ -1,5 +1,3 @@
-**NetworkInterceptor 1.0** was made with :heart: by Luck. All credit for the original design and implementation belong to him.
-
 ### Overview
 **NetworkInterceptor** detects and (optionally) blocks outgoing network connections. Some examples include:
 * Generally required:
@@ -32,5 +30,7 @@ All **NetworkInterceptor** commands are accessible at the console, and in-game w
 Note: Only certified releases are supported.
 
 ### The Wiki
-NetworkInterceptor is completely documented on The Wiki. Please start there when you have questions.
+**NetworkInterceptor** is completely documented on The Wiki. Please start there when you have questions.
 https://github.com/SlimeDog/NetworkInterceptor/wiki
+
+And we'll never forget: **NetworkInterceptor 1.0** was made with ❤️ by Luck. All credit for the original design and implementation belong to him.
