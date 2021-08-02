@@ -33,4 +33,4 @@ Note: Only certified releases are supported.
 **NetworkInterceptor** is completely documented on The Wiki. Please start there when you have questions.
 https://github.com/SlimeDog/NetworkInterceptor/wiki
 
-And we'll never forget: **NetworkInterceptor 1.0** was made with ❤️ by Luck. All credit for the original design and implementation belong to him.
+And we'll never forget: **NetworkInterceptor 1.0** was made with ❤️ by Luck. All credit for the original design and implementation belongs to him.
