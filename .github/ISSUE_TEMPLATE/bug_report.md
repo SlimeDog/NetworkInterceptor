@@ -21,8 +21,8 @@ If applicable, add screenshots to help explain the problem
 
 **Server Environment**
  - OS [Linux, MacOS, Windows] version: 
- - Java version: 
- - Spigot version [/version]: 
+ - Java version [java -version]
+ - Server version [/version]: 
  - NetworkInterceptor version [/version NetworkInterceptor]: 
 
 **Additional context**
