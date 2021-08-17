@@ -21,6 +21,7 @@ import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 
+import org.bstats.charts.SimplePie;
 import org.bstats.velocity.Metrics;
 import org.slf4j.Logger;
 
@@ -68,7 +69,8 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         boolean useMetrics = getConfiguration().getBoolean("enable-metrics", true);
         if (useMetrics) {
             int pluginId = 12197;
-            metricsFactory.make(this, pluginId);
+            Metrics metrics = metricsFactory.make(this, pluginId);
+            metrics.addCustomChart(new SimplePie("mode", () -> config.getString("mode", "N/A")));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
 

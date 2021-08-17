@@ -10,6 +10,7 @@ import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptorPlugin<JavaPlugin> {
@@ -28,7 +29,8 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         boolean useMetrics = getConfig().getBoolean("enable-metrics", true);
         if (useMetrics) {
             int pluginId = 11822;
-            new Metrics(this, pluginId);
+            Metrics metrics = new Metrics(this, pluginId);
+            metrics.addCustomChart(new SimplePie("mode", () -> config.getString("mode", "N/A")));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }

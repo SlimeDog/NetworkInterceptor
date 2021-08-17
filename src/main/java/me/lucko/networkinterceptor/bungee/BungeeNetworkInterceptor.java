@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.concurrent.TimeUnit;
 
 import org.bstats.bungeecord.Metrics;
+import org.bstats.charts.SimplePie;
 
 import me.lucko.networkinterceptor.NetworkInterceptorCommand;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
@@ -32,7 +33,8 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
         boolean useMetrics = getConfiguration().getBoolean("enable-metrics", true);
         if (useMetrics) {
             int pluginId = 12035;
-            new Metrics(this, pluginId);
+            Metrics metrics = new Metrics(this, pluginId);
+            metrics.addCustomChart(new SimplePie("mode", () -> configuration.getString("mode", "N/A")));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
