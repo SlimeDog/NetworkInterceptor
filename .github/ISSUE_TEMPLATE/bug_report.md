@@ -21,7 +21,7 @@ If applicable, add screenshots to help explain the problem
 
 **Server Environment**
  - OS [Linux, MacOS, Windows] version: 
- - Java version [java -version]
+ - Java version [java -version]:
  - Server version [/version]: 
  - NetworkInterceptor version [/version NetworkInterceptor]: 
 
