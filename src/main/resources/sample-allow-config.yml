@@ -125,9 +125,12 @@ targets:
   - 'api.extendedclip.com'
 
   # SpigotMC library loader
-  # For plugins that utilize the SpigotMC library loader, e.g., ntdLuckyBlock
+  # For plugins that utilize the SpigotMC library loader
+  # For example: LuckPerms, ntdLuckyBlock, TicketManager
   - 'repo.maven.apache.org'
-
+  - '199.232.192.215'
+  - '199.232.196.215'
+  
   ########## Generally good: plugin version/update check #######################
 
   # Plugin update checks
