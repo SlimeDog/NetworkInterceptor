@@ -22,6 +22,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         // init early
         // this is seen as bad practice, but we want to try and catch as
         // many requests as possible
+        saveDefaultConfig();
         config = new BukkitConfiguration(getConfig());
         delegate = new CommonNetworkInterceptor<>(this);
 
