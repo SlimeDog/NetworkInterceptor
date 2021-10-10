@@ -14,6 +14,8 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptorPlugin<JavaPlugin> {
+    private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
+    private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
     private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
     private BukkitConfiguration config;
     private boolean registerManualStopTask = false;
@@ -23,6 +25,8 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         // this is seen as bad practice, but we want to try and catch as
         // many requests as possible
         saveDefaultConfig();
+        saveResource(SAMPLE_ALLOW_CONFIG_FILE_NAME, false);
+        saveResource(SAMPLE_DENY_CONFIG_FILE_NAME, false);
         config = new BukkitConfiguration(getConfig());
         delegate = new CommonNetworkInterceptor<>(this);
 
