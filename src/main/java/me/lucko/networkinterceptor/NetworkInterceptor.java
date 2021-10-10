@@ -9,6 +9,8 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
+import java.io.File;
+
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,8 +27,8 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         // this is seen as bad practice, but we want to try and catch as
         // many requests as possible
         saveDefaultConfig();
-        saveResource(SAMPLE_ALLOW_CONFIG_FILE_NAME, false);
-        saveResource(SAMPLE_DENY_CONFIG_FILE_NAME, false);
+        saveResourceInternal(SAMPLE_ALLOW_CONFIG_FILE_NAME);
+        saveResourceInternal(SAMPLE_DENY_CONFIG_FILE_NAME);
         config = new BukkitConfiguration(getConfig());
         delegate = new CommonNetworkInterceptor<>(this);
 
@@ -38,6 +40,14 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
             metrics.addCustomChart(new SimplePie("mode", () -> config.getString("mode", "N/A")));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
+    }
+
+    private void saveResourceInternal(String name) {
+        File file = new File(getDataFolder(), name);
+        if (file.exists()) {
+            return;
+        }
+        saveResource(name, false);
     }
 
     @Override
