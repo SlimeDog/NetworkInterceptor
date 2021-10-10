@@ -20,12 +20,16 @@ import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
 
 public class BungeeNetworkInterceptor extends Plugin implements NetworkInterceptorPlugin<Plugin> {
+    private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
+    private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
     private final CommonNetworkInterceptor<BungeeNetworkInterceptor, Plugin> delegate;
     private Configuration configuration;
     private BungeeConfiguration bungeeConfig;
 
     public BungeeNetworkInterceptor() {
         saveDefaultConfig();
+        saveResource(SAMPLE_ALLOW_CONFIG_FILE_NAME);
+        saveResource(SAMPLE_DENY_CONFIG_FILE_NAME);
         loadConfig();
         delegate = new CommonNetworkInterceptor<>(this);
 
@@ -64,13 +68,17 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
 
     @Override
     public void saveDefaultConfig() {
+        saveResource("config.yml");
+    }
+
+    public void saveResource(String fileName) {
         if (!getDataFolder().exists())
             getDataFolder().mkdir();
 
-        File file = new File(getDataFolder(), "config.yml");
+        File file = new File(getDataFolder(), fileName);
 
         if (!file.exists()) {
-            try (InputStream in = getResourceAsStream("config.yml")) {
+            try (InputStream in = getResourceAsStream(fileName)) {
                 Files.copy(in, file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
