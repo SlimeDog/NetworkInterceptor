@@ -36,6 +36,8 @@ import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfig
         description = VelocityNetworkInterceptorInfo.DESCRIPTION, authors = { "drives_a_ford" }, dependencies = {
                 @Dependency(id = "luckperms", optional = true) })
 public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<PluginContainer> {
+    private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
+    private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
     private final ProxyServer server;
     private final Logger logger;
     private final VelictyLoggerWrapper loggerWrapper;
@@ -53,6 +55,8 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         this.dataDirectory = dataDirectory;
         this.loggerWrapper = new VelictyLoggerWrapper(this, this.logger);
         saveDefaultConfig();
+        saveResource(SAMPLE_ALLOW_CONFIG_FILE_NAME);
+        saveResource(SAMPLE_DENY_CONFIG_FILE_NAME);
         reloadConfig();
         this.delegate = new CommonNetworkInterceptor<>(this);
         this.metricsFactory = metricsFactory;
@@ -87,13 +91,17 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
 
     @Override
     public void saveDefaultConfig() {
+        saveResource("config.yml");
+    }
+
+    public void saveResource(String fileName) {
         if (!getDataFolder().exists())
             getDataFolder().mkdir();
 
-        File file = getConfigFile();
+        File file = new File(getDataFolder(), fileName);
 
         if (!file.exists()) {
-            try (InputStream in = getClass().getClassLoader().getResourceAsStream("config.yml")) {
+            try (InputStream in = getClass().getClassLoader().getResourceAsStream(fileName)) {
                 Files.copy(in, file.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
