@@ -138,7 +138,7 @@ targets:
   - 'api.spiget.org'                    # Alternate for SpigotMC plugins
   - 'api.spigotmc.org'                  # Standard for SpigotMC plugins
   - 'gist.githubusercontent.com'        # PremiumVanish (probably also SuperVanish)
-  - 'raw.githubusercontent.com'         # DiscordSRV
+  - 'raw.githubusercontent.com'         # CMI, DiscordSRV
 
   ########## Recommended #######################################################
 
