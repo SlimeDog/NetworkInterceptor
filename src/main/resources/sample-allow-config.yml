@@ -77,6 +77,12 @@ mapping:
 # - LuckPerms
 trusted-plugins: []
 
+# Blocked plugins
+# No network connections by the listed plugin(s) will be allowed, period.
+# Remove [] on the next line, and add the following line (without the # comment).
+# - pluginName
+blocked-plugins: []
+
 # The target list
 # Entries should be lowercase
 # In allow mode, outbound network connections to these targets will be allowed.
