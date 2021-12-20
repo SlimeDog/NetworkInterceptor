@@ -9,10 +9,15 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeePluginOptions<T extends Plugin> extends PluginOptions<T> {
     private final Plugin owner;
-    private final Set<Plugin> trustedPlugins = new HashSet<>();
+    private final Set<Plugin> plugins = new HashSet<>();
 
     public BungeePluginOptions(Plugin owner, KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins) {
-        super(keepType, allowNonPlugin, trustedPlugins);
+        this(owner, keepType, allowNonPlugin, trustedPlugins, true);
+    }
+
+    public BungeePluginOptions(Plugin owner, KeepPlugins keepType, boolean allowNonPlugin, Set<String> plugins,
+            boolean trust) {
+        super(keepType, allowNonPlugin, plugins, trust);
         this.owner = owner;
     }
 
@@ -22,13 +27,13 @@ public class BungeePluginOptions<T extends Plugin> extends PluginOptions<T> {
         if (plugin == null) {
             return false;
         }
-        this.trustedPlugins.add(plugin);
+        this.plugins.add(plugin);
         return true;
     }
 
     @Override
     public boolean isTrusted(T plugin) {
-        return trustedPlugins.contains(plugin);
+        return plugins.contains(plugin);
     }
-    
+
 }

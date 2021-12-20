@@ -12,10 +12,16 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> {
     private final JavaPlugin owner;
-    private final Set<JavaPlugin> trustedPlugins = new HashSet<>();
+    private final Set<JavaPlugin> plugins = new HashSet<>();
 
-    public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins) {
-        super(keepType, allowNonPlugin, trustedPlugins);
+    public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
+            Set<String> plugins) {
+        this(owner, keepType, allowNonPlugin, plugins, true);
+    }
+
+    public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
+            Set<String> plugins, boolean trust) {
+        super(keepType, allowNonPlugin, plugins, trust);
         this.owner = owner;
     }
 
@@ -29,13 +35,14 @@ public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> 
             owner.getLogger().warning("Plugin of unknown type (" + name + "): " + plugin);
             return false;
         }
-        this.trustedPlugins.add((JavaPlugin) plugin);
+        this.plugins.add((JavaPlugin) plugin);
         return true;
     }
 
     @Override
     public boolean isTrusted(T plugin) {
-        return trustedPlugins.contains(plugin);
+        return plugins.contains(plugin) == trust; // if trust is true, plugin must be listed; if trust is false, plugin
+                                                  // must not be listed
     }
-    
+
 }

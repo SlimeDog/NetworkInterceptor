@@ -13,12 +13,14 @@ public abstract class PluginOptions<PLUGIN> {
     private final boolean allowNonPlugin;
     private final Set<String> allTrustedPluginNames;
     private final Set<String> pluginNames;
+    protected final boolean trust;
 
-    public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins) {
+    public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> plugins, boolean trust) {
         this.keepType = keepType;
         this.allowNonPlugin = allowNonPlugin;
-        this.allTrustedPluginNames = new HashSet<>(trustedPlugins);
-        this.pluginNames = trustedPlugins;
+        this.allTrustedPluginNames = new HashSet<>(plugins);
+        this.pluginNames = plugins;
+        this.trust = trust;
     }
 
     public void searchForPlugins(NetworkInterceptorPlugin<PLUGIN> owner) {
@@ -57,11 +59,10 @@ public abstract class PluginOptions<PLUGIN> {
 
     public abstract boolean isTrusted(PLUGIN plugin);
 
-    // public boolean isTrusted(JavaPlugin plugin) {
-    //     return trustedPlugins.contains(plugin);
-    // }
-
     public boolean isListedAsTrustedPluginName(String pluginName) {
+        if (!trust) {
+            return !allTrustedPluginNames.contains(pluginName);
+        }
         return allTrustedPluginNames.contains(pluginName);
     }
 

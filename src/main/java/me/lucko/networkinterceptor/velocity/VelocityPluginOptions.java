@@ -11,11 +11,16 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 public class VelocityPluginOptions extends PluginOptions<PluginContainer> {
     private final VelocityNetworkInterceptor owner;
-    private final Set<PluginContainer> trustedPlugins = new HashSet<>();
+    private final Set<PluginContainer> plugins = new HashSet<>();
 
     public VelocityPluginOptions(VelocityNetworkInterceptor owner, KeepPlugins keepType, boolean allowNonPlugin,
-            Set<String> trustedPlugins) {
-        super(keepType, allowNonPlugin, trustedPlugins);
+            Set<String> plugins) {
+        this(owner, keepType, allowNonPlugin, plugins, true);
+    }
+
+    public VelocityPluginOptions(VelocityNetworkInterceptor owner, KeepPlugins keepType, boolean allowNonPlugin,
+            Set<String> plugins, boolean trust) {
+        super(keepType, allowNonPlugin, plugins, trust);
         this.owner = owner;
     }
 
@@ -25,13 +30,14 @@ public class VelocityPluginOptions extends PluginOptions<PluginContainer> {
         if (plugin == null || !plugin.isPresent()) {
             return false;
         }
-        this.trustedPlugins.add(plugin.get());
+        this.plugins.add(plugin.get());
         return true;
     }
 
     @Override
     public boolean isTrusted(PluginContainer plugin) {
-        return trustedPlugins.contains(plugin);
+        return plugins.contains(plugin) == trust; // if trust is true, plugin must be listed; if trust is false, plugin
+                                                  // must not be listed
     }
 
 }
