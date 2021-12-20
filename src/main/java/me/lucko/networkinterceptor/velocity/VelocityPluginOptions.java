@@ -1,6 +1,5 @@
 package me.lucko.networkinterceptor.velocity;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -11,7 +10,6 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 public class VelocityPluginOptions extends PluginOptions<PluginContainer> {
     private final VelocityNetworkInterceptor owner;
-    private final Set<PluginContainer> plugins = new HashSet<>();
 
     public VelocityPluginOptions(VelocityNetworkInterceptor owner, KeepPlugins keepType, boolean allowNonPlugin,
             Set<String> plugins) {
@@ -32,12 +30,6 @@ public class VelocityPluginOptions extends PluginOptions<PluginContainer> {
         }
         this.plugins.add(plugin.get());
         return true;
-    }
-
-    @Override
-    public boolean isTrusted(PluginContainer plugin) {
-        return plugins.contains(plugin) == trust; // if trust is true, plugin must be listed; if trust is false, plugin
-                                                  // must not be listed
     }
 
 }
