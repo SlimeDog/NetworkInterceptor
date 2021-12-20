@@ -1,6 +1,5 @@
 package me.lucko.networkinterceptor.bukkit;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -12,7 +11,6 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
 
 public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> {
     private final JavaPlugin owner;
-    private final Set<JavaPlugin> plugins = new HashSet<>();
 
     public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
             Set<String> plugins) {
@@ -26,6 +24,7 @@ public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> 
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected boolean attemptAddPlugin(String name) {
         Plugin plugin = Bukkit.getPluginManager().getPlugin(name);
         if (plugin == null) {
@@ -35,14 +34,8 @@ public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> 
             owner.getLogger().warning("Plugin of unknown type (" + name + "): " + plugin);
             return false;
         }
-        this.plugins.add((JavaPlugin) plugin);
+        this.plugins.add((T) plugin); // unchecked
         return true;
-    }
-
-    @Override
-    public boolean isTrusted(T plugin) {
-        return plugins.contains(plugin) == trust; // if trust is true, plugin must be listed; if trust is false, plugin
-                                                  // must not be listed
     }
 
 }

@@ -13,6 +13,7 @@ public abstract class PluginOptions<PLUGIN> {
     private final boolean allowNonPlugin;
     private final Set<String> allTrustedPluginNames;
     private final Set<String> pluginNames;
+    protected final Set<PLUGIN> plugins = new HashSet<>();
     protected final boolean trust;
 
     public PluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> plugins, boolean trust) {
@@ -57,7 +58,10 @@ public abstract class PluginOptions<PLUGIN> {
         return allowNonPlugin;
     }
 
-    public abstract boolean isTrusted(PLUGIN plugin);
+    public boolean isTrusted(PLUGIN plugin) {
+        return plugins.contains(plugin) == trust; // if trust is true, plugin must be listed; if trust is false, plugin
+                                                  // must not be listed
+    }
 
     public boolean isListedAsTrustedPluginName(String pluginName) {
         if (!trust) {
