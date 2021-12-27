@@ -290,6 +290,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         PluginOptions<PLUGIN> trustedOpts = getPluginOptions(trustedPlugins, keepType, allowNonPlugin, true);
         Set<String> blockedPlugins = new HashSet<>(configuration.getStringList("blocked-plugins"));
         PluginOptions<PLUGIN> blockedOpts = getPluginOptions(blockedPlugins, keepType, allowNonPlugin, true);
+        for (String trustedPluginName : trustedPlugins) {
+            if (blockedPlugins.contains(trustedPluginName)) {
+                plugin.getLogger().warning(
+                        "Conflicting trusted-plugins and blocked-plugins specifications were detected. Outbound connections by "
+                                + trustedPluginName + " will be blocked.");
+            }
+        }
         return new DelagatingPluginOptions<PLUGIN>(trustedOpts, blockedOpts);
     }
 
