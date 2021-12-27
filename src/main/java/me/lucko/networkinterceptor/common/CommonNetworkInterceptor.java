@@ -262,7 +262,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             // registerManualStopTask = manBlocker != null &&
             // manOptions.disableAfterStartup();
         }
-        if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
+        if (this.blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             long similarStackTimeoutMs = configuration.getLong("mapping.timer", -1L);
             if (similarStackTimeoutMs < 0) {
                 plugin.getLogger().severe("Mapping timer incorrect or not specified");
@@ -270,7 +270,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                         "(Need a positive number)");
             }
             plugin.getLogger().info("Using a mapping blocker with timer of " + similarStackTimeoutMs + "ms");
-            blocker = new LearningBlocker<>(blocker, similarStackTimeoutMs);
+            blocker = new LearningBlocker<>(this.blocker, similarStackTimeoutMs);
         }
     }
 
