@@ -289,7 +289,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         Set<String> trustedPlugins = new HashSet<>(configuration.getStringList("trusted-plugins"));
         PluginOptions<PLUGIN> trustedOpts = getPluginOptions(trustedPlugins, keepType, allowNonPlugin, true);
         Set<String> blockedPlugins = new HashSet<>(configuration.getStringList("blocked-plugins"));
-        PluginOptions<PLUGIN> blockedOpts = getPluginOptions(blockedPlugins, keepType, allowNonPlugin, true);
+        PluginOptions<PLUGIN> blockedOpts = getPluginOptions(blockedPlugins, keepType, allowNonPlugin, false);
         for (String trustedPluginName : trustedPlugins) {
             if (blockedPlugins.contains(trustedPluginName)) {
                 plugin.getLogger().warning(
@@ -305,13 +305,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             boolean allowNonPlugin, boolean trust) {
         if (plugin.isBukkit()) {
             return (PluginOptions<PLUGIN>) new BukkitPluginOptions<JavaPlugin>(
-                    (JavaPlugin) plugin, keepType, allowNonPlugin, plugins);
+                    (JavaPlugin) plugin, keepType, allowNonPlugin, plugins, trust);
         } else if (plugin.isBungee()) {
             return (PluginOptions<PLUGIN>) new BungeePluginOptions<Plugin>((Plugin) plugin,
-                    keepType, allowNonPlugin, plugins);
+                    keepType, allowNonPlugin, plugins, trust);
         } else if (plugin.isVelocity()) {
             return (PluginOptions<PLUGIN>) new VelocityPluginOptions(
-                    (VelocityNetworkInterceptor) plugin, keepType, allowNonPlugin, plugins);
+                    (VelocityNetworkInterceptor) plugin, keepType, allowNonPlugin, plugins, trust);
         }
         throw new IllegalStateException("Unknown type of plugin: " + plugin);
     }

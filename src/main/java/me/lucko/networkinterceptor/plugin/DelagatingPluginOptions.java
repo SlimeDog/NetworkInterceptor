@@ -4,6 +4,8 @@ import java.util.Collections;
 
 import org.apache.commons.lang.Validate;
 
+import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+
 public class DelagatingPluginOptions<PLUGIN> extends PluginOptions<PLUGIN> {
     private final PluginOptions<PLUGIN> one, two;
 
@@ -14,6 +16,12 @@ public class DelagatingPluginOptions<PLUGIN> extends PluginOptions<PLUGIN> {
                 "Need non-plugin behaviour to be the same");
         this.one = one;
         this.two = two;
+    }
+
+    @Override
+    public void searchForPlugins(NetworkInterceptorPlugin<PLUGIN> owner) {
+        one.searchForPlugins(owner);
+        two.searchForPlugins(owner);
     }
 
     @Override

@@ -12,11 +12,6 @@ public class VelocityPluginOptions extends PluginOptions<PluginContainer> {
     private final VelocityNetworkInterceptor owner;
 
     public VelocityPluginOptions(VelocityNetworkInterceptor owner, KeepPlugins keepType, boolean allowNonPlugin,
-            Set<String> plugins) {
-        this(owner, keepType, allowNonPlugin, plugins, true);
-    }
-
-    public VelocityPluginOptions(VelocityNetworkInterceptor owner, KeepPlugins keepType, boolean allowNonPlugin,
             Set<String> plugins, boolean trust) {
         super(keepType, allowNonPlugin, plugins, trust);
         this.owner = owner;
