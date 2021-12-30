@@ -38,6 +38,10 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
             int pluginId = 11822;
             Metrics metrics = new Metrics(this, pluginId);
             metrics.addCustomChart(new SimplePie("mode", () -> config.getString("mode", "N/A")));
+            metrics.addCustomChart(new SimplePie("trustedplugins",
+                    () -> String.valueOf(delegate.getPluginOptions().getTrustedOptions().getPluginNames().size())));
+            metrics.addCustomChart(new SimplePie("blockedplugins",
+                    () -> String.valueOf(delegate.getPluginOptions().getBlockedOptions().getPluginNames().size())));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }

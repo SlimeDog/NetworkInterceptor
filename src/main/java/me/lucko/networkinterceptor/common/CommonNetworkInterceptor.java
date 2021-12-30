@@ -339,6 +339,10 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         }
     }
 
+    public TrustedAndBlockedOptions<PLUGIN> getPluginOptions() {
+        return options;
+    }
+
     public Blocker<PLUGIN> getBlocker() {
         return blocker;
     }
