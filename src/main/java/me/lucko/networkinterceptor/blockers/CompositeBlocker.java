@@ -8,27 +8,17 @@ public class CompositeBlocker<PLUGIN> implements Blocker<PLUGIN> {
     private final ManualPluginDetectingBlocker<PLUGIN> manual;
     private final Blocker<PLUGIN>[] delegates;
     private boolean useManualBlocker = true;
-    private final boolean hasPluginAwareBlocker;
     private final PluginAwareBlocker<PLUGIN> pluginAwareBlocker;
 
     @SafeVarargs // hopefully
-    public CompositeBlocker(ManualPluginDetectingBlocker<PLUGIN> manualBlocker, Blocker<PLUGIN>... delegates) {
+    public CompositeBlocker(ManualPluginDetectingBlocker<PLUGIN> manualBlocker,
+            PluginAwareBlocker<PLUGIN> pluginAwareBlocker, Blocker<PLUGIN>... delegates) {
         this.manual = manualBlocker;
         if (manual == null) {
             useManualBlocker = false;
         }
+        this.pluginAwareBlocker = pluginAwareBlocker;
         this.delegates = delegates;
-        boolean containsPluginAwareBlocker = false;
-        PluginAwareBlocker<PLUGIN> thePluginAwareBlocker = null;
-        for (Blocker<PLUGIN> blocker : this.delegates) {
-            if (blocker instanceof PluginAwareBlocker) {
-                containsPluginAwareBlocker = true;
-                thePluginAwareBlocker = (PluginAwareBlocker<PLUGIN>) blocker;
-                break; // assume only 1
-            }
-        }
-        this.hasPluginAwareBlocker = containsPluginAwareBlocker;
-        this.pluginAwareBlocker = thePluginAwareBlocker;
     }
 
     @Override
@@ -36,8 +26,11 @@ public class CompositeBlocker<PLUGIN> implements Blocker<PLUGIN> {
         if (useManualBlocker && !manual.shouldBlock(event)) {
             return false; // allowed by manual plugin detecting blockeru
         }
-        if (hasPluginAwareBlocker && pluginAwareBlocker.shouldBlock(event)) {
-            return true;
+        if (pluginAwareBlocker.hasTrustedPlugins(event)) {
+            return false; // allow
+        }
+        if (pluginAwareBlocker.hasBlockedPlugins(event)) {
+            return true; // block
         }
         for (Blocker<PLUGIN> delegate : delegates) {
             if (delegate == this.pluginAwareBlocker) {

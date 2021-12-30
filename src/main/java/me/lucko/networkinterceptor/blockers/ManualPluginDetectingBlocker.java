@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
-import me.lucko.networkinterceptor.plugin.PluginOptions;
+import me.lucko.networkinterceptor.plugin.TrustedAndBlockedOptions;
 
 /**
  * This class is used to manually check stack trace for allowed plugins.
@@ -24,12 +24,13 @@ import me.lucko.networkinterceptor.plugin.PluginOptions;
  * it should not be used when the server is fully operational.
  */
 public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
-    private final PluginOptions<PLUGIN> pluginOptions;
+    private final TrustedAndBlockedOptions<PLUGIN> pluginOptions;
     private final ManualPluginOptions manualPluginOptions;
     private final boolean isBungee;
     private final boolean isVelocity;
 
-    public ManualPluginDetectingBlocker(PluginOptions<PLUGIN> pluginOptions, ManualPluginOptions manualPluginOptions,
+    public ManualPluginDetectingBlocker(TrustedAndBlockedOptions<PLUGIN> pluginOptions,
+            ManualPluginOptions manualPluginOptions,
             boolean isBungee, boolean isVelocity) {
         this.pluginOptions = pluginOptions;
         this.manualPluginOptions = manualPluginOptions;
@@ -43,7 +44,7 @@ public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
         if (pluginName == null) { // none found
             return true; // block
         }
-        boolean shouldBlock = !pluginOptions.isListedAsTrustedPluginName(pluginName);
+        boolean shouldBlock = !pluginOptions.getTrustedOptions().isListedAsTrustedPluginName(pluginName);
         if (!shouldBlock) { // try to add trusted plugin
             if (!isBungee) {
                 @SuppressWarnings("unchecked")

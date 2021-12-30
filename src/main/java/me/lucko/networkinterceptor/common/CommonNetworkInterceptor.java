@@ -33,7 +33,7 @@ import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
 import me.lucko.networkinterceptor.loggers.FileLogger;
-import me.lucko.networkinterceptor.plugin.DelagatingPluginOptions;
+import me.lucko.networkinterceptor.plugin.TrustedAndBlockedOptions;
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
 import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
@@ -46,7 +46,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
     private EventLogger<PLUGIN> logger = null;
     private Blocker<PLUGIN> blocker = null;
-    private PluginOptions<PLUGIN> options = null;
+    private TrustedAndBlockedOptions<PLUGIN> options = null;
     private boolean isOnStartup = true;
     // private boolean registerManualStopTask = false;
 
@@ -66,7 +66,8 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
 
     public void onEnable() {
         if (options != null) { // search now that the plugin is enabled
-            options.searchForPlugins(plugin);
+            options.getTrustedOptions().searchForPlugins(plugin);
+            options.getBlockedOptions().searchForPlugins(plugin);
         }
         isOnStartup = false;
     }
@@ -258,7 +259,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                 manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee(),
                         plugin.isVelocity());
             }
-            this.blocker = new CompositeBlocker<>(manBlocker, this.blocker, pluginBlocker);
+            this.blocker = new CompositeBlocker<>(manBlocker, pluginBlocker, this.blocker);
             // registerManualStopTask = manBlocker != null &&
             // manOptions.disableAfterStartup();
         }
@@ -274,7 +275,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         }
     }
 
-    private PluginOptions<PLUGIN> generatePluginOptions(AbstractConfiguration configuration) {
+    private TrustedAndBlockedOptions<PLUGIN> generatePluginOptions(AbstractConfiguration configuration) {
         // TODO - re-implement in config
         String keepTypeName = configuration.getString("keep-type", "ALL");
         KeepPlugins keepType;
@@ -297,7 +298,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                                 + trustedPluginName + " will be blocked.");
             }
         }
-        return new DelagatingPluginOptions<PLUGIN>(trustedOpts, blockedOpts);
+        return new TrustedAndBlockedOptions<PLUGIN>(trustedOpts, blockedOpts);
     }
 
     @SuppressWarnings("unchecked")

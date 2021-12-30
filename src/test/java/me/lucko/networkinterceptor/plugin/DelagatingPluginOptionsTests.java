@@ -15,7 +15,7 @@ public class DelagatingPluginOptionsTests {
         LocalPluginOptions allowed = LocalPluginOptions.allow(new Plugin("NAMED_TEST_PLUGIN_1"));
         allowed.searchForPlugins(null);
         LocalPluginOptions blocked = LocalPluginOptions.block();
-        DelagatingPluginOptions<Plugin> parent = new DelagatingPluginOptions<>(allowed, blocked);
+        TrustedAndBlockedOptions<Plugin> parent = new TrustedAndBlockedOptions<>(allowed, blocked);
         Assertions.assertTrue(parent.isTrusted(allowed.potentialPlugins.iterator().next()),
                 "Plugin not listed after being added");
     }
@@ -25,7 +25,7 @@ public class DelagatingPluginOptionsTests {
         LocalPluginOptions allowed = LocalPluginOptions.allow();
         LocalPluginOptions blocked = LocalPluginOptions.block(new Plugin("NAMED_TEST_PLUGIN_2"));
         blocked.searchForPlugins(null);
-        DelagatingPluginOptions<Plugin> parent = new DelagatingPluginOptions<>(allowed, blocked);
+        TrustedAndBlockedOptions<Plugin> parent = new TrustedAndBlockedOptions<>(allowed, blocked);
         Assertions.assertFalse(parent.isTrusted(blocked.potentialPlugins.iterator().next()),
                 "Plugin is listed after being added as blocked");
     }
@@ -36,7 +36,7 @@ public class DelagatingPluginOptionsTests {
         LocalPluginOptions blocked = LocalPluginOptions.block(new Plugin("NAMED_TEST_PLUGIN_3_BLOCKED"));
         blocked.searchForPlugins(null);
         Plugin plugin = new Plugin("NAMED_TEST_PLUGIN_3_NOT_BLOCKED");
-        DelagatingPluginOptions<Plugin> parent = new DelagatingPluginOptions<>(allowed, blocked);
+        TrustedAndBlockedOptions<Plugin> parent = new TrustedAndBlockedOptions<>(allowed, blocked);
         Assertions.assertFalse(parent.isTrusted(plugin),
                 "Plugin is listed after being added as blocked");
     }
