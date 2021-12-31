@@ -1,7 +1,5 @@
 package me.lucko.networkinterceptor.plugin;
 
-import org.apache.commons.lang.Validate;
-
 public class TrustedAndBlockedOptions<PLUGIN> {
     private final PluginOptions<PLUGIN> trusted, blocked;
 
@@ -25,6 +23,15 @@ public class TrustedAndBlockedOptions<PLUGIN> {
 
     public PluginOptions<PLUGIN> getBlockedOptions() {
         return blocked;
+    }
+
+    // in case the Validate class is not available
+    private static class Validate {
+        public static void isTrue(boolean val, String msg) {
+            if (!val) {
+                throw new IllegalStateException(msg);
+            }
+        }
     }
 
 }
