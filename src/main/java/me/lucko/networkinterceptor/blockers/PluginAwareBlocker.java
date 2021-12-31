@@ -16,28 +16,47 @@ public class PluginAwareBlocker<PLUGIN> {
     public boolean hasBlockedPlugins(InterceptEvent<PLUGIN> event) {
         Collection<PLUGIN> plugins = event.getOrderedTracedPlugins();
         if (plugins.isEmpty()) {
-            return !false;
+            return false;
         }
-        return !isTrustedIn(event, plugins, options.getBlockedOptions());
+        return !isTrustedIn(event, plugins, options.getBlockedOptions(), TrustType.BLOCK_ON_FIRST_UNTRUST);
     }
 
     public boolean hasTrustedPlugins(InterceptEvent<PLUGIN> event) {
         Collection<PLUGIN> plugins = event.getOrderedTracedPlugins();
         if (plugins.isEmpty()) {
-            return !false;
+            return false;
         }
-        return isTrustedIn(event, plugins, options.getTrustedOptions());
+        return isTrustedIn(event, plugins, options.getTrustedOptions(), TrustType.ALLOW_ON_FIRST_TRUST);
     }
 
     private boolean isTrustedIn(InterceptEvent<PLUGIN> event, Collection<PLUGIN> plugins,
-            PluginOptions<PLUGIN> options) {
+            PluginOptions<PLUGIN> options, TrustType trust) {
         for (PLUGIN plugin : plugins) {
-            if (options.isTrusted(plugin)) {
+            boolean curTrusted = options.isTrusted(plugin);
+            if (curTrusted && trust == TrustType.ALLOW_ON_FIRST_TRUST) {
                 event.setTrustedPlugin(plugin);
-                return false; // trusted!
+                return true;
+            } else if (!curTrusted && trust == TrustType.BLOCK_ON_FIRST_UNTRUST) {
+                event.setBlockedPlugin(plugin);
+                return false;
             }
         }
-        return false;
+        return trust.getTrustedDefault();
+    }
+
+    private enum TrustType {
+        ALLOW_ON_FIRST_TRUST, // for trusted plugins
+        BLOCK_ON_FIRST_UNTRUST; // for blocked pluggins
+
+        public boolean getTrustedDefault() {
+            switch (this) {
+                case ALLOW_ON_FIRST_TRUST:
+                    return false;
+                case BLOCK_ON_FIRST_UNTRUST:
+                    return true;
+            }
+            throw new IllegalStateException("Unedfined trust type: " + this);
+        }
     }
 
 }
