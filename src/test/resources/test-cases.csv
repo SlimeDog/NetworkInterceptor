@@ -1,0 +1,9 @@
+trustedPlugins,blockedPlugins,hostTargets,allowMode,testHost,plguinUnderTest,expectation
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",allow,host.target.one,RandomPlugin,PASS
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",allow,host.target.two,RandomPlugin,PASS
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",deny,host.target.one,RandomPlugin,BLOCK
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",deny,host.target.two,RandomPlugin,BLOCK
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",allow,random.host.target,TrustedPlugin1,PASS
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",allow,random.host.target,TrustedPlugin2,PASS
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",deny,random.host.target,BlockedPlugin1,BLOCK
+"TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",deny,random.host.target,BlockedPlugin2,BLOCK
