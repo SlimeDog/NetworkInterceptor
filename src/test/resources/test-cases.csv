@@ -1,4 +1,4 @@
-trustedPlugins,blockedPlugins,hostTargets,allowMode,testHost,plguinUnderTest,expectation
+trustedPlugins,blockedPlugins,hostTargets,allowMode,testHost,pluginUnderTest,expectation
 "TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",allow,host.target.one,RandomPlugin,PASS
 "TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",allow,host.target.two,RandomPlugin,PASS
 "TrustedPlugin1,TrustedPlugin2","BlockedPlugin1,BlockedPlugin2","host.target.one,host.target.two",deny,host.target.one,RandomPlugin,BLOCK
