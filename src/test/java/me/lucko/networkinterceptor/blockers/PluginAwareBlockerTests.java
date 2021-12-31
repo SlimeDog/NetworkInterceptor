@@ -16,7 +16,6 @@ public class PluginAwareBlockerTests {
     @Test
     public void test_RecognizesTrustedPlugin() {
         Plugin trustedPlugin = new Plugin("Some Trusted Plugin 1");
-        // Plugin blockedPlugin = new Plugin("Some Blocked Plugin 1");
         PluginOptions<Plugin> trusted = LocalPluginOptions.allow(trustedPlugin);
         trusted.searchForPlugins(null);
         PluginOptions<Plugin> blocked = LocalPluginOptions.block();
