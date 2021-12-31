@@ -10,7 +10,6 @@ import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.lucko.networkinterceptor.common.Platform;
-import net.md_5.bungee.api.plugin.Plugin;
 
 public class InterceptEvent<PLUGIN> {
     private static final int MAX_INTERNAL_TRACES = 2;
@@ -19,17 +18,30 @@ public class InterceptEvent<PLUGIN> {
     private final Map<StackTraceElement, PLUGIN> nonInternalStackTrace = new LinkedHashMap<>();
     private final Set<PLUGIN> tracedPlugins = new LinkedHashSet<>();
     private final Platform platform;
-    private final BungeePluginFinder bungeePluginFinder;
+    private final PluginFinder<PLUGIN> pluginFinder;
     private String originalHost;
     private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
     private PLUGIN trustedPlugin;
     private PLUGIN blockedPlugin;
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace, Platform platform) {
+        this(host, stackTrace, platform, null);
+    }
+
+    public InterceptEvent(String host, StackTraceElement[] stackTrace, Platform platform, PluginFinder<PLUGIN> finder) {
         this.host = host;
         this.stackTrace = stackTrace;
         this.platform = platform;
-        bungeePluginFinder = platform == Platform.BUNGEE ? new BungeePluginFinder() : null;
+        if (platform == Platform.BUKKIT) {
+            pluginFinder = new BukkitPluginFinder();
+        } else if (platform == Platform.BUNGEE) {
+            pluginFinder = new BungeePluginFinder();
+        } else if (platform == Platform.VELOCITY) {
+            // TODO - make velocity implementation
+            pluginFinder = new DummyPluginFinder();
+        } else { // passed finder if available
+            pluginFinder = finder;
+        }
         generateNonInternalStackTrace();
     }
 
@@ -91,23 +103,11 @@ public class InterceptEvent<PLUGIN> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private PLUGIN getProvidingPlugin(StackTraceElement element) {
-        if (platform == Platform.BUKKIT) {
-            try {
-                Class<?> clazz = Class.forName(element.getClassName());
-                return (PLUGIN) JavaPlugin.getProvidingPlugin(clazz);
-            } catch (Exception e) {
-                return null;
-            }
-        } else if (platform == Platform.VELOCITY) {
-            return null; // TODO - find
-        } else if (platform == Platform.BUNGEE) {
-            return (PLUGIN) bungeePluginFinder.findPlugin(element);
-        } else {
-            // TODO - other
-            throw new IllegalStateException("Not defined for platform " + platform);
+        if (pluginFinder != null) {
+            return pluginFinder.findPlugin(element);
         }
+        throw new IllegalStateException("Plugin finder not defined! Platform: " + platform);
     }
 
     public void setOriginalHost(String host) {
@@ -142,7 +142,28 @@ public class InterceptEvent<PLUGIN> {
         return blockedPlugin;
     }
 
-    private class BungeePluginFinder {
+    public static interface PluginFinder<PLUGIN> {
+
+        PLUGIN findPlugin(StackTraceElement element);
+
+    }
+
+    private class BukkitPluginFinder implements PluginFinder<PLUGIN> {
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public PLUGIN findPlugin(StackTraceElement element) {
+            try {
+                Class<?> clazz = Class.forName(element.getClassName());
+                return (PLUGIN) JavaPlugin.getProvidingPlugin(clazz); // unchecked
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+    }
+
+    private class BungeePluginFinder implements PluginFinder<PLUGIN> {
         private final Class<?> pluginClassloaderClass;
         private final Field pluginField;
 
@@ -156,7 +177,9 @@ public class InterceptEvent<PLUGIN> {
             }
         }
 
-        public Plugin findPlugin(StackTraceElement element) {
+        @Override
+        @SuppressWarnings("unchecked")
+        public PLUGIN findPlugin(StackTraceElement element) {
             Class<?> clazz;
             try {
                 clazz = Class.forName(element.getClassName());
@@ -168,13 +191,22 @@ public class InterceptEvent<PLUGIN> {
                 return null;
             }
             try {
-                return (Plugin) pluginField.get(cl);
+                return (PLUGIN) pluginField.get(cl); // unchecked cast
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 System.err.println("Problem finding BungeeCoord plugin for network connection:");
                 e.printStackTrace();
                 return null;
             }
         }
+    }
+
+    private class DummyPluginFinder implements PluginFinder<PLUGIN> {
+
+        @Override
+        public PLUGIN findPlugin(StackTraceElement element) {
+            return null; // nothing to find
+        }
+
     }
 
 }
