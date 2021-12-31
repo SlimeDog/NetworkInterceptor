@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.lucko.networkinterceptor.common.Platform;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class InterceptEvent<PLUGIN> {
@@ -17,20 +18,18 @@ public class InterceptEvent<PLUGIN> {
     private final StackTraceElement[] stackTrace;
     private final Map<StackTraceElement, PLUGIN> nonInternalStackTrace = new LinkedHashMap<>();
     private final Set<PLUGIN> tracedPlugins = new LinkedHashSet<>();
-    private final boolean isBungee;
-    private final boolean isVelocity;
+    private final Platform platform;
     private final BungeePluginFinder bungeePluginFinder;
     private String originalHost;
     private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
     private PLUGIN trustedPlugin;
     private PLUGIN blockedPlugin;
 
-    public InterceptEvent(String host, StackTraceElement[] stackTrace, boolean isBungee, boolean isVelocity) {
+    public InterceptEvent(String host, StackTraceElement[] stackTrace, Platform platform) {
         this.host = host;
         this.stackTrace = stackTrace;
-        this.isBungee = isBungee;
-        this.isVelocity = isVelocity;
-        bungeePluginFinder = isBungee ? new BungeePluginFinder() : null;
+        this.platform = platform;
+        bungeePluginFinder = platform == Platform.BUNGEE ? new BungeePluginFinder() : null;
         generateNonInternalStackTrace();
     }
 
@@ -94,17 +93,20 @@ public class InterceptEvent<PLUGIN> {
 
     @SuppressWarnings("unchecked")
     private PLUGIN getProvidingPlugin(StackTraceElement element) {
-        if (!isBungee && !isVelocity) {
+        if (platform == Platform.BUKKIT) {
             try {
                 Class<?> clazz = Class.forName(element.getClassName());
                 return (PLUGIN) JavaPlugin.getProvidingPlugin(clazz);
             } catch (Exception e) {
                 return null;
             }
-        } else if (isVelocity) {
+        } else if (platform == Platform.VELOCITY) {
             return null; // TODO - find
-        } else {
+        } else if (platform == Platform.BUNGEE) {
             return (PLUGIN) bungeePluginFinder.findPlugin(element);
+        } else {
+            // TODO - other
+            throw new IllegalStateException("Not defined for platform " + platform);
         }
     }
 

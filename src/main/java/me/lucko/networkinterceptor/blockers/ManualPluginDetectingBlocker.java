@@ -5,6 +5,7 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 
 import me.lucko.networkinterceptor.InterceptEvent;
+import me.lucko.networkinterceptor.common.Platform;
 import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
 import me.lucko.networkinterceptor.plugin.TrustedAndBlockedOptions;
 
@@ -26,16 +27,14 @@ import me.lucko.networkinterceptor.plugin.TrustedAndBlockedOptions;
 public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
     private final TrustedAndBlockedOptions<PLUGIN> pluginOptions;
     private final ManualPluginOptions manualPluginOptions;
-    private final boolean isBungee;
-    private final boolean isVelocity;
+    private final Platform platform;
 
     public ManualPluginDetectingBlocker(TrustedAndBlockedOptions<PLUGIN> pluginOptions,
             ManualPluginOptions manualPluginOptions,
-            boolean isBungee, boolean isVelocity) {
+            Platform platform) {
         this.pluginOptions = pluginOptions;
         this.manualPluginOptions = manualPluginOptions;
-        this.isBungee = isBungee;
-        this.isVelocity = isVelocity;
+        this.platform = platform;
     }
 
     @Override
@@ -46,7 +45,7 @@ public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
         }
         boolean shouldBlock = !pluginOptions.getTrustedOptions().isListedAsTrustedPluginName(pluginName);
         if (!shouldBlock) { // try to add trusted plugin
-            if (!isBungee) {
+            if (platform == Platform.BUKKIT) {
                 @SuppressWarnings("unchecked")
                 PLUGIN plugin = (PLUGIN) Bukkit.getPluginManager().getPlugin(pluginName);
                 if (plugin != null) {
@@ -67,13 +66,13 @@ public class ManualPluginDetectingBlocker<PLUGIN> implements Blocker<PLUGIN> {
             StackTraceElement trace = entry.getKey();
             String pluginName = manualPluginOptions.getPluginNameFor(trace.getClassName());
             if (pluginName != null) {
-                if (!isBungee && !isVelocity) {
+                if (platform == Platform.BUKKIT) {
                     @SuppressWarnings("unchecked")
                     PLUGIN plugin = (PLUGIN) Bukkit.getPluginManager().getPlugin(pluginName);
                     if (plugin != null) {
                         event.updateTraceElement(trace, plugin);
                     }
-                } else if (isBungee) {
+                } else if (platform == Platform.BUNGEE) {
                     // TODO - bungee stuff
                 } else {
                     // TODO - velocity stuff

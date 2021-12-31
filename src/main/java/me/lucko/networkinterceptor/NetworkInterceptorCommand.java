@@ -13,6 +13,7 @@ import me.lucko.networkinterceptor.blockers.LearningBlocker;
 import me.lucko.networkinterceptor.blockers.PluginAwareBlocker;
 import me.lucko.networkinterceptor.common.CommonCommandSender;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.common.Platform;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.InterceptMethod;
 import me.lucko.networkinterceptor.interceptors.Interceptor;
 import me.lucko.networkinterceptor.loggers.CompositeLogger;
@@ -43,12 +44,12 @@ public class NetworkInterceptorCommand<PLUGIN> {
     public boolean onCommand(CommonCommandSender sender, String[] args) {
         if (args.length == 0) {
             String versionMsg = "Running NetworkInterceptor v" + this.plugin.getPluginVersion();
-            if (plugin.isBukkit() || plugin.isBungee()) {
+            if (plugin.getPlatformType() == Platform.BUKKIT || plugin.getPlatformType() == Platform.BUNGEE) {
                 versionMsg = ChatColor.RED + versionMsg;
             }
             sender.send(versionMsg);
             String helpMsg = "Use '/networkinterceptor reload' to reload the configuration.";
-            if (plugin.isBukkit() || plugin.isBungee()) {
+            if (plugin.getPlatformType() == Platform.BUKKIT || plugin.getPlatformType() == Platform.BUNGEE) {
                 helpMsg = ChatColor.GRAY + helpMsg;
             }
             sender.send(helpMsg);
@@ -60,7 +61,7 @@ public class NetworkInterceptorCommand<PLUGIN> {
             this.plugin.reload();
 
             String msg = "NetworkInterceptor configuration reloaded.";
-            if (plugin.isBukkit() || plugin.isBungee()) {
+            if (plugin.getPlatformType() == Platform.BUKKIT || plugin.getPlatformType() == Platform.BUNGEE) {
                 msg = ChatColor.GRAY + msg;
             }
             sender.send(msg);
@@ -72,7 +73,7 @@ public class NetworkInterceptorCommand<PLUGIN> {
         }
 
         String msg = "Unknown subcommand.";
-        if (plugin.isBukkit() || plugin.isBungee()) {
+        if (plugin.getPlatformType() == Platform.BUKKIT || plugin.getPlatformType() == Platform.BUNGEE) {
             msg = ChatColor.RED + msg;
         }
         sender.send(msg);

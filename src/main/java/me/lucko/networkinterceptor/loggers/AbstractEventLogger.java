@@ -1,6 +1,7 @@
 package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
+import me.lucko.networkinterceptor.common.Platform;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,13 +12,11 @@ import java.util.logging.Logger;
 
 public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN> {
     private final boolean includeTraces;
-    protected final boolean isBungee;
-    protected final boolean isVelocity;
+    protected final Platform platform;
 
-    protected AbstractEventLogger(boolean includeTraces, boolean isBungee, boolean isVelocity) {
+    protected AbstractEventLogger(boolean includeTraces, Platform platform) {
         this.includeTraces = includeTraces;
-        this.isBungee = isBungee;
-        this.isVelocity = isVelocity;
+        this.platform = platform;
     }
 
     protected abstract Logger getLogger();
@@ -39,7 +38,7 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
             Map<StackTraceElement, PLUGIN> map = event.getNonInternalStackTraceWithPlugins();
             for (StackTraceElement element : map.keySet()) {
                 sb.append("\tat ").append(element);
-                if (!isBungee && !isVelocity) {
+                if (platform == Platform.BUKKIT) {
                     JavaPlugin providingPlugin = (JavaPlugin) map.get(element);
                     if (providingPlugin != null) {
                         sb.append(" [").append(providingPlugin.getName()).append(']');
@@ -77,10 +76,13 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
             }
         }
         if (target != null) {
-            if (!isBungee) {
+            if (platform == Platform.BUKKIT) {
                 sb.append(((JavaPlugin) target).getName());
-            } else {
+            } else if (platform == Platform.BUNGEE) {
                 sb.append(((Plugin) target).getDescription().getName());
+            } else {
+                // TODO - velocity?
+                // TODO - other?
             }
         }
     }

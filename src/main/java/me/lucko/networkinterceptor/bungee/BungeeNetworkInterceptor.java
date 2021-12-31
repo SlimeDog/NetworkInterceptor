@@ -13,6 +13,7 @@ import me.lucko.networkinterceptor.NetworkInterceptorCommand;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.common.Platform;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -130,18 +131,8 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     }
 
     @Override
-    public boolean isBukkit() {
-        return false;
-    }
-
-    @Override
-    public boolean isBungee() {
-        return true;
-    }
-
-    @Override
-    public boolean isVelocity() {
-        return false;
+    public Platform getPlatformType() {
+        return Platform.BUNGEE;
     }
 
     @Override

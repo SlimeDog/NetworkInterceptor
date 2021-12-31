@@ -2,6 +2,7 @@ package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.common.Platform;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +17,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final Logger logger;
 
     public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean truncateFile) {
-        super(true, plugin.isBungee(), plugin.isVelocity());
+        super(true, plugin.getPlatformType());
         File file = new File(plugin.getDataFolder(), "intercept.log");
         Formatter formatter = new Formatter() {
             @Override
@@ -24,7 +25,8 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
                 return new Date(record.getMillis()).toString() + ": " + record.getMessage() + "\n";
             }
         };
-        this.logger = isVelocity ? new VelocityWrapper() : Logger.getLogger(FileLogger.class.getName());
+        this.logger = platform == Platform.VELOCITY ? new VelocityWrapper()
+                : Logger.getLogger(FileLogger.class.getName());
         try {
             file.getParentFile().mkdirs();
             if (truncateFile && file.exists()) {

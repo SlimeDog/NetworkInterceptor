@@ -27,11 +27,7 @@ public interface NetworkInterceptorPlugin<PLUGIN> {
 
     void runTaskLater(Runnable runnable, long ticks);
 
-    boolean isBukkit();
-
-    boolean isBungee();
-
-    boolean isVelocity();
+    Platform getPlatformType();
 
     CommonNetworkInterceptor<? extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> getDelegate();
 

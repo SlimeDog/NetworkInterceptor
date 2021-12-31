@@ -124,7 +124,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                 interceptor.enable();
             } catch (Exception e) {
                 if (e instanceof AccessControlException) {
-                    if (plugin.isBungee()) {
+                    if (plugin.getPlatformType() == Platform.BUNGEE) {
                         plugin.getLogger().warning("Since bungee provides its own security manager, "
                                 + "the Security Manager Interceptor is unable to be used with a Bungee instance");
                         return;
@@ -256,8 +256,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
             } else {
-                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee(),
-                        plugin.isVelocity());
+                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.getPlatformType());
             }
             this.blocker = new CompositeBlocker<>(manBlocker, pluginBlocker, this.blocker);
             // registerManualStopTask = manBlocker != null &&
@@ -304,13 +303,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
     @SuppressWarnings("unchecked")
     private PluginOptions<PLUGIN> getPluginOptions(Set<String> plugins, KeepPlugins keepType,
             boolean allowNonPlugin, boolean trust) {
-        if (plugin.isBukkit()) {
+        if (plugin.getPlatformType() == Platform.BUKKIT) {
             return (PluginOptions<PLUGIN>) new BukkitPluginOptions<JavaPlugin>(
                     (JavaPlugin) plugin, keepType, allowNonPlugin, plugins, trust);
-        } else if (plugin.isBungee()) {
+        } else if (plugin.getPlatformType() == Platform.BUNGEE) {
             return (PluginOptions<PLUGIN>) new BungeePluginOptions<Plugin>((Plugin) plugin,
                     keepType, allowNonPlugin, plugins, trust);
-        } else if (plugin.isVelocity()) {
+        } else if (plugin.getPlatformType() == Platform.VELOCITY) {
             return (PluginOptions<PLUGIN>) new VelocityPluginOptions(
                     (VelocityNetworkInterceptor) plugin, keepType, allowNonPlugin, plugins, trust);
         }

@@ -29,6 +29,7 @@ import me.lucko.networkinterceptor.NetworkInterceptorCommand;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.common.Platform;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 @Plugin(id = VelocityNetworkInterceptorInfo.ID, name = VelocityNetworkInterceptorInfo.NAME, //
@@ -179,18 +180,8 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
     }
 
     @Override
-    public boolean isBukkit() {
-        return false;
-    }
-
-    @Override
-    public boolean isBungee() {
-        return false;
-    }
-
-    @Override
-    public boolean isVelocity() {
-        return true;
+    public Platform getPlatformType() {
+        return Platform.VELOCITY;
     }
 
     @Override
