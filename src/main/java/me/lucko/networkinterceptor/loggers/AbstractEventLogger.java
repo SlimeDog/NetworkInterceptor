@@ -55,25 +55,32 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
         getLogger().info(sb.toString());
     }
 
+    // TODO - create a PluginManager that has a #getName(PLUGIN) method
+    // and has an implementation for different platforms
+    // and use that here to get plugin name instead of coupling platform-specific
+    // stuff in here
     private void appendPluginIfPossible(StringBuilder sb, InterceptEvent<PLUGIN> event) {
         PLUGIN trustedPlugin = event.getTrustedPlugin();
+        PLUGIN blockedPlugin = event.getBlockedPlugin();
+        PLUGIN target = null;
         if (trustedPlugin != null) {
+            target = trustedPlugin;
             sb.append(" by trusted-plugin ");
-            if (!isBungee) {
-                sb.append(((JavaPlugin) trustedPlugin).getName());
-            } else {
-                sb.append(((Plugin) trustedPlugin).getDescription().getName());
-            }
+        } else if (blockedPlugin != null) {
+            target = blockedPlugin;
+            sb.append(" by blocked-plugin ");
         } else {
             Set<PLUGIN> traced = event.getOrderedTracedPlugins();
             if (!traced.isEmpty()) {
                 sb.append(" by plugin ");
-                PLUGIN next = traced.iterator().next();
-                if (!isBungee) {
-                    sb.append(((JavaPlugin) next).getName());
-                } else {
-                    sb.append(((Plugin) next).getDescription().getName());
-                }
+                target = traced.iterator().next();
+            }
+        }
+        if (target != null) {
+            if (!isBungee) {
+                sb.append(((JavaPlugin) target).getName());
+            } else {
+                sb.append(((Plugin) target).getDescription().getName());
             }
         }
     }

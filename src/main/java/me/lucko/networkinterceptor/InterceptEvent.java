@@ -23,6 +23,7 @@ public class InterceptEvent<PLUGIN> {
     private String originalHost;
     private boolean isRepeat = false; // is repeat if has original host or repeat connection to the same host
     private PLUGIN trustedPlugin;
+    private PLUGIN blockedPlugin;
 
     public InterceptEvent(String host, StackTraceElement[] stackTrace, boolean isBungee, boolean isVelocity) {
         this.host = host;
@@ -129,6 +130,14 @@ public class InterceptEvent<PLUGIN> {
 
     public PLUGIN getTrustedPlugin() {
         return trustedPlugin;
+    }
+
+    public void setBlockedPlugin(PLUGIN plugin) {
+        this.blockedPlugin = plugin;
+    }
+
+    public PLUGIN getBlockedPlugin() {
+        return blockedPlugin;
     }
 
     private class BungeePluginFinder {
