@@ -41,10 +41,10 @@ public class DelagatingPluginOptionsTests {
                 "Plugin is listed after being added as blocked");
     }
 
-    private static final class LocalPluginOptions extends PluginOptions<Plugin> {
+    public static final class LocalPluginOptions extends PluginOptions<Plugin> {
         private final Set<Plugin> potentialPlugins;
 
-        LocalPluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> plugins, boolean trust,
+        public LocalPluginOptions(KeepPlugins keepType, boolean allowNonPlugin, Set<String> plugins, boolean trust,
                 Set<Plugin> potentialPlugins) {
             super(keepType, allowNonPlugin, plugins, trust);
             this.potentialPlugins = potentialPlugins;
@@ -61,26 +61,26 @@ public class DelagatingPluginOptionsTests {
             return false;
         }
 
-        private static LocalPluginOptions of(boolean trust, Plugin... pluginArray) {
+        public static LocalPluginOptions of(boolean trust, Plugin... pluginArray) {
             Set<Plugin> plugins = new HashSet<>(Arrays.asList(pluginArray));
             return new LocalPluginOptions(KeepPlugins.ALL, true,
                     plugins.stream().map(p -> p.name).collect(Collectors.toSet()), trust, plugins);
         }
 
-        private static LocalPluginOptions allow(Plugin... pluginArray) {
+        public static LocalPluginOptions allow(Plugin... pluginArray) {
             return of(true, pluginArray);
         }
 
-        private static LocalPluginOptions block(Plugin... pluginArray) {
+        public static LocalPluginOptions block(Plugin... pluginArray) {
             return of(false, pluginArray);
         }
 
     }
 
-    private final class Plugin {
+    public static final class Plugin {
         private final String name;
 
-        private Plugin(String name) {
+        public Plugin(String name) {
             this.name = name;
         }
 
@@ -99,6 +99,12 @@ public class DelagatingPluginOptionsTests {
             }
             return ((Plugin) other).name.equals(this.name);
         }
+
+        @Override
+        public String toString() {
+            return String.format("{TEST PLUGIN NAMED '%s'}", name);
+        }
+
     }
 
 }
