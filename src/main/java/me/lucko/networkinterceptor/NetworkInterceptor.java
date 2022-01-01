@@ -7,6 +7,7 @@ import me.lucko.networkinterceptor.bukkit.BukkitConfiguration;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
+import me.lucko.networkinterceptor.common.Platform;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 import java.io.File;
@@ -38,6 +39,10 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
             int pluginId = 11822;
             Metrics metrics = new Metrics(this, pluginId);
             metrics.addCustomChart(new SimplePie("mode", () -> config.getString("mode", "N/A")));
+            metrics.addCustomChart(new SimplePie("trustedplugins",
+                    () -> String.valueOf(delegate.getPluginOptions().getTrustedOptions().getPluginNames().size())));
+            metrics.addCustomChart(new SimplePie("blockedplugins",
+                    () -> String.valueOf(delegate.getPluginOptions().getBlockedOptions().getPluginNames().size())));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
     }
@@ -123,18 +128,8 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
-    public boolean isBukkit() {
-        return true;
-    }
-
-    @Override
-    public boolean isBungee() {
-        return false;
-    }
-
-    @Override
-    public boolean isVelocity() {
-        return false;
+    public Platform getPlatformType() {
+        return Platform.BUKKIT;
     }
 
     @Override

@@ -13,11 +13,6 @@ public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> 
     private final JavaPlugin owner;
 
     public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
-            Set<String> plugins) {
-        this(owner, keepType, allowNonPlugin, plugins, true);
-    }
-
-    public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
             Set<String> plugins, boolean trust) {
         super(keepType, allowNonPlugin, plugins, trust);
         this.owner = owner;

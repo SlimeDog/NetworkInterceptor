@@ -9,10 +9,6 @@ import net.md_5.bungee.api.plugin.Plugin;
 public class BungeePluginOptions<T extends Plugin> extends PluginOptions<T> {
     private final Plugin owner;
 
-    public BungeePluginOptions(Plugin owner, KeepPlugins keepType, boolean allowNonPlugin, Set<String> trustedPlugins) {
-        this(owner, keepType, allowNonPlugin, trustedPlugins, true);
-    }
-
     public BungeePluginOptions(Plugin owner, KeepPlugins keepType, boolean allowNonPlugin, Set<String> plugins,
             boolean trust) {
         super(keepType, allowNonPlugin, plugins, trust);

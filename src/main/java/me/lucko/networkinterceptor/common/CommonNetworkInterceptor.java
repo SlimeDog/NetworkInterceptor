@@ -33,7 +33,7 @@ import me.lucko.networkinterceptor.loggers.CompositeLogger;
 import me.lucko.networkinterceptor.loggers.ConsoleLogger;
 import me.lucko.networkinterceptor.loggers.EventLogger;
 import me.lucko.networkinterceptor.loggers.FileLogger;
-import me.lucko.networkinterceptor.plugin.DelagatingPluginOptions;
+import me.lucko.networkinterceptor.plugin.TrustedAndBlockedOptions;
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
 import me.lucko.networkinterceptor.plugin.ManualPluginOptions;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
@@ -46,7 +46,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
     private final Map<InterceptMethod, Interceptor> interceptors = new EnumMap<>(InterceptMethod.class);
     private EventLogger<PLUGIN> logger = null;
     private Blocker<PLUGIN> blocker = null;
-    private PluginOptions<PLUGIN> options = null;
+    private TrustedAndBlockedOptions<PLUGIN> options = null;
     private boolean isOnStartup = true;
     // private boolean registerManualStopTask = false;
 
@@ -66,7 +66,8 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
 
     public void onEnable() {
         if (options != null) { // search now that the plugin is enabled
-            options.searchForPlugins(plugin);
+            options.getTrustedOptions().searchForPlugins(plugin);
+            options.getBlockedOptions().searchForPlugins(plugin);
         }
         isOnStartup = false;
     }
@@ -123,7 +124,7 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                 interceptor.enable();
             } catch (Exception e) {
                 if (e instanceof AccessControlException) {
-                    if (plugin.isBungee()) {
+                    if (plugin.getPlatformType() == Platform.BUNGEE) {
                         plugin.getLogger().warning("Since bungee provides its own security manager, "
                                 + "the Security Manager Interceptor is unable to be used with a Bungee instance");
                         return;
@@ -255,14 +256,13 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             if (manOptions.isEmpty()) { // either disable or empty
                 manBlocker = null;
             } else {
-                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.isBungee(),
-                        plugin.isVelocity());
+                manBlocker = new ManualPluginDetectingBlocker<>(options, manOptions, plugin.getPlatformType());
             }
-            this.blocker = new CompositeBlocker<>(manBlocker, this.blocker, pluginBlocker);
+            this.blocker = new CompositeBlocker<>(manBlocker, pluginBlocker, this.blocker);
             // registerManualStopTask = manBlocker != null &&
             // manOptions.disableAfterStartup();
         }
-        if (blocker != null && configuration.getBoolean("mapping.enabled", true)) {
+        if (this.blocker != null && configuration.getBoolean("mapping.enabled", true)) {
             long similarStackTimeoutMs = configuration.getLong("mapping.timer", -1L);
             if (similarStackTimeoutMs < 0) {
                 plugin.getLogger().severe("Mapping timer incorrect or not specified");
@@ -270,11 +270,11 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
                         "(Need a positive number)");
             }
             plugin.getLogger().info("Using a mapping blocker with timer of " + similarStackTimeoutMs + "ms");
-            blocker = new LearningBlocker<>(blocker, similarStackTimeoutMs);
+            blocker = new LearningBlocker<>(this.blocker, similarStackTimeoutMs);
         }
     }
 
-    private PluginOptions<PLUGIN> generatePluginOptions(AbstractConfiguration configuration) {
+    private TrustedAndBlockedOptions<PLUGIN> generatePluginOptions(AbstractConfiguration configuration) {
         // TODO - re-implement in config
         String keepTypeName = configuration.getString("keep-type", "ALL");
         KeepPlugins keepType;
@@ -289,22 +289,29 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
         Set<String> trustedPlugins = new HashSet<>(configuration.getStringList("trusted-plugins"));
         PluginOptions<PLUGIN> trustedOpts = getPluginOptions(trustedPlugins, keepType, allowNonPlugin, true);
         Set<String> blockedPlugins = new HashSet<>(configuration.getStringList("blocked-plugins"));
-        PluginOptions<PLUGIN> blockedOpts = getPluginOptions(blockedPlugins, keepType, allowNonPlugin, true);
-        return new DelagatingPluginOptions<PLUGIN>(trustedOpts, blockedOpts);
+        PluginOptions<PLUGIN> blockedOpts = getPluginOptions(blockedPlugins, keepType, allowNonPlugin, false);
+        for (String trustedPluginName : trustedPlugins) {
+            if (blockedPlugins.contains(trustedPluginName)) {
+                plugin.getLogger().warning(
+                        "Conflicting trusted-plugins and blocked-plugins specifications were detected. Outbound connections by "
+                                + trustedPluginName + " will be blocked.");
+            }
+        }
+        return new TrustedAndBlockedOptions<PLUGIN>(trustedOpts, blockedOpts);
     }
 
     @SuppressWarnings("unchecked")
     private PluginOptions<PLUGIN> getPluginOptions(Set<String> plugins, KeepPlugins keepType,
             boolean allowNonPlugin, boolean trust) {
-        if (plugin.isBukkit()) {
+        if (plugin.getPlatformType() == Platform.BUKKIT) {
             return (PluginOptions<PLUGIN>) new BukkitPluginOptions<JavaPlugin>(
-                    (JavaPlugin) plugin, keepType, allowNonPlugin, plugins);
-        } else if (plugin.isBungee()) {
+                    (JavaPlugin) plugin, keepType, allowNonPlugin, plugins, trust);
+        } else if (plugin.getPlatformType() == Platform.BUNGEE) {
             return (PluginOptions<PLUGIN>) new BungeePluginOptions<Plugin>((Plugin) plugin,
-                    keepType, allowNonPlugin, plugins);
-        } else if (plugin.isVelocity()) {
+                    keepType, allowNonPlugin, plugins, trust);
+        } else if (plugin.getPlatformType() == Platform.VELOCITY) {
             return (PluginOptions<PLUGIN>) new VelocityPluginOptions(
-                    (VelocityNetworkInterceptor) plugin, keepType, allowNonPlugin, plugins);
+                    (VelocityNetworkInterceptor) plugin, keepType, allowNonPlugin, plugins, trust);
         }
         throw new IllegalStateException("Unknown type of plugin: " + plugin);
     }
@@ -329,6 +336,10 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
             }
             throw new IllegalArgumentException();
         }
+    }
+
+    public TrustedAndBlockedOptions<PLUGIN> getPluginOptions() {
+        return options;
     }
 
     public Blocker<PLUGIN> getBlocker() {

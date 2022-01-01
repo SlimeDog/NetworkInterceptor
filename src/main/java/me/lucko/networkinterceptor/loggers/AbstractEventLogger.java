@@ -1,6 +1,7 @@
 package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
+import me.lucko.networkinterceptor.common.Platform;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,13 +12,11 @@ import java.util.logging.Logger;
 
 public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN> {
     private final boolean includeTraces;
-    protected final boolean isBungee;
-    protected final boolean isVelocity;
+    protected final Platform platform;
 
-    protected AbstractEventLogger(boolean includeTraces, boolean isBungee, boolean isVelocity) {
+    protected AbstractEventLogger(boolean includeTraces, Platform platform) {
         this.includeTraces = includeTraces;
-        this.isBungee = isBungee;
-        this.isVelocity = isVelocity;
+        this.platform = platform;
     }
 
     protected abstract Logger getLogger();
@@ -39,7 +38,7 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
             Map<StackTraceElement, PLUGIN> map = event.getNonInternalStackTraceWithPlugins();
             for (StackTraceElement element : map.keySet()) {
                 sb.append("\tat ").append(element);
-                if (!isBungee && !isVelocity) {
+                if (platform == Platform.BUKKIT) {
                     JavaPlugin providingPlugin = (JavaPlugin) map.get(element);
                     if (providingPlugin != null) {
                         sb.append(" [").append(providingPlugin.getName()).append(']');
@@ -55,25 +54,35 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
         getLogger().info(sb.toString());
     }
 
+    // TODO - create a PluginManager that has a #getName(PLUGIN) method
+    // and has an implementation for different platforms
+    // and use that here to get plugin name instead of coupling platform-specific
+    // stuff in here
     private void appendPluginIfPossible(StringBuilder sb, InterceptEvent<PLUGIN> event) {
         PLUGIN trustedPlugin = event.getTrustedPlugin();
+        PLUGIN blockedPlugin = event.getBlockedPlugin();
+        PLUGIN target = null;
         if (trustedPlugin != null) {
+            target = trustedPlugin;
             sb.append(" by trusted-plugin ");
-            if (!isBungee) {
-                sb.append(((JavaPlugin) trustedPlugin).getName());
-            } else {
-                sb.append(((Plugin) trustedPlugin).getDescription().getName());
-            }
+        } else if (blockedPlugin != null) {
+            target = blockedPlugin;
+            sb.append(" by blocked-plugin ");
         } else {
             Set<PLUGIN> traced = event.getOrderedTracedPlugins();
             if (!traced.isEmpty()) {
                 sb.append(" by plugin ");
-                PLUGIN next = traced.iterator().next();
-                if (!isBungee) {
-                    sb.append(((JavaPlugin) next).getName());
-                } else {
-                    sb.append(((Plugin) next).getDescription().getName());
-                }
+                target = traced.iterator().next();
+            }
+        }
+        if (target != null) {
+            if (platform == Platform.BUKKIT) {
+                sb.append(((JavaPlugin) target).getName());
+            } else if (platform == Platform.BUNGEE) {
+                sb.append(((Plugin) target).getDescription().getName());
+            } else {
+                // TODO - velocity?
+                // TODO - other?
             }
         }
     }

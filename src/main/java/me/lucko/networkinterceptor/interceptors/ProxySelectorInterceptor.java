@@ -54,7 +54,7 @@ public class ProxySelectorInterceptor<PLUGIN> implements Interceptor {
         public List<Proxy> select(URI uri) {
             String host = uri.getHost();
             StackTraceElement[] trace = new Exception().getStackTrace();
-            InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.isBungee(), plugin.isVelocity());
+            InterceptEvent<PLUGIN> event = new InterceptEvent<>(host, trace, plugin.getPlatformType());
 
             boolean blocked = ProxySelectorInterceptor.this.plugin.getDelegate().shouldBlock(event);
 
@@ -75,16 +75,19 @@ public class ProxySelectorInterceptor<PLUGIN> implements Interceptor {
         }
     }
 
-    /* private static final class DummyProxyList extends AbstractList<Proxy> {
-        @Override
-        public Proxy get(int index) {
-            SneakyThrow.sneakyThrow(new IOException("Connection not allowed"));
-            throw new AssertionError();
-        }
-
-        @Override
-        public int size() {
-            return 1;
-        }
-    } */
+    /*
+     * private static final class DummyProxyList extends AbstractList<Proxy> {
+     * 
+     * @Override
+     * public Proxy get(int index) {
+     * SneakyThrow.sneakyThrow(new IOException("Connection not allowed"));
+     * throw new AssertionError();
+     * }
+     * 
+     * @Override
+     * public int size() {
+     * return 1;
+     * }
+     * }
+     */
 }
