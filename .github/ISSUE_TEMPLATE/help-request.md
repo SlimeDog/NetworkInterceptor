@@ -2,7 +2,7 @@
 name: Help request
 about: Ask a question
 title: ''
-labels: question
+labels: 'type: question'
 assignees: SlimeDog
 
 ---

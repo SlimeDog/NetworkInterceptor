@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest a new feature
 title: ''
-labels: enhancement
+labels: 'type: feature request'
 assignees: SlimeDog
 
 ---
