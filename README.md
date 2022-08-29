@@ -34,3 +34,5 @@ Note: Only certified releases are supported.
 https://github.com/SlimeDog/NetworkInterceptor/wiki
 
 And we'll never forget: **NetworkInterceptor 1.0** was made with ❤️ by Luck. All credit for the original design and implementation belongs to him.
+
+<a href="https://www.spigotmc.org/resources/53351/">![download-on-spigot](https://user-images.githubusercontent.com/17748923/187102011-b72e0f1d-ba74-4cb2-a69e-46f48cb364b5.png)</a>
