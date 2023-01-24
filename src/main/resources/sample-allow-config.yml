@@ -136,6 +136,7 @@ targets:
   - 'repo.maven.apache.org'
   - '199.232.192.215'
   - '199.232.196.215'
+  - '151.101.16.215'
   
   ########## Generally good: plugin version/update check #######################
 
