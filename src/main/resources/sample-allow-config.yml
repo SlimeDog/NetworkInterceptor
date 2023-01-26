@@ -142,6 +142,7 @@ targets:
 
   # Plugin update checks
   - 'api.github.com'                    # EssentialsX
+  - 'api.modrinth.com'                  # Standard for Modrinth plugins
   - 'api.spiget.org'                    # Alternate for SpigotMC plugins
   - 'api.spigotmc.org'                  # Standard for SpigotMC plugins
   - 'gist.githubusercontent.com'        # PremiumVanish (probably also SuperVanish)
