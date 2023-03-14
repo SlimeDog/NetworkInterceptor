@@ -25,7 +25,7 @@ For more detailed analysis of network traffic, we recommend trying [Wireshark](h
 All **NetworkInterceptor** commands are accessible at the console, and in-game with appropriate permissions (default OP). Tab-completion is supported for all commands.
 
 ### Version Support
-**NetworkInterceptor** 3.1.5 is certified Spigot 1.13.2, 1.14.4, 1.15.2, 1.16.5, and 1.17.1 and 1.18; Paper 1.16.5, 1.17.x and 1.18; BungeeCord 1.18-1615; Waterfall 1.17-460, and Velocity 3.1.0.
+**NetworkInterceptor** 3.1.5 is certified Spigot 1.13.2, 1.14.4, 1.15.2, 1.16.5, and 1.17.1, 1.18.2 and 1.19.4; Paper 1.16.5, 1.17.1, 1.18.2 and 1.19.3; BungeeCord 1.18-1615 and 1.19-x; Waterfall 1.19-x, and Velocity 3.1.0.
 
 **NetworkInterceptor** may or may not work on previous Spigot releases or other non-Spigot variants.
 
