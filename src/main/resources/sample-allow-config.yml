@@ -10,7 +10,7 @@
 # Supported MC versions:
 # https://github.com/SlimeDog/NetworkInterceptor/wiki/Technical-Details
 # Default configuration:
-# https://github.com/SlimeDog/NetworkInterceptor/edit/master/src/main/resources/config.yml
+# https://github.com/SlimeDog/NetworkInterceptor/blob/master/src/main/resources/config.yml
 
 # Network requests may be detected by either or both of the following methods.
 #
