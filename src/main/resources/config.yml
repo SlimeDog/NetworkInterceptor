@@ -7,7 +7,10 @@
 # Implementation: drives_a_ford
 # Testing: SlimeDog
 #
-# Minecraft version support: 1.12.2, 1.13,2, 1.14.4, 1.15.2, 1.16.5, 1.17.1, 1.18.2, 1.19.x
+# Supported MC versions:
+# https://github.com/SlimeDog/NetworkInterceptor/wiki/Technical-Details
+# Default configuration:
+# https://github.com/SlimeDog/NetworkInterceptor/blob/master/src/main/resources/config.yml
 
 # Network requests may be detected by either or both of the following methods.
 #
