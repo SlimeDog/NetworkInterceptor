@@ -2,7 +2,6 @@ package me.lucko.networkinterceptor;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
@@ -31,6 +30,8 @@ import java.util.Map;
 
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.plugin.PluginContainer;
+
+import dev.ratas.slimedogcore.impl.commands.BukkitFacingParentCommand;
 
 public class NetworkInterceptorCommand<PLUGIN> {
     private static final List<String> OPTIONS = Arrays.asList("reload", "info");
@@ -194,13 +195,14 @@ public class NetworkInterceptorCommand<PLUGIN> {
         return new VelocityWrapper((NetworkInterceptorCommand<PluginContainer>) this);
     }
 
-    public static class SpigotWrapper implements TabExecutor {
+    public static class SpigotWrapper extends BukkitFacingParentCommand {
         private final NetworkInterceptorCommand<JavaPlugin> cmd;
 
         public SpigotWrapper(NetworkInterceptorCommand<JavaPlugin> md) {
             this.cmd = md;
         }
 
+        // The below undoes the SDC stuff, but it's better this way for here
         @Override
         public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
             if (args.length == 1) {
