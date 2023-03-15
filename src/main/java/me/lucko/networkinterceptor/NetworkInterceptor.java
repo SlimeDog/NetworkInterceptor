@@ -16,7 +16,9 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptorPlugin<JavaPlugin> {
+import dev.ratas.slimedogcore.impl.SlimeDogCore;
+
+public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<JavaPlugin> {
     private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
     private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
     private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
@@ -30,7 +32,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         saveDefaultConfig();
         saveResourceInternal(SAMPLE_ALLOW_CONFIG_FILE_NAME);
         saveResourceInternal(SAMPLE_DENY_CONFIG_FILE_NAME);
-        config = new BukkitConfiguration(getConfig());
+        config = new BukkitConfiguration(getDefaultConfig());
         delegate = new CommonNetworkInterceptor<>(this);
 
         // check and enable bStats
@@ -56,7 +58,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
-    public void onEnable() {
+    public void pluginEnabled() {
         delegate.onEnable();
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
@@ -75,14 +77,14 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
-    public void onDisable() {
+    public void pluginDisabled() {
         disable();
     }
 
     @Override
     public void reload() {
         reloadConfig();
-        config = new BukkitConfiguration(getConfig());
+        config = new BukkitConfiguration(getDefaultConfig());
 
         disable();
         try {

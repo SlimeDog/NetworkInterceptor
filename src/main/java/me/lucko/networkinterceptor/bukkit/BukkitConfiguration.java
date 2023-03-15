@@ -1,22 +1,26 @@
 package me.lucko.networkinterceptor.bukkit;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.bukkit.configuration.ConfigurationSection;
-
+import dev.ratas.slimedogcore.api.config.SDCConfiguration;
+import dev.ratas.slimedogcore.api.config.SDCCustomConfig;
 import me.lucko.networkinterceptor.common.AbstractConfiguration;
 
 public class BukkitConfiguration implements AbstractConfiguration {
-    private final ConfigurationSection config;
+    private final SDCConfiguration config;
 
-    public BukkitConfiguration(ConfigurationSection config) {
+    public BukkitConfiguration(SDCCustomConfig config) {
+        this(config.getConfig());
+    }
+
+    public BukkitConfiguration(SDCConfiguration config) {
         this.config = config;
     }
 
     @Override
-    public Set<String> getKeys(boolean deep) {
+    public Collection<String> getKeys(boolean deep) {
         return config.getKeys(deep);
     }
 
@@ -127,7 +131,7 @@ public class BukkitConfiguration implements AbstractConfiguration {
 
     @Override
     public AbstractConfiguration getConfigurationSection(String path) {
-        ConfigurationSection section = config.getConfigurationSection(path);
+        SDCConfiguration section = config.getConfigurationSection(path);
         return section == null ? null : new BukkitConfiguration(section);
     }
 
