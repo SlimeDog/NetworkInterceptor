@@ -6,7 +6,7 @@
 
     <groupId>me.lucko</groupId>
     <artifactId>networkinterceptor</artifactId>
-    <version>3.2.3-SNAPSHOT</version>
+    <version>3.3.0</version>
     <packaging>jar</packaging>
 
     <name>NetworkInterceptor</name>
