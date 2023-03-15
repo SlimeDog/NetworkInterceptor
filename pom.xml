@@ -43,6 +43,10 @@
               <pattern>org.bstats</pattern>
               <shadedPattern>me.lucko.networkinterceptor.bstats</shadedPattern>
             </relocation>
+            <relocation>
+              <pattern>dev.ratas.slimedogcore</pattern>
+              <shadedPattern>${project.groupId}.${project.artifactId}.core</shadedPattern>
+            </relocation>
           </relocations>
         </configuration>
         <executions>
@@ -100,6 +104,12 @@
             <artifactId>spigot-api</artifactId>
             <version>1.19.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.SlimeDog</groupId>
+            <artifactId>SlimeDogCore</artifactId>
+            <version>1.0.2</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
