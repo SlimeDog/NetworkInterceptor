@@ -14,14 +14,14 @@ import java.io.File;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
-import org.bukkit.plugin.java.JavaPlugin;
 
+import dev.ratas.slimedogcore.api.SlimeDogPlugin;
 import dev.ratas.slimedogcore.impl.SlimeDogCore;
 
-public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<JavaPlugin> {
+public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<SlimeDogPlugin> {
     private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
     private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
-    private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
+    private final CommonNetworkInterceptor<NetworkInterceptor, SlimeDogPlugin> delegate;
     private BukkitConfiguration config;
     private boolean registerManualStopTask = false;
 
@@ -63,12 +63,12 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
                 if (delegate.getBlocker() instanceof CompositeBlocker) {
-                    ((CompositeBlocker<JavaPlugin>) delegate.getBlocker()).stopUsingManualBlocker();
+                    ((CompositeBlocker<SlimeDogPlugin>) delegate.getBlocker()).stopUsingManualBlocker();
                 } else if (delegate.getBlocker() instanceof LearningBlocker) {
-                    Blocker<JavaPlugin> delegate = ((LearningBlocker<JavaPlugin>) this.delegate.getBlocker())
+                    Blocker<SlimeDogPlugin> delegate = ((LearningBlocker<SlimeDogPlugin>) this.delegate.getBlocker())
                             .getDelegate();
                     if (delegate instanceof CompositeBlocker) {
-                        ((CompositeBlocker<JavaPlugin>) delegate).stopUsingManualBlocker();
+                        ((CompositeBlocker<SlimeDogPlugin>) delegate).stopUsingManualBlocker();
                     }
                 }
             }, 1L);
@@ -135,12 +135,12 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
     }
 
     @Override
-    public CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> getDelegate() {
+    public CommonNetworkInterceptor<NetworkInterceptor, SlimeDogPlugin> getDelegate() {
         return delegate;
     }
 
     @Override
-    public JavaPlugin asPlugin() {
+    public SlimeDogPlugin asPlugin() {
         return this;
     }
 

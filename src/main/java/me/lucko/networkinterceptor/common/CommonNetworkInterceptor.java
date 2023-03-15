@@ -14,7 +14,7 @@ import java.util.logging.Level;
 
 import com.google.common.collect.ImmutableList;
 
-import org.bukkit.plugin.java.JavaPlugin;
+import dev.ratas.slimedogcore.api.SlimeDogPlugin;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.blockers.AllowBlocker;
@@ -304,8 +304,8 @@ public class CommonNetworkInterceptor<T extends NetworkInterceptorPlugin<PLUGIN>
     private PluginOptions<PLUGIN> getPluginOptions(Set<String> plugins, KeepPlugins keepType,
             boolean allowNonPlugin, boolean trust) {
         if (plugin.getPlatformType() == Platform.BUKKIT) {
-            return (PluginOptions<PLUGIN>) new BukkitPluginOptions<JavaPlugin>(
-                    (JavaPlugin) plugin, keepType, allowNonPlugin, plugins, trust);
+            return (PluginOptions<PLUGIN>) new BukkitPluginOptions<SlimeDogPlugin>(
+                    (SlimeDogPlugin) plugin, keepType, allowNonPlugin, plugins, trust);
         } else if (plugin.getPlatformType() == Platform.BUNGEE) {
             return (PluginOptions<PLUGIN>) new BungeePluginOptions<Plugin>((Plugin) plugin,
                     keepType, allowNonPlugin, plugins, trust);

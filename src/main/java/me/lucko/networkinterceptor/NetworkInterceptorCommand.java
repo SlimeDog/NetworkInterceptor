@@ -2,7 +2,6 @@ package me.lucko.networkinterceptor;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
 import me.lucko.networkinterceptor.blockers.AllowBlocker;
@@ -31,6 +30,7 @@ import java.util.Map;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.plugin.PluginContainer;
 
+import dev.ratas.slimedogcore.api.SlimeDogPlugin;
 import dev.ratas.slimedogcore.impl.commands.BukkitFacingParentCommand;
 
 public class NetworkInterceptorCommand<PLUGIN> {
@@ -182,7 +182,7 @@ public class NetworkInterceptorCommand<PLUGIN> {
 
     @SuppressWarnings("unchecked")
     public SpigotWrapper asSpigotCommand() {
-        return new SpigotWrapper((NetworkInterceptorCommand<JavaPlugin>) this);
+        return new SpigotWrapper((NetworkInterceptorCommand<SlimeDogPlugin>) this);
     }
 
     @SuppressWarnings("unchecked")
@@ -196,9 +196,9 @@ public class NetworkInterceptorCommand<PLUGIN> {
     }
 
     public static class SpigotWrapper extends BukkitFacingParentCommand {
-        private final NetworkInterceptorCommand<JavaPlugin> cmd;
+        private final NetworkInterceptorCommand<SlimeDogPlugin> cmd;
 
-        public SpigotWrapper(NetworkInterceptorCommand<JavaPlugin> md) {
+        public SpigotWrapper(NetworkInterceptorCommand<SlimeDogPlugin> md) {
             this.cmd = md;
         }
 
