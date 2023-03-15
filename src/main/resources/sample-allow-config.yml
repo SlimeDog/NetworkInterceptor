@@ -7,7 +7,10 @@
 # Implementation: drives_a_ford
 # Testing: SlimeDog
 #
-# Minecraft version support: 1.12.2, 1.13,2, 1.14.4, 1.15.2, 1.16.5, 1.17.1, 1.18.2, 1.19.x
+# Supported MC versions:
+# https://github.com/SlimeDog/NetworkInterceptor/wiki/Technical-Details
+# Default configuration:
+# https://github.com/SlimeDog/NetworkInterceptor/blob/master/src/main/resources/config.yml
 
 # Network requests may be detected by either or both of the following methods.
 #
@@ -136,7 +139,11 @@ targets:
   - 'repo.maven.apache.org'
   - '199.232.192.215'
   - '199.232.196.215'
+  - '151.101.0.215'
   - '151.101.16.215'
+  - '151.101.64.215'
+  - '151.101.128.215'
+  - '151.101.192.215'
   
   ########## Generally good: plugin version/update check #######################
 
