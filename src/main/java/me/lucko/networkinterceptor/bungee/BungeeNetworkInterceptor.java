@@ -14,6 +14,7 @@ import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.Platform;
+import me.lucko.networkinterceptor.common.PluginManager;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -26,6 +27,7 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
     private final CommonNetworkInterceptor<BungeeNetworkInterceptor, Plugin> delegate;
     private Configuration configuration;
     private BungeeConfiguration bungeeConfig;
+    private BungeePluginManager pluginManager;
 
     public BungeeNetworkInterceptor() {
         saveDefaultConfig();
@@ -42,6 +44,7 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
             metrics.addCustomChart(new SimplePie("mode", () -> configuration.getString("mode", "N/A")));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
+        this.pluginManager = new BungeePluginManager(getProxy().getPluginManager());
     }
 
     private void loadConfig() {
@@ -157,6 +160,11 @@ public class BungeeNetworkInterceptor extends Plugin implements NetworkIntercept
             getLogger().severe("Disabling plugin");
             disablePlugin();
         }
+    }
+
+    @Override
+    public PluginManager<Plugin> getNIPluginManager() {
+        return pluginManager;
     }
 
 }

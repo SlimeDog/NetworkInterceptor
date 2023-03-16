@@ -1,10 +1,7 @@
 package me.lucko.networkinterceptor.loggers;
 
 import me.lucko.networkinterceptor.InterceptEvent;
-import me.lucko.networkinterceptor.common.Platform;
-import net.md_5.bungee.api.plugin.Plugin;
-
-import org.bukkit.plugin.java.JavaPlugin;
+import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 
 import java.util.Map;
 import java.util.Set;
@@ -12,11 +9,13 @@ import java.util.logging.Logger;
 
 public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN> {
     private final boolean includeTraces;
-    protected final Platform platform;
+    // protected final Platform platform;
+    private final NetworkInterceptorPlugin<PLUGIN> ni;
 
-    protected AbstractEventLogger(boolean includeTraces, Platform platform) {
+    protected AbstractEventLogger(boolean includeTraces, NetworkInterceptorPlugin<PLUGIN> ni) {
         this.includeTraces = includeTraces;
-        this.platform = platform;
+        // this.platform = platform;
+        this.ni = ni;
     }
 
     protected abstract Logger getLogger();
@@ -38,11 +37,10 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
             Map<StackTraceElement, PLUGIN> map = event.getNonInternalStackTraceWithPlugins();
             for (StackTraceElement element : map.keySet()) {
                 sb.append("\tat ").append(element);
-                if (platform == Platform.BUKKIT) {
-                    JavaPlugin providingPlugin = (JavaPlugin) map.get(element);
-                    if (providingPlugin != null) {
-                        sb.append(" [").append(providingPlugin.getName()).append(']');
-                    }
+                PLUGIN providingPlugin = map.get(element);
+                if (providingPlugin != null) {
+                    String name = ni.getNIPluginManager().getName(providingPlugin);
+                    sb.append(" [").append(name).append(']');
                 }
                 sb.append("\n");
             }
@@ -76,14 +74,8 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
             }
         }
         if (target != null) {
-            if (platform == Platform.BUKKIT) {
-                sb.append(((JavaPlugin) target).getName());
-            } else if (platform == Platform.BUNGEE) {
-                sb.append(((Plugin) target).getDescription().getName());
-            } else {
-                // TODO - velocity?
-                // TODO - other?
-            }
+            String name = ni.getNIPluginManager().getName(target);
+            sb.append(name);
         }
     }
 

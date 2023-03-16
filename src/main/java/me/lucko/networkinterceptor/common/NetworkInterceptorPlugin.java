@@ -31,6 +31,8 @@ public interface NetworkInterceptorPlugin<PLUGIN> {
 
     CommonNetworkInterceptor<? extends NetworkInterceptorPlugin<PLUGIN>, PLUGIN> getDelegate();
 
+    PluginManager<PLUGIN> getNIPluginManager();
+
     PLUGIN asPlugin();
 
     void reload();

@@ -17,7 +17,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final Logger logger;
 
     public FileLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean truncateFile) {
-        super(true, plugin.getPlatformType());
+        super(true, plugin);
         File file = new File(plugin.getDataFolder(), "intercept.log");
         Formatter formatter = new Formatter() {
             @Override
@@ -25,7 +25,7 @@ public class FileLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
                 return new Date(record.getMillis()).toString() + ": " + record.getMessage() + "\n";
             }
         };
-        this.logger = platform == Platform.VELOCITY ? new VelocityWrapper()
+        this.logger = plugin.getPlatformType() == Platform.VELOCITY ? new VelocityWrapper()
                 : Logger.getLogger(FileLogger.class.getName());
         try {
             file.getParentFile().mkdirs();

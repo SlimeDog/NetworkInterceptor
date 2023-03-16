@@ -8,22 +8,24 @@ import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.Platform;
+import me.lucko.networkinterceptor.common.PluginManager;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 import java.io.File;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import org.bukkit.plugin.java.JavaPlugin;
 
-import dev.ratas.slimedogcore.api.SlimeDogPlugin;
 import dev.ratas.slimedogcore.impl.SlimeDogCore;
 
-public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<SlimeDogPlugin> {
+public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<JavaPlugin> {
     private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
     private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
-    private final CommonNetworkInterceptor<NetworkInterceptor, SlimeDogPlugin> delegate;
+    private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
     private BukkitConfiguration config;
     private boolean registerManualStopTask = false;
+    private PluginManager<JavaPlugin> pluginManager;
 
     public NetworkInterceptor() {
         // init early
@@ -47,6 +49,7 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
                     () -> String.valueOf(delegate.getPluginOptions().getBlockedOptions().getPluginNames().size())));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
+        pluginManager = new BukkitPluginManager(getServer().getPluginManager());
     }
 
     private void saveResourceInternal(String name) {
@@ -63,12 +66,12 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
                 if (delegate.getBlocker() instanceof CompositeBlocker) {
-                    ((CompositeBlocker<SlimeDogPlugin>) delegate.getBlocker()).stopUsingManualBlocker();
+                    ((CompositeBlocker<JavaPlugin>) delegate.getBlocker()).stopUsingManualBlocker();
                 } else if (delegate.getBlocker() instanceof LearningBlocker) {
-                    Blocker<SlimeDogPlugin> delegate = ((LearningBlocker<SlimeDogPlugin>) this.delegate.getBlocker())
+                    Blocker<JavaPlugin> delegate = ((LearningBlocker<JavaPlugin>) this.delegate.getBlocker())
                             .getDelegate();
                     if (delegate instanceof CompositeBlocker) {
-                        ((CompositeBlocker<SlimeDogPlugin>) delegate).stopUsingManualBlocker();
+                        ((CompositeBlocker<JavaPlugin>) delegate).stopUsingManualBlocker();
                     }
                 }
             }, 1L);
@@ -135,13 +138,18 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
     }
 
     @Override
-    public CommonNetworkInterceptor<NetworkInterceptor, SlimeDogPlugin> getDelegate() {
+    public CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> getDelegate() {
         return delegate;
     }
 
     @Override
-    public SlimeDogPlugin asPlugin() {
+    public JavaPlugin asPlugin() {
         return this;
+    }
+
+    @Override
+    public PluginManager<JavaPlugin> getNIPluginManager() {
+        return pluginManager;
     }
 
 }
