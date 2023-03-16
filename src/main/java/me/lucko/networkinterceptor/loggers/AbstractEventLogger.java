@@ -52,10 +52,6 @@ public abstract class AbstractEventLogger<PLUGIN> implements EventLogger<PLUGIN>
         getLogger().info(sb.toString());
     }
 
-    // TODO - create a PluginManager that has a #getName(PLUGIN) method
-    // and has an implementation for different platforms
-    // and use that here to get plugin name instead of coupling platform-specific
-    // stuff in here
     private void appendPluginIfPossible(StringBuilder sb, InterceptEvent<PLUGIN> event) {
         PLUGIN trustedPlugin = event.getTrustedPlugin();
         PLUGIN blockedPlugin = event.getBlockedPlugin();
