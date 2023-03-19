@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import com.google.common.collect.ImmutableList;
-
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.google.common.collect.ImmutableList;
 
 import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.blockers.AllowBlocker;

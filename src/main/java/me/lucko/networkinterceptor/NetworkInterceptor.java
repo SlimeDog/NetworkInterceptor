@@ -8,6 +8,7 @@ import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.Platform;
+import me.lucko.networkinterceptor.common.PluginManager;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 import java.io.File;
@@ -16,12 +17,15 @@ import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptorPlugin<JavaPlugin> {
+import dev.ratas.slimedogcore.impl.SlimeDogCore;
+
+public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<JavaPlugin> {
     private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
     private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
     private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
     private BukkitConfiguration config;
     private boolean registerManualStopTask = false;
+    private PluginManager<JavaPlugin> pluginManager;
 
     public NetworkInterceptor() {
         // init early
@@ -30,7 +34,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
         saveDefaultConfig();
         saveResourceInternal(SAMPLE_ALLOW_CONFIG_FILE_NAME);
         saveResourceInternal(SAMPLE_DENY_CONFIG_FILE_NAME);
-        config = new BukkitConfiguration(getConfig());
+        config = new BukkitConfiguration(getDefaultConfig());
         delegate = new CommonNetworkInterceptor<>(this);
 
         // check and enable bStats
@@ -45,6 +49,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
                     () -> String.valueOf(delegate.getPluginOptions().getBlockedOptions().getPluginNames().size())));
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
+        pluginManager = new BukkitPluginManager(getServer().getPluginManager());
     }
 
     private void saveResourceInternal(String name) {
@@ -56,7 +61,7 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
-    public void onEnable() {
+    public void pluginEnabled() {
         delegate.onEnable();
         if (registerManualStopTask) {
             getServer().getScheduler().runTaskLater(this, () -> {
@@ -75,14 +80,14 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     }
 
     @Override
-    public void onDisable() {
+    public void pluginDisabled() {
         disable();
     }
 
     @Override
     public void reload() {
         reloadConfig();
-        config = new BukkitConfiguration(getConfig());
+        config = new BukkitConfiguration(getDefaultConfig());
 
         disable();
         try {
@@ -140,6 +145,11 @@ public class NetworkInterceptor extends JavaPlugin implements NetworkInterceptor
     @Override
     public JavaPlugin asPlugin() {
         return this;
+    }
+
+    @Override
+    public PluginManager<JavaPlugin> getNIPluginManager() {
+        return pluginManager;
     }
 
 }

@@ -2,8 +2,6 @@ package me.lucko.networkinterceptor;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.StringUtil;
 
 import me.lucko.networkinterceptor.blockers.AllowBlocker;
@@ -31,6 +29,9 @@ import java.util.Map;
 
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.plugin.PluginContainer;
+
+import dev.ratas.slimedogcore.api.SlimeDogPlugin;
+import dev.ratas.slimedogcore.impl.commands.BukkitFacingParentCommand;
 
 public class NetworkInterceptorCommand<PLUGIN> {
     private static final List<String> OPTIONS = Arrays.asList("reload", "info");
@@ -181,7 +182,7 @@ public class NetworkInterceptorCommand<PLUGIN> {
 
     @SuppressWarnings("unchecked")
     public SpigotWrapper asSpigotCommand() {
-        return new SpigotWrapper((NetworkInterceptorCommand<JavaPlugin>) this);
+        return new SpigotWrapper((NetworkInterceptorCommand<SlimeDogPlugin>) this);
     }
 
     @SuppressWarnings("unchecked")
@@ -194,13 +195,14 @@ public class NetworkInterceptorCommand<PLUGIN> {
         return new VelocityWrapper((NetworkInterceptorCommand<PluginContainer>) this);
     }
 
-    public static class SpigotWrapper implements TabExecutor {
-        private final NetworkInterceptorCommand<JavaPlugin> cmd;
+    public static class SpigotWrapper extends BukkitFacingParentCommand {
+        private final NetworkInterceptorCommand<SlimeDogPlugin> cmd;
 
-        public SpigotWrapper(NetworkInterceptorCommand<JavaPlugin> md) {
+        public SpigotWrapper(NetworkInterceptorCommand<SlimeDogPlugin> md) {
             this.cmd = md;
         }
 
+        // The below undoes the SDC stuff, but it's better this way for here
         @Override
         public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
             if (args.length == 1) {

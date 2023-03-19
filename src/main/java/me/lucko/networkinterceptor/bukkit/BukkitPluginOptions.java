@@ -3,8 +3,8 @@ package me.lucko.networkinterceptor.bukkit;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.Plugin;
 
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
 import me.lucko.networkinterceptor.plugin.PluginOptions;

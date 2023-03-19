@@ -30,6 +30,7 @@ import me.lucko.networkinterceptor.common.AbstractConfiguration;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.common.Platform;
+import me.lucko.networkinterceptor.common.PluginManager;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 @Plugin(id = VelocityNetworkInterceptorInfo.ID, name = VelocityNetworkInterceptorInfo.NAME, //
@@ -47,6 +48,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
     private VelocityConfiguration config;
     private final Metrics.Factory metricsFactory;
     private boolean isStartup = true;
+    private VelocityPluginManager pluginManager;
 
     @Inject
     public VelocityNetworkInterceptor(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory,
@@ -61,6 +63,7 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
         reloadConfig();
         this.delegate = new CommonNetworkInterceptor<>(this);
         this.metricsFactory = metricsFactory;
+        this.pluginManager = new VelocityPluginManager(this.getServer().getPluginManager());
     }
 
     @Subscribe
@@ -220,6 +223,11 @@ public class VelocityNetworkInterceptor implements NetworkInterceptorPlugin<Plug
             this.runnable = runnable;
             this.ticks = ticks;
         }
+    }
+
+    @Override
+    public PluginManager<PluginContainer> getNIPluginManager() {
+        return pluginManager;
     }
 
 }

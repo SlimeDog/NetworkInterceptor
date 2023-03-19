@@ -8,7 +8,7 @@ public class ConsoleLogger<PLUGIN> extends AbstractEventLogger<PLUGIN> {
     private final NetworkInterceptorPlugin<PLUGIN> plugin;
 
     public ConsoleLogger(NetworkInterceptorPlugin<PLUGIN> plugin, boolean includeTraces) {
-        super(includeTraces, plugin.getPlatformType());
+        super(includeTraces, plugin);
         this.plugin = plugin;
     }
 
