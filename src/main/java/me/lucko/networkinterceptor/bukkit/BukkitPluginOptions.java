@@ -6,14 +6,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.Plugin;
 
-import dev.ratas.slimedogcore.api.SlimeDogPlugin;
 import me.lucko.networkinterceptor.plugin.KeepPlugins;
 import me.lucko.networkinterceptor.plugin.PluginOptions;
 
-public class BukkitPluginOptions<T extends SlimeDogPlugin> extends PluginOptions<T> {
-    private final SlimeDogPlugin owner;
+public class BukkitPluginOptions<T extends JavaPlugin> extends PluginOptions<T> {
+    private final JavaPlugin owner;
 
-    public BukkitPluginOptions(SlimeDogPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
+    public BukkitPluginOptions(JavaPlugin owner, KeepPlugins keepType, boolean allowNonPlugin,
             Set<String> plugins, boolean trust) {
         super(keepType, allowNonPlugin, plugins, trust);
         this.owner = owner;
