@@ -8,6 +8,7 @@ load: STARTUP
 loadbefore: [LuckPerms]
 depend: []
 softdepend: []
+folia-supported: true
 
 commands:
   networkinterceptor:
