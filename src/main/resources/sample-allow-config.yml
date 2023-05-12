@@ -161,3 +161,7 @@ targets:
   - 'bytebin.lucko.me'                  # pastebin
   - 'metadata.luckperms.net'            # dependencies
   - 'nexus.lucko.me'                    # dependencies
+
+  # Spark
+  - 'spark-usercontent.lucko.me'        # pastebin
+  
