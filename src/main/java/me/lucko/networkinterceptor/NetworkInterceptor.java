@@ -55,30 +55,6 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
         pluginManager = new BukkitPluginManager(getServer().getPluginManager());
-        // updating
-        if (getDefaultConfig().getConfig().getBoolean("check-for-updates", true)) {
-            String source = getDefaultConfig().getConfig().getString("update-source", "Hangar");
-            BiConsumer<UpdateChecker.VersionResponse, String> consumer = (response, version) -> {
-                switch (response) {
-                    case LATEST:
-                        getLogger().info("Already on latest version");
-                        break;
-                    case FOUND_NEW:
-                        getLogger().info("Found new version: " + version);
-                        break;
-                    case UNAVAILABLE:
-                        getLogger().info("Version information not available");
-                        break;
-                }
-            };
-            UpdateChecker checker;
-            if (source.equalsIgnoreCase("Hangar")) {
-                checker = UpdateChecker.forHangar(this, consumer, HANGAR_AUTHOR, HANGAR_SLUG);
-            } else {
-                checker = UpdateChecker.forSpigot(this, consumer, SPIGOT_ID);
-            }
-            checker.check();
-        }
     }
 
     private void saveResourceInternal(String name) {
@@ -106,6 +82,30 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
             }, 1L);
         }
         getCommand("networkinterceptor").setExecutor(new NetworkInterceptorCommand<>(this).asSpigotCommand());
+        // updating
+        if (getDefaultConfig().getConfig().getBoolean("check-for-updates", true)) {
+            String source = getDefaultConfig().getConfig().getString("update-source", "Hangar");
+            BiConsumer<UpdateChecker.VersionResponse, String> consumer = (response, version) -> {
+                switch (response) {
+                    case LATEST:
+                        getLogger().info("Already on latest version");
+                        break;
+                    case FOUND_NEW:
+                        getLogger().info("Found new version: " + version);
+                        break;
+                    case UNAVAILABLE:
+                        getLogger().info("Version information not available");
+                        break;
+                }
+            };
+            UpdateChecker checker;
+            if (source.equalsIgnoreCase("Hangar")) {
+                checker = UpdateChecker.forHangar(this, consumer, HANGAR_AUTHOR, HANGAR_SLUG);
+            } else {
+                checker = UpdateChecker.forSpigot(this, consumer, SPIGOT_ID);
+            }
+            checker.check();
+        }
     }
 
     @Override
