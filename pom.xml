@@ -181,6 +181,10 @@
             <id>velocity</id>
             <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
         </repository>
+        <repository>
+            <id>jitpack.io</id> <!-- For automated building of SlimeDogCore-->
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
 </project>
