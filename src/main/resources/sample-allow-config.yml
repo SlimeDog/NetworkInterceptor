@@ -105,7 +105,7 @@ targets:
   ########## Generally good: server version/update check #######################
 
   # Paper version and update check
-  - 'papermc.io'
+  - 'api.papermc.io'
 
   # SpigotMC version and update check
   - 'hub.spigotmc.org'
@@ -145,13 +145,20 @@ targets:
   - '151.101.128.215'
   - '151.101.192.215'
   
-  ########## Generally good: plugin version/update check #######################
+  ########## Generally good: plugin version/update checks ######################
 
-  # Plugin update checks
-  - 'api.github.com'                    # EssentialsX
-  - 'api.modrinth.com'                  # Standard for Modrinth plugins
+  #  Hangar plugin update checks
+  - 'hangar.papermc.io'
+
+  #  Modrinth plugin update checks
+  - 'api.modrinth.com'
+
+  #  Spigot plugin update checks
   - 'api.spiget.org'                    # Alternate for SpigotMC plugins
   - 'api.spigotmc.org'                  # Standard for SpigotMC plugins
+  
+  # Github plugin update checks
+  - 'api.github.com'                    # EssentialsX
   - 'gist.githubusercontent.com'        # PremiumVanish (probably also SuperVanish)
   - 'raw.githubusercontent.com'         # CMI, DiscordSRV
 
