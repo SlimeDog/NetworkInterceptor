@@ -6,7 +6,7 @@
 
     <groupId>me.lucko</groupId>
     <artifactId>networkinterceptor</artifactId>
-    <version>3.3.3</version>
+    <version>3.4.0</version>
     <packaging>jar</packaging>
 
     <name>NetworkInterceptor</name>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>com.github.SlimeDog</groupId>
             <artifactId>SlimeDogCore</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.9</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -180,6 +180,10 @@
         <repository>
             <id>velocity</id>
             <url>https://nexus.velocitypowered.com/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id> <!-- For automated building of SlimeDogCore-->
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
 
