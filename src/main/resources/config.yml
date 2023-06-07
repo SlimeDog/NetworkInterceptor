@@ -12,6 +12,7 @@
 # Default configuration:
 # https://github.com/SlimeDog/NetworkInterceptor/blob/master/src/main/resources/config.yml
 
+# ========== METHODS ===============================================================================
 # Network requests may be detected by either or both of the following methods.
 #
 # security-manager:
@@ -37,15 +38,17 @@ check-for-updates: true
 # Update source may be either Hangar (default) or SpigotMC.
 update-source: Hangar
 
-# bStats metrics
+# ========== BSTATS METRICS ========================================================================
 enable-metrics: true
 
+# ========== PROCESSING MODE =======================================================================
 # Processing mode is allow or deny
 # In allow mode, outbound network connections to specified targets will be allowed.
 # In deny mode, outbound network connections to specified targets will be denied (blocked).
 # In either mode, trusted plugins may be specified.
 mode: deny
 
+# ========== LOGGING ===============================================================================
 # Enable/disable logging of outbound network connections.
 #
 # Enable/disable stack traces for each connection attempt.
@@ -63,11 +66,13 @@ logging:
   mode: file
   truncate-file-on-start: true
 
+# ========== BLOCKING ==============================================================================
 # Enable/disable blocking.
 # If blocking is disabled, logging will still occur unless disabled above.
 blocking:
   enabled: false
 
+# ========== MAPPING ===============================================================================
 # Configure whether fully qualified domain names (FQDNs) are mapped to their IP addresses
 # This will allow calls to IP addresses that are the result of a call to a specific FQDN
 # within a certain amount of time of the former.
@@ -76,7 +81,7 @@ mapping:
   # The time (in ms) within which IPs are allowed to pass as per their FQDN permissions
   timer: 1000
 
-# Trusted plugins
+# ========== TRUSTED PLUGINS =======================================================================
 # In allow mode, outbound network connections by these plugins will be allowed.
 # In deny mode, outbound network connections by these plugins will be allowed,
 # unless the target is explicitly blocked in the targets list.
@@ -86,13 +91,13 @@ mapping:
 # - LuckPerms
 trusted-plugins: []
 
-# Blocked plugins
+# ========== BLOCKED PLUGINS =======================================================================
 # No network connections by the listed plugin(s) will be allowed, period.
 # Remove [] on the next line, and add the following line (without the # comment).
 # - pluginName
 blocked-plugins: []
 
-# The target list
+# ========== TARGETS ===============================================================================
 # A list of disallowed FQDNs and IP addresses
 # Entries should be lowercase.
 # In allow mode, outbound network connections to these targets will be allowed.
