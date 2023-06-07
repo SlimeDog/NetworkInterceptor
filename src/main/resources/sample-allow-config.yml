@@ -105,7 +105,7 @@ targets:
   ########## Generally good: server version/update check #######################
 
   # Paper version and update check
-  - 'papermc.io'
+  - 'api.papermc.io'
 
   # SpigotMC version and update check
   - 'hub.spigotmc.org'
