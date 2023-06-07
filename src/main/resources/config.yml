@@ -31,6 +31,12 @@ methods:
   - security-manager
   - proxy-selector
 
+# ========== CHECK FOR UPDATES =====================================================================
+# If you do not want notification of available updates in the console log, you may disable it here.
+check-for-updates: true
+# Update source may be either Hangar (default) or SpigotMC.
+update-source: Hangar
+
 # bStats metrics
 enable-metrics: true
 

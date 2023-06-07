@@ -12,14 +12,19 @@ import me.lucko.networkinterceptor.common.PluginManager;
 import me.lucko.networkinterceptor.common.CommonNetworkInterceptor.IllegalConfigStateException;
 
 import java.io.File;
+import java.util.function.BiConsumer;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.ratas.slimedogcore.impl.SlimeDogCore;
+import dev.ratas.slimedogcore.impl.utils.UpdateChecker;
 
 public class NetworkInterceptor extends SlimeDogCore implements NetworkInterceptorPlugin<JavaPlugin> {
+    private static final int SPIGOT_ID = 53351;
+    private static final String HANGAR_AUTHOR = "SlimeDog";
+    private static final String HANGAR_SLUG = "NetworkInterceptor";
     private static final String SAMPLE_ALLOW_CONFIG_FILE_NAME = "sample-allow-config.yml";
     private static final String SAMPLE_DENY_CONFIG_FILE_NAME = "sample-deny-config.yml";
     private final CommonNetworkInterceptor<NetworkInterceptor, JavaPlugin> delegate;
@@ -50,6 +55,30 @@ public class NetworkInterceptor extends SlimeDogCore implements NetworkIntercept
         }
         getLogger().info(useMetrics ? "bStats metrics enabled" : "bStats metrics disabled");
         pluginManager = new BukkitPluginManager(getServer().getPluginManager());
+        // updating
+        if (getDefaultConfig().getConfig().getBoolean("check-for-updates", true)) {
+            String source = getDefaultConfig().getConfig().getString("update-source", "Hangar");
+            BiConsumer<UpdateChecker.VersionResponse, String> consumer = (response, version) -> {
+                switch (response) {
+                    case LATEST:
+                        getLogger().info("Already on latest version");
+                        break;
+                    case FOUND_NEW:
+                        getLogger().info("Found new version: " + version);
+                        break;
+                    case UNAVAILABLE:
+                        getLogger().info("Version information not available");
+                        break;
+                }
+            };
+            UpdateChecker checker;
+            if (source.equalsIgnoreCase("Hangar")) {
+                checker = UpdateChecker.forHangar(this, consumer, HANGAR_AUTHOR, HANGAR_SLUG);
+            } else {
+                checker = UpdateChecker.forSpigot(this, consumer, SPIGOT_ID);
+            }
+            checker.check();
+        }
     }
 
     private void saveResourceInternal(String name) {
