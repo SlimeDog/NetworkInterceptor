@@ -158,6 +158,9 @@ targets:
   
   ########## Generally good: plugin version/update checks ######################
 
+  # CurseForge plugin update check
+  - 'api.curseforge.com'
+
   #  Hangar plugin update checks
   - 'hangar.papermc.io'
 
