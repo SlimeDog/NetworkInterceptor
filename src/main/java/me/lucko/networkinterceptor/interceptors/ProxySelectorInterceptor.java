@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
-import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class ProxySelectorInterceptor<PLUGIN> implements Interceptor {
 
             if (blocked) {
                 ProxySelectorInterceptor.this.plugin.getDelegate().logBlock(event);
-                SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
+                SneakyThrow.sneakyThrow(new ConnectionBlockedException("ProxySelector"));
                 throw new AssertionError();
             }
 
