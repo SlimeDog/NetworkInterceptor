@@ -25,7 +25,7 @@ For more detailed analysis of network traffic, we recommend trying [Wireshark](h
 All **NetworkInterceptor** commands are accessible at the console, and in-game with appropriate permissions (default OP). Tab-completion is supported for all commands.
 
 ### Version Support
-See [The Wiki](https://github.com/SlimeDog/NetworkInterceptor/wiki/Version-Support) for supported versions. Only certified releases are supported.
+See [Version Support](https://github.com/SlimeDog/NetworkInterceptor/wiki/Version-Support) for supported versions. Only certified releases are supported.
 
 ### The Wiki
 **NetworkInterceptor** is completely documented on [The Wiki](https://github.com/SlimeDog/NetworkInterceptor/wiki). Please start there when you have questions.
