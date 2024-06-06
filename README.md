@@ -1,3 +1,25 @@
+<table border=1><tr><td>
+<h2>🛑 End Of Life for SlimeDog/NetworkInterceptor</h2>
+
+SlimeDog/NetworkInterceptor has reached end-of-life
+
+Completed tasks:
+- Updated SlimeDog/NetworkInterceptor to support Paper and Spigot 1.20.6 and 1.21.0
+- Posted update to SpigotMC
+- Updated `Version Support` page of SlimeDog/NetworkInterceptor wiki on Github
+- Posted end-of-life notices
+  - `Overview` and `Documentation` pages of SlimeDog/NetworkInterceptor on SpigotMC
+  - `README` for SlimeDog/NetworkInterceptor repository on Github
+  - `Home` page of SlimeDog/NetworkInterceptor wiki on Github
+- Archived SlimeDog/NetworkInterceptor Github repository
+- Removed SlimeDog/NetworkInterceptor from bStats
+- Removed SlimeDog/NetworkInterceptor from Hangar
+
+Support for future Minecraft versions:
+- SlimeDog/NetworkInterceptor will likely work on future Minecraft versions without updates, but there are no guarantees
+- Anyone may fork NetworkInterceptor to support future Minecraft versions, or for any other purpose permitted under the GPL3 license
+</td></tr></table>
+
 # NetworkInterceptor &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="https://hangar.papermc.io/SlimeDog/NetworkInterceptor">![download-on-hangar](https://user-images.githubusercontent.com/17748923/187102194-00e910e6-ee8e-42cb-bfe1-d2f9e657ef4b.png)</a> <a href="https://www.spigotmc.org/resources/53351/">![download-on-spigot](https://user-images.githubusercontent.com/17748923/187102011-b72e0f1d-ba74-4cb2-a69e-46f48cb364b5.png)</a>
 
 ### Overview
