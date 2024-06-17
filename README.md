@@ -12,7 +12,6 @@ Completed tasks:
   - `README` for SlimeDog/NetworkInterceptor repository on Github
   - `Home` page of SlimeDog/NetworkInterceptor wiki on Github
 - Archived SlimeDog/NetworkInterceptor Github repository
-- Removed SlimeDog/NetworkInterceptor from bStats
 - Removed SlimeDog/NetworkInterceptor from Hangar
 
 Support for future Minecraft versions:
