@@ -4,7 +4,6 @@ import me.lucko.networkinterceptor.InterceptEvent;
 import me.lucko.networkinterceptor.common.NetworkInterceptorPlugin;
 import me.lucko.networkinterceptor.utils.SneakyThrow;
 
-import java.net.SocketTimeoutException;
 import java.security.Permission;
 
 public class SecurityManagerInterceptor<PLUGIN> extends SecurityManager implements Interceptor {
@@ -39,7 +38,7 @@ public class SecurityManagerInterceptor<PLUGIN> extends SecurityManager implemen
 
         if (blocked) {
             this.plugin.getDelegate().logBlock(event);
-            SneakyThrow.sneakyThrow(new SocketTimeoutException("Connection timed out"));
+            SneakyThrow.sneakyThrow(new ConnectionBlockedException("SecurityManager"));
             throw new AssertionError();
         }
     }
