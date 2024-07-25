@@ -1,5 +1,9 @@
 # NetworkInterceptor &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="https://hangar.papermc.io/SlimeDog/NetworkInterceptor">![download-on-hangar](https://user-images.githubusercontent.com/17748923/187102194-00e910e6-ee8e-42cb-bfe1-d2f9e657ef4b.png)</a> <a href="https://www.spigotmc.org/resources/53351/">![download-on-spigot](https://user-images.githubusercontent.com/17748923/187102011-b72e0f1d-ba74-4cb2-a69e-46f48cb364b5.png)</a>
 
+⚠️ SecurityManager was terminally deprecated in Java 17. This affects NetworkInterceptor on all platforms. Fortunately, the issue is easily resolved, without change to NetworkInterceptor. Add the following specification to server/proxy start-up
+java -Djava.security.manager=allow.
+This specification was verified to be compatible with Java 17.0.1 and later, through Java 22.0.2.
+
 ### Overview
 **NetworkInterceptor** detects and (optionally) blocks outgoing network connections. Some examples include:
 * Generally required:
